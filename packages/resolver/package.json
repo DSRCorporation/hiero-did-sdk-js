@@ -1,0 +1,52 @@
+{
+  "name": "@swiss-digital-assets-institute/resolver",
+  "version": "0.3.0",
+  "description": "This package provides the `resolveDID` function, a core component of the Hashgraph DID SDK. It resolves Decentralized Identifiers (DIDs) registered on the Hedera network to their corresponding DID Documents.",
+  "author": {
+    "name": "The Hashgraph Association",
+    "url": "https://www.hashgraph.swiss/"
+  },
+  "bugs": {
+    "url": "https://github.com/Swiss-Digital-Assets-Institute/hashgraph-did-sdk-js/issues"
+  },
+  "license": "Apache-2.0",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "browser": "./dist/browser/index.esm.js",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "browser": "./dist/browser/index.esm.js",
+    "require": "./dist/index.cjs.js",
+    "import": "./dist/index.esm.js",
+    "default": "./dist/index.esm.js"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Swiss-Digital-Assets-Institute/hashgraph-did-sdk-js.git",
+    "directory": "packages/resolver"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "jest",
+    "build": "tsup"
+  },
+  "publishConfig": {
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com",
+    "scope": "@swiss-digital-assets-institute"
+  },
+  "dependencies": {
+    "@hashgraph/sdk": "^2.62.0",
+    "@swiss-digital-assets-institute/core": "0.3.0",
+    "@swiss-digital-assets-institute/verifier-internal": "0.3.0"
+  }
+}

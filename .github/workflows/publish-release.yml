@@ -1,0 +1,50 @@
+name: Publish Release
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  publish-release:
+    if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')
+    runs-on: ubuntu-latest
+    name: Publish packages releases
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          registry-url: 'https://npm.pkg.github.com'
+
+      - name: Install dependencies
+        run: npm ci --workspaces --include-workspace-root
+
+      - name: Publish packages
+        run: npm run packages:publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fetch version
+        run: |
+          PACKAGE_VERSION=$(cat lerna.json | jq -r .version)
+          echo "PACKAGE_VERSION=${PACKAGE_VERSION}" >> $GITHUB_ENV
+
+          if [[ "${PACKAGE_VERSION}" =~ -(alpha|beta|rc) ]]; then
+            echo "PRERELEASE=true" >> $GITHUB_ENV
+          else
+            echo "PRERELEASE=false" >> $GITHUB_ENV
+          fi
+
+      - name: Create a GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: 'v${{ env.PACKAGE_VERSION }}'
+          name: 'Release v${{ env.PACKAGE_VERSION }}'
+          generateReleaseNotes: true
+          prerelease: ${{ env.PRERELEASE }}

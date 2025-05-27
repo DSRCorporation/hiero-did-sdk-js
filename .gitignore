@@ -1,0 +1,22 @@
+# Ignore build files
+build/
+**/dist/*
+
+# IDE files
+.vscode/
+.idea/
+
+# Ignore node_modules
+node_modules/
+
+# Ignore coverage
+coverage/
+
+# Ignore debug logs
+lerna-debug.log
+
+# Ignore all .env files in all directories
+*.env
+
+# Except for .env.template files in any directory
+!**/.env.template
