@@ -1,8 +1,8 @@
-import { DIDError, Network } from '@swiss-digital-assets-institute/core';
+import { DIDError, Network } from '@hiero-did-sdk/core';
 import {
   TopicReader,
   TopicReaderHederaClient,
-} from '@swiss-digital-assets-institute/resolver';
+} from '@hiero-did-sdk/resolver';
 
 /**
  * Class implementing a message awaiter for Hedera Consensus Service.

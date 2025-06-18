@@ -2,7 +2,7 @@ import {
   DIDError,
   DIDMessage,
   isHederaDID,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 import {
   DIDRemoveServiceMessageConstructor,
   MessageSerialized,

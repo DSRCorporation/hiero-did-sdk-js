@@ -2,7 +2,7 @@
  * This example demonstrates how to update a DID document using the
  * `updateDID` function with custom client options.
  */
-import { updateDID } from '@swiss-digital-assets-institute/registrar';
+import { updateDID } from '@hiero-did-sdk/registrar';
 
 const accountId = process.env.HEDERA_TESTNET_ACCOUNT_ID;
 const operatorPrivateKey = process.env.HEDERA_TESTNET_PRIVATE_KEY;

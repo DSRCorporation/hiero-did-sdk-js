@@ -1,4 +1,4 @@
-import { Verifier as BaseVerifier } from '@swiss-digital-assets-institute/core';
+import { Verifier as BaseVerifier } from '@hiero-did-sdk/core';
 import { VerifierOptions } from './interfaces';
 
 /**

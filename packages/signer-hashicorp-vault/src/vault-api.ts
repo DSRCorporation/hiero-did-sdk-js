@@ -1,4 +1,4 @@
-import { DIDError, KeysUtility } from '@swiss-digital-assets-institute/core';
+import { DIDError, KeysUtility } from '@hiero-did-sdk/core';
 import { parseTransitPath, parseUrl } from './utils';
 
 /**

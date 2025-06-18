@@ -1,5 +1,5 @@
-import { DIDError, Signer } from '@swiss-digital-assets-institute/core';
-import { Signer as InternalSigner } from '@swiss-digital-assets-institute/signer-internal';
+import { DIDError, Signer } from '@hiero-did-sdk/core';
+import { Signer as InternalSigner } from '@hiero-did-sdk/signer-internal';
 import { PrivateKey } from '@hashgraph/sdk';
 
 /**

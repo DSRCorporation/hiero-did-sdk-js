@@ -1,5 +1,5 @@
 {
-  "name": "@swiss-digital-assets-institute/registrar",
+  "name": "@hiero-did-sdk/registrar",
   "version": "0.3.0",
   "description": "This package provides the core functions for registering and managing Decentralized Identifiers (DIDs) on the Hedera network within the Hashgraph DID SDK. It offers a streamlined interface for creating, updating, and deactivating DIDs, ensuring secure and verifiable DID operations.",
   "author": {
@@ -7,7 +7,7 @@
     "url": "https://www.hashgraph.swiss/"
   },
   "bugs": {
-    "url": "https://github.com/Swiss-Digital-Assets-Institute/hashgraph-did-sdk-js/issues"
+    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js/issues"
   },
   "license": "Apache-2.0",
   "main": "./dist/index.cjs.js",
@@ -29,7 +29,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Swiss-Digital-Assets-Institute/hashgraph-did-sdk-js.git",
+    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js.git",
     "directory": "packages/registrar"
   },
   "engines": {
@@ -42,16 +42,16 @@
   "publishConfig": {
     "access": "restricted",
     "registry": "https://npm.pkg.github.com",
-    "scope": "@swiss-digital-assets-institute"
+    "scope": "@hiero-did-sdk"
   },
   "dependencies": {
-    "@hashgraph/sdk": "^2.62.0",
-    "@swiss-digital-assets-institute/core": "0.3.0",
-    "@swiss-digital-assets-institute/lifecycle": "0.3.0",
-    "@swiss-digital-assets-institute/messages": "0.3.0",
-    "@swiss-digital-assets-institute/publisher-internal": "0.3.0",
-    "@swiss-digital-assets-institute/resolver": "0.3.0",
-    "@swiss-digital-assets-institute/signer-internal": "0.3.0",
-    "@swiss-digital-assets-institute/verifier-internal": "0.3.0"
+    "@hashgraph/sdk": "^2.66.0",
+    "@hiero-did-sdk/core": "workspace:*",
+    "@hiero-did-sdk/lifecycle": "workspace:*",
+    "@hiero-did-sdk/messages": "workspace:*",
+    "@hiero-did-sdk/publisher-internal": "workspace:*",
+    "@hiero-did-sdk/resolver": "workspace:*",
+    "@hiero-did-sdk/signer-internal": "workspace:*",
+    "@hiero-did-sdk/verifier-internal": "workspace:*"
   }
 }

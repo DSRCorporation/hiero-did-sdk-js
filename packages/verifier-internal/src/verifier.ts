@@ -4,7 +4,7 @@ import {
   DIDError,
   isEd25519PublicKey,
   KeysUtility,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 
 /**
  * An internal implementation of the Verifier interface.

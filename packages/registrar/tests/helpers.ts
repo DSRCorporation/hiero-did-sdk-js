@@ -3,7 +3,7 @@ import {
   PublicKeyInDer,
   Publisher,
   Signer,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 import {
   Client,
   PrivateKey,

@@ -4,8 +4,8 @@ import {
   Signer,
   DIDMessage,
   Verifier,
-} from '@swiss-digital-assets-institute/core';
-import { RunnerState } from '@swiss-digital-assets-institute/lifecycle';
+} from '@hiero-did-sdk/core';
+import { RunnerState } from '@hiero-did-sdk/lifecycle';
 import { DIDUpdateOperation, UpdateDIDOptions } from '../interface';
 
 export type PrepareFunction<

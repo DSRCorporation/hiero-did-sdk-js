@@ -5,7 +5,7 @@ import {
   isHederaDID,
   KeysUtility,
   DIDError,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 import { isTopicId } from '../../validators/is-topic-id';
 import { DIDOwnerMessageConstructor, MessageSerialized } from './interfaces';
 

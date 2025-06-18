@@ -1,4 +1,4 @@
-import { Network } from '@swiss-digital-assets-institute/core';
+import { Network } from '@hiero-did-sdk/core';
 import { TopicReaderHederaRestApi } from '../../src/topic-readers/topic-reader-hedera-rest-api';
 
 describe('Topic Reader Hedera REST API', () => {

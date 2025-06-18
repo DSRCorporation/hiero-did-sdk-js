@@ -1,14 +1,14 @@
 import {
   LifecycleRunner,
   LifecycleRunnerOptions,
-} from '@swiss-digital-assets-institute/lifecycle';
-import { Publisher } from '@swiss-digital-assets-institute/publisher-internal';
+} from '@hiero-did-sdk/lifecycle';
+import { Publisher } from '@hiero-did-sdk/publisher-internal';
 import {
   DIDDeactivateMessage,
   DIDDeactivateMessageHederaDefaultLifeCycle,
-} from '@swiss-digital-assets-institute/messages';
-import { DIDError } from '@swiss-digital-assets-institute/core';
-import { Verifier } from '@swiss-digital-assets-institute/verifier-internal';
+} from '@hiero-did-sdk/messages';
+import { DIDError } from '@hiero-did-sdk/core';
+import { Verifier } from '@hiero-did-sdk/verifier-internal';
 import { Providers } from '../interfaces';
 import {
   MessageAwaiter,
@@ -17,7 +17,7 @@ import {
   getDIDRootKey,
 } from '../shared';
 import { DeactivateDIDOptions, DeactivateDIDResult } from './interface';
-import { resolveDID } from '@swiss-digital-assets-institute/resolver';
+import { resolveDID } from '@hiero-did-sdk/resolver';
 
 /**
  * Deactivate a DID on the Hedera network

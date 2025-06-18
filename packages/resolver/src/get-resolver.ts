@@ -3,7 +3,7 @@ import {
   DIDDocumentCbor,
   DIDResolution,
   JsonLdDIDDocument,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 import { resolveDID } from './resolve-did';
 
 async function resolveWrapper(

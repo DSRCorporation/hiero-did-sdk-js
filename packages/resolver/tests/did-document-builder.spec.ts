@@ -2,7 +2,7 @@ import { PrivateKey } from '@hashgraph/sdk';
 import {
   KeysUtility,
   DID_ROOT_KEY_ID,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 import { DidDocumentBuilder } from '../src/did-document-builder';
 import {
   getAddServiceMessage,

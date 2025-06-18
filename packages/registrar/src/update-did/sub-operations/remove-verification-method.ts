@@ -1,10 +1,10 @@
-import { LifecycleRunner } from '@swiss-digital-assets-institute/lifecycle';
+import { LifecycleRunner } from '@hiero-did-sdk/lifecycle';
 import {
   DIDRemoveVerificationMethodMessage,
   DIDRemoveVerificationMethodMessageHederaDefaultLifeCycle,
   DIDRemoveVerificationMethodMessageHederaCSMLifeCycle,
-} from '@swiss-digital-assets-institute/messages';
-import { DIDError } from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/messages';
+import { DIDError } from '@hiero-did-sdk/core';
 import { RemoveVerificationMethodOperation } from '../interface';
 import { fragmentSearch } from '../helpers/fragment-search';
 import {

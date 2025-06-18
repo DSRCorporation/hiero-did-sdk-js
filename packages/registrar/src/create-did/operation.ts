@@ -1,14 +1,14 @@
 import {
   DIDOwnerMessage,
   DIDOwnerMessageHederaDefaultLifeCycle,
-} from '@swiss-digital-assets-institute/messages';
+} from '@hiero-did-sdk/messages';
 import {
   LifecycleRunner,
   LifecycleRunnerOptions,
-} from '@swiss-digital-assets-institute/lifecycle';
-import { Signer } from '@swiss-digital-assets-institute/signer-internal';
-import { Publisher } from '@swiss-digital-assets-institute/publisher-internal';
-import { DIDError, KeysUtility } from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/lifecycle';
+import { Signer } from '@hiero-did-sdk/signer-internal';
+import { Publisher } from '@hiero-did-sdk/publisher-internal';
+import { DIDError, KeysUtility } from '@hiero-did-sdk/core';
 import { PublicKey } from '@hashgraph/sdk';
 import { Providers } from '../interfaces';
 import {
@@ -19,7 +19,7 @@ import {
   extractProviders,
 } from '../shared';
 import { CreateDIDOptions, CreateDIDResult } from './interface';
-import { Verifier } from '@swiss-digital-assets-institute/verifier-internal';
+import { Verifier } from '@hiero-did-sdk/verifier-internal';
 
 /**
  * Create a new DID on the Hedera network.

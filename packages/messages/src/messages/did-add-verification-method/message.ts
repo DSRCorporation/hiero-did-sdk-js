@@ -4,7 +4,7 @@ import {
   isEd25519PublicKey,
   isHederaDID,
   VerificationMethodProperties,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 import {
   DIDAddVerificationMethodMessageConstructor,
   MessageSerialized,

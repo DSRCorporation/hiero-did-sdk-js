@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 import { PublicKey } from '@hashgraph/sdk';
-import { DIDError } from '@swiss-digital-assets-institute/core';
+import { DIDError } from '@hiero-did-sdk/core';
 import { VaultApi } from '../src/vault-api';
 import { VaultTestContainer } from './helpers';
 

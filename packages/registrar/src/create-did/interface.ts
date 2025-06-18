@@ -1,11 +1,11 @@
 import { PrivateKey } from '@hashgraph/sdk';
-import { DIDDocument } from '@swiss-digital-assets-institute/core';
+import { DIDDocument } from '@hiero-did-sdk/core';
 import {
   OperationState,
   SigningRequest,
   CommonRegistrarOptions,
 } from '../interfaces';
-import { TopicReader } from '@swiss-digital-assets-institute/resolver';
+import { TopicReader } from '@hiero-did-sdk/resolver';
 
 export interface CreateDIDOptions extends CommonRegistrarOptions {
   /**

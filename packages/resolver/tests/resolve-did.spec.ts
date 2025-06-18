@@ -1,4 +1,4 @@
-import { CborCodec, DIDError } from '@swiss-digital-assets-institute/core';
+import { CborCodec, DIDError } from '@hiero-did-sdk/core';
 import { resolveDID } from '../src';
 import { getAddVerificationMethodMessage, getDIDOwnerMessage } from './helpers';
 

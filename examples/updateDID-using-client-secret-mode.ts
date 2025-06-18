@@ -6,7 +6,7 @@ import {
   generateUpdateDIDRequest,
   submitUpdateDIDRequest,
   DIDUpdateBuilder,
-} from '@swiss-digital-assets-institute/registrar';
+} from '@hiero-did-sdk/registrar';
 
 const accountId = process.env.HEDERA_TESTNET_ACCOUNT_ID;
 const operatorPrivateKey = process.env.HEDERA_TESTNET_PRIVATE_KEY;

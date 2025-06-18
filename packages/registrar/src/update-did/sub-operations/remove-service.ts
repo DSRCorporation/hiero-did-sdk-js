@@ -2,8 +2,8 @@ import {
   DIDRemoveServiceMessage,
   DIDRemoveServiceMessageHederaDefaultLifeCycle,
   DIDRemoveServiceMessageHederaCSMLifeCycle,
-} from '@swiss-digital-assets-institute/messages';
-import { LifecycleRunner } from '@swiss-digital-assets-institute/lifecycle';
+} from '@hiero-did-sdk/messages';
+import { LifecycleRunner } from '@hiero-did-sdk/lifecycle';
 import { RemoveServiceOperation } from '../interface';
 import {
   ExecuteFunction,

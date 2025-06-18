@@ -1,4 +1,4 @@
-import { isHederaDIDUrl } from '@swiss-digital-assets-institute/core';
+import { isHederaDIDUrl } from '@hiero-did-sdk/core';
 import { RemoveVerificationMethodEvent } from '../interfaces/remove-verification-method-event';
 import { isObject, isString } from './base';
 

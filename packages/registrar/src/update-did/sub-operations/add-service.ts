@@ -1,9 +1,9 @@
-import { LifecycleRunner } from '@swiss-digital-assets-institute/lifecycle';
+import { LifecycleRunner } from '@hiero-did-sdk/lifecycle';
 import {
   DIDAddServiceMessage,
   DIDAddServiceMessageHederaDefaultLifeCycle,
   DIDAddServiceMessageHederaCSMLifeCycle,
-} from '@swiss-digital-assets-institute/messages';
+} from '@hiero-did-sdk/messages';
 import { AddServiceOperation } from '../interface';
 import { haveId } from '../helpers/have-id';
 import {
@@ -11,7 +11,7 @@ import {
   PreExecuteFunction,
   PrepareFunction,
 } from './interfaces';
-import { DIDError } from '@swiss-digital-assets-institute/core';
+import { DIDError } from '@hiero-did-sdk/core';
 
 export const prepare: PrepareFunction<
   DIDAddServiceMessage,

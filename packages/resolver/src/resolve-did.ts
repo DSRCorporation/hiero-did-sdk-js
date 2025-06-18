@@ -4,7 +4,7 @@ import {
   DIDResolution,
   isHederaDID,
   JsonLdDIDDocument,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 import { ResolveDIDOptions, Accept } from './interfaces';
 import { parseDID } from './helpers';
 import { TopicReaderHederaClient } from './topic-readers';

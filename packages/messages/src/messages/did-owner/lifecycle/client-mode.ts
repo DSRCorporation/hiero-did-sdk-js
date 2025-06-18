@@ -2,8 +2,8 @@ import {
   TopicCreateTransaction,
   TopicMessageSubmitTransaction,
 } from '@hashgraph/sdk';
-import { LifecycleBuilder } from '@swiss-digital-assets-institute/lifecycle';
-import { DIDError, Publisher } from '@swiss-digital-assets-institute/core';
+import { LifecycleBuilder } from '@hiero-did-sdk/lifecycle';
+import { DIDError, Publisher } from '@hiero-did-sdk/core';
 import { DIDOwnerMessage } from '../message';
 import { checkDIDExists } from '../utils';
 import { DIDOwnerMessageContext } from './context';

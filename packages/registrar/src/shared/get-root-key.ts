@@ -4,7 +4,7 @@ import {
   DIDError,
   JsonLdDIDDocument,
   KeysUtility,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 
 /**
  * Extracts the root key from the DID Document.

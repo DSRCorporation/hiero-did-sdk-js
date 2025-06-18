@@ -2,7 +2,7 @@ import {
   DIDDocument,
   Service,
   VerificationMethod,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 
 /**
  * The result of a fragment search

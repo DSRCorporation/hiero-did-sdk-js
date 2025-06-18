@@ -1,4 +1,4 @@
-import { Signer as BaseSigner } from '@swiss-digital-assets-institute/core';
+import { Signer as BaseSigner } from '@hiero-did-sdk/core';
 import { SignerOptions } from './interfaces';
 
 /**

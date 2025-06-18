@@ -13,26 +13,26 @@
     "declaration": true,
     "declarationMap": true,
     "paths": {
-      "@swiss-digital-assets-institute/core": ["packages/core/src/index.ts"],
-      "@swiss-digital-assets-institute/lifecycle": [
+      "@hiero-did-sdk/core": ["packages/core/src/index.ts"],
+      "@hiero-did-sdk/lifecycle": [
         "packages/lifecycle/src/index.ts"
       ],
-      "@swiss-digital-assets-institute/messages": [
+      "@hiero-did-sdk/messages": [
         "packages/messages/src/index.ts"
       ],
-      "@swiss-digital-assets-institute/publisher-internal": [
+      "@hiero-did-sdk/publisher-internal": [
         "packages/publisher-internal/src/index.ts"
       ],
-      "@swiss-digital-assets-institute/registrar": [
+      "@hiero-did-sdk/registrar": [
         "packages/registrar/src/index.ts"
       ],
-      "@swiss-digital-assets-institute/resolver": [
+      "@hiero-did-sdk/resolver": [
         "packages/resolver/src/index.ts"
       ],
-      "@swiss-digital-assets-institute/signer-internal": [
+      "@hiero-did-sdk/signer-internal": [
         "packages/signer-internal/src/index.ts"
       ],
-      "@swiss-digital-assets-institute/verifier-internal": [
+      "@hiero-did-sdk/verifier-internal": [
         "packages/verifier-internal/src/index.ts"
       ]
     }

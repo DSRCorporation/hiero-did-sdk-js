@@ -1,4 +1,4 @@
-import { isHederaDID, isHederaDIDUrl } from '@swiss-digital-assets-institute/core';
+import { isHederaDID, isHederaDIDUrl } from '@hiero-did-sdk/core';
 
 export function isString(value: unknown): value is string {
   if (!value) return false;

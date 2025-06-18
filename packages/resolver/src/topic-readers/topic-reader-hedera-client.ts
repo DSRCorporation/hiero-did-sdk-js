@@ -4,7 +4,7 @@ import {
   TopicMessage,
   TopicMessageQuery,
 } from '@hashgraph/sdk';
-import { Network } from '@swiss-digital-assets-institute/core';
+import { Network } from '@hiero-did-sdk/core';
 import {
   TopicReader,
   TopicReaderMessage,

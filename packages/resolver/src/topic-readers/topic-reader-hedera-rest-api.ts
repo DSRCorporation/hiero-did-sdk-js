@@ -1,4 +1,4 @@
-import { Network, DIDError } from '@swiss-digital-assets-institute/core';
+import { Network, DIDError } from '@hiero-did-sdk/core';
 import {
   TopicReader,
   TopicReaderMessage,

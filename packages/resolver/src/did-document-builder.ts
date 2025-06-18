@@ -13,8 +13,8 @@ import {
   CborCodec,
   DIDError,
   DID_ROOT_KEY_ID,
-} from '@swiss-digital-assets-institute/core';
-import { Verifier as InternalVerifier } from '@swiss-digital-assets-institute/verifier-internal';
+} from '@hiero-did-sdk/core';
+import { Verifier as InternalVerifier } from '@hiero-did-sdk/verifier-internal';
 import { PublicKey } from '@hashgraph/sdk';
 import {
   TopicDIDContent,

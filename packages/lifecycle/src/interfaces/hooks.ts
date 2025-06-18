@@ -1,4 +1,4 @@
-import { DIDMessage } from '@swiss-digital-assets-institute/core';
+import { DIDMessage } from '@hiero-did-sdk/core';
 
 /**
  * A hook function that can be registered with a lifecycle.

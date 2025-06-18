@@ -6,8 +6,8 @@ import { Client, PrivateKey } from '@hashgraph/sdk';
 import {
   generateCreateDIDRequest,
   submitCreateDIDRequest,
-} from '@swiss-digital-assets-institute/registrar';
-import { KeysUtility } from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/registrar';
+import { KeysUtility } from '@hiero-did-sdk/core';
 
 const accountId = process.env.HEDERA_TESTNET_ACCOUNT_ID;
 const operatorPrivateKey = process.env.HEDERA_TESTNET_PRIVATE_KEY;

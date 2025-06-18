@@ -1,4 +1,4 @@
-import { Publisher, DIDMessage } from '@swiss-digital-assets-institute/core';
+import { Publisher, DIDMessage } from '@hiero-did-sdk/core';
 
 /**
  * A step in the lifecycle pipeline.

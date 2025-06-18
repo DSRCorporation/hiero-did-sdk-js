@@ -1,4 +1,4 @@
-import { isHederaDID } from '@swiss-digital-assets-institute/core';
+import { isHederaDID } from '@hiero-did-sdk/core';
 import { DIDOwnerEvent } from '../interfaces/did-owner-event';
 import { hasVerificationMethodProperties, isObject, isString } from './base';
 

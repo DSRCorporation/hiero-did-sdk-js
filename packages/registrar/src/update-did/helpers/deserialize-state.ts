@@ -1,4 +1,4 @@
-import { DIDMessage, DIDError } from '@swiss-digital-assets-institute/core';
+import { DIDMessage, DIDError } from '@hiero-did-sdk/core';
 import { DIDUpdateOperationsKeys } from '../interface';
 import { OperationState } from '../../interfaces';
 import {
@@ -6,8 +6,8 @@ import {
   DIDAddVerificationMethodMessage,
   DIDRemoveServiceMessage,
   DIDRemoveVerificationMethodMessage,
-} from '@swiss-digital-assets-institute/messages';
-import { RunnerState } from '@swiss-digital-assets-institute/lifecycle';
+} from '@hiero-did-sdk/messages';
+import { RunnerState } from '@hiero-did-sdk/lifecycle';
 
 interface DeserializedState extends RunnerState<DIDMessage> {
   operation: DIDUpdateOperationsKeys;

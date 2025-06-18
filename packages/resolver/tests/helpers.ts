@@ -3,7 +3,7 @@ import {
   PublicKeyInBase58,
   Signer,
   VerificationMethodProperties,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 import {
   DIDAddServiceMessage,
   DIDAddVerificationMethodMessage,
@@ -11,9 +11,9 @@ import {
   DIDOwnerMessage,
   DIDRemoveServiceMessage,
   DIDRemoveVerificationMethodMessage,
-} from '@swiss-digital-assets-institute/messages';
+} from '@hiero-did-sdk/messages';
 import { PrivateKey } from '@hashgraph/sdk';
-import { DIDResolution } from '@swiss-digital-assets-institute/core';
+import { DIDResolution } from '@hiero-did-sdk/core';
 
 export const VALID_DID_TOPIC_ID = '0.0.2';
 export const VALID_DID_PUBLIC_KEY =

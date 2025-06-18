@@ -5,7 +5,7 @@
 import {
   resolveDID,
   TopicReaderHederaClient,
-} from '@swiss-digital-assets-institute/resolver';
+} from '@hiero-did-sdk/resolver';
 
 const did =
   'did:hedera:testnet:23g2MabDNq3KyB7oeH9yYZsJTRVeQ24DqX8o6scB98e3_0.0.5217215';

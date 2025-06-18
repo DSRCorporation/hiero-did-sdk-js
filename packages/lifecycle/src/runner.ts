@@ -4,7 +4,7 @@ import {
   Publisher,
   Signer,
   Verifier,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 import { LifecycleBuilder } from './builder';
 import { RunnerState } from './interfaces/runner-state';
 import { HookFunction } from './interfaces/hooks';

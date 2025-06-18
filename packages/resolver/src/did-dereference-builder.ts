@@ -9,7 +9,7 @@ import {
   VerificationMethod,
   CborCodec,
   DIDError,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 
 export class DIDDereferenceBuilder {
   private fragment?: string;

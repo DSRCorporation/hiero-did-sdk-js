@@ -1,5 +1,5 @@
 import { PrivateKey } from '@hashgraph/sdk';
-import { KeysUtility } from '@swiss-digital-assets-institute/core';
+import { KeysUtility } from '@hiero-did-sdk/core';
 import { Verifier } from '../src';
 
 describe('Internal Verifier class', () => {

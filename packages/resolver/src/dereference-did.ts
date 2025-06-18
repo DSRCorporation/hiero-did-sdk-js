@@ -7,7 +7,7 @@ import {
   DIDDereferenceResolution,
   ServiceEndpoint,
   DIDError,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 import { DereferenceDIDOptions, ResolveDIDOptions, Accept } from './interfaces';
 import { parseDIDUrl } from './helpers';
 import { DIDDereferenceBuilder } from './did-dereference-builder';

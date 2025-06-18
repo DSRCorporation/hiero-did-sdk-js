@@ -2,7 +2,7 @@ import { PrivateKey } from '@hashgraph/sdk';
 import {
   Signer as BaseSigner,
   DIDError,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 import {
   isEd25519DerPrivateKeyString,
   isEd25519PrivateKey,

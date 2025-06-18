@@ -1,4 +1,4 @@
-import { DIDError, DIDMessage } from '@swiss-digital-assets-institute/core';
+import { DIDError, DIDMessage } from '@hiero-did-sdk/core';
 import { Steps, CallbackStep, CatchStep } from './interfaces/steps';
 
 /**

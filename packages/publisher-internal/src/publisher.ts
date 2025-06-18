@@ -8,7 +8,7 @@ import {
   Network,
   Publisher as BasePublisher,
   DIDError,
-} from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/core';
 
 /**
  * Internal Publisher is an implementation of the Publisher interface.

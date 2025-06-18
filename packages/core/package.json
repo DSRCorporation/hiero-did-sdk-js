@@ -1,5 +1,5 @@
 {
-  "name": "@swiss-digital-assets-institute/core",
+  "name": "@hiero-did-sdk/core",
   "version": "0.3.0",
   "description": "This package forms the foundation of the Hashgraph DID SDK. It provides essential interfaces, utilities, and validation tools for working with Decentralized Identifiers (DIDs) on the Hedera network.",
   "author": {
@@ -7,7 +7,7 @@
     "url": "https://www.hashgraph.swiss/"
   },
   "bugs": {
-    "url": "https://github.com/Swiss-Digital-Assets-Institute/hashgraph-did-sdk-js/issues"
+    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js/issues"
   },
   "license": "Apache-2.0",
   "main": "./dist/index.cjs.js",
@@ -29,7 +29,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Swiss-Digital-Assets-Institute/hashgraph-did-sdk-js.git",
+    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js.git",
     "directory": "packages/core"
   },
   "engines": {
@@ -42,11 +42,11 @@
   "publishConfig": {
     "access": "restricted",
     "registry": "https://npm.pkg.github.com",
-    "scope": "@swiss-digital-assets-institute"
+    "scope": "@hiero-did-sdk"
   },
   "dependencies": {
-    "@hashgraph/sdk": "^2.62.0",
+    "@hashgraph/sdk": "^2.66.0",
     "@scure/base": "^1.2.4",
-    "cbor2": "^1.12.0"
+    "cbor-x": "^1.6.0"
   }
 }

@@ -7,7 +7,7 @@ const config: Config = {
   },
   transformIgnorePatterns: ['/node_modules/(?!(cbor2)/)'],
   moduleNameMapper: {
-    '^@swiss-digital-assets-institute/(.*)$': '<rootDir>/packages/$1/src',
+    '^@hiero-did-sdk/(.*)$': '<rootDir>/packages/$1/src',
   },
   extensionsToTreatAsEsm: ['.ts'],
   moduleFileExtensions: ['ts', 'js', 'json', 'node'],

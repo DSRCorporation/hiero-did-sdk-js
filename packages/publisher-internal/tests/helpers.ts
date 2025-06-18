@@ -1,4 +1,4 @@
-import { Network } from '@swiss-digital-assets-institute/core';
+import { Network } from '@hiero-did-sdk/core';
 import { Client, PrivateKey } from '@hashgraph/sdk';
 
 export function randomClient(network: Network = 'testnet'): Client {

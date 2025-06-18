@@ -1,0 +1,9 @@
+packages:
+  - packages/**
+
+onlyBuiltDependencies:
+  - cbor-extract
+  - cpu-features
+  - esbuild
+  - protobufjs
+  - ssh2

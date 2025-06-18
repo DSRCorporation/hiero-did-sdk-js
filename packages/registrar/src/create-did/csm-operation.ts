@@ -1,14 +1,14 @@
 import {
   DIDOwnerMessage,
   DIDOwnerMessageHederaCSMLifeCycle,
-} from '@swiss-digital-assets-institute/messages';
+} from '@hiero-did-sdk/messages';
 import {
   LifecycleRunner,
   LifecycleRunnerOptions,
-} from '@swiss-digital-assets-institute/lifecycle';
-import { Publisher } from '@swiss-digital-assets-institute/publisher-internal';
-import { Verifier } from '@swiss-digital-assets-institute/verifier-internal';
-import { DIDError, KeysUtility } from '@swiss-digital-assets-institute/core';
+} from '@hiero-did-sdk/lifecycle';
+import { Publisher } from '@hiero-did-sdk/publisher-internal';
+import { Verifier } from '@hiero-did-sdk/verifier-internal';
+import { DIDError, KeysUtility } from '@hiero-did-sdk/core';
 import { OperationState, PublisherProviders } from '../interfaces';
 import { getPublisher, MessageAwaiter } from '../shared';
 import {

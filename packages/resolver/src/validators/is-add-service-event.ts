@@ -1,4 +1,4 @@
-import { isHederaDIDUrl } from '@swiss-digital-assets-institute/core';
+import { isHederaDIDUrl } from '@hiero-did-sdk/core';
 import { isObject, isString } from './base';
 import { AddServiceEvent } from '../interfaces/add-service-event';
 

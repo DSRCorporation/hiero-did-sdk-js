@@ -1,4 +1,4 @@
-import { DIDError, Network } from '@swiss-digital-assets-institute/core';
+import { DIDError, Network } from '@hiero-did-sdk/core';
 
 interface Output {
   /**

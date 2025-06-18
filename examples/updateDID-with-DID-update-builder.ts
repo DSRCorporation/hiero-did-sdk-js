@@ -2,8 +2,8 @@
  * This example demonstrates how to use the `DIDUpdateBuilder` class
  * to construct and execute DID update operations.
  */
-import { updateDID } from '@swiss-digital-assets-institute/registrar';
-import { DIDUpdateBuilder } from '@swiss-digital-assets-institute/registrar';
+import { updateDID } from '@hiero-did-sdk/registrar';
+import { DIDUpdateBuilder } from '@hiero-did-sdk/registrar';
 import { Client } from '@hashgraph/sdk';
 
 const accountId = process.env.HEDERA_TESTNET_ACCOUNT_ID;

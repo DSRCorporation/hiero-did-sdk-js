@@ -3,7 +3,7 @@
  * `deactivateDID` function with a Hedera Client instance.
  */
 import { Client } from '@hashgraph/sdk';
-import { deactivateDID } from '@swiss-digital-assets-institute/registrar';
+import { deactivateDID } from '@hiero-did-sdk/registrar';
 
 const accountId = process.env.HEDERA_TESTNET_ACCOUNT_ID;
 const privateKey = process.env.HEDERA_TESTNET_PRIVATE_KEY;

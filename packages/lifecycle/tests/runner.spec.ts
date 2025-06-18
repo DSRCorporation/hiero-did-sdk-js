@@ -1,5 +1,5 @@
-import { Publisher } from '@swiss-digital-assets-institute/publisher-internal';
-import { Signer } from '@swiss-digital-assets-institute/signer-internal';
+import { Publisher } from '@hiero-did-sdk/publisher-internal';
+import { Signer } from '@hiero-did-sdk/signer-internal';
 import { LifecycleRunner, LifecycleBuilder } from '../src';
 import { randomClient } from './helpers';
 

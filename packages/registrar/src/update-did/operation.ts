@@ -1,5 +1,5 @@
-import { Publisher } from '@swiss-digital-assets-institute/publisher-internal';
-import { resolveDID } from '@swiss-digital-assets-institute/resolver';
+import { Publisher } from '@hiero-did-sdk/publisher-internal';
+import { resolveDID } from '@hiero-did-sdk/resolver';
 import { Providers } from '../interfaces';
 import {
   MessageAwaiter,
@@ -9,7 +9,7 @@ import {
 } from '../shared';
 import { UpdateDIDOptions, UpdateDIDResult } from './interface';
 import { prepareOperation, executeOperation } from './sub-operations';
-import { Verifier } from '@swiss-digital-assets-institute/verifier-internal';
+import { Verifier } from '@hiero-did-sdk/verifier-internal';
 
 /**
  * Update a DID on the Hedera network.

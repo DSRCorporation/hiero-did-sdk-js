@@ -1,4 +1,4 @@
-import { DIDError } from '@swiss-digital-assets-institute/core';
+import { DIDError } from '@hiero-did-sdk/core';
 import { Signer } from './signer';
 import {
   VaultLoginWithAppRoleOptions,

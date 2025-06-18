@@ -1,11 +1,11 @@
-/* 
-  This example demonstrates how to create a DID with a 
-  topic-specific DID. This means that the DID will be 
-  associated with a specific Hedera topic ID, which can 
+/*
+  This example demonstrates how to create a DID with a
+  topic-specific DID. This means that the DID will be
+  associated with a specific Hedera topic ID, which can
   be useful for managing permissions and access control.
 */
 import { Client } from "@hashgraph/sdk";
-import { createDID } from '@swiss-digital-assets-institute/registrar';
+import { createDID } from '@hiero-did-sdk/registrar';
 
 const accountId = process.env.HEDERA_TESTNET_ACCOUNT_ID;
 const operatorPrivateKey = process.env.HEDERA_TESTNET_PRIVATE_KEY;

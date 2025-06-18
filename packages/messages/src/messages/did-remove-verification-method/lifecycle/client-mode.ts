@@ -1,6 +1,6 @@
 import { TopicMessageSubmitTransaction } from '@hashgraph/sdk';
-import { LifecycleBuilder } from '@swiss-digital-assets-institute/lifecycle';
-import { Publisher } from '@swiss-digital-assets-institute/core';
+import { LifecycleBuilder } from '@hiero-did-sdk/lifecycle';
+import { Publisher } from '@hiero-did-sdk/core';
 import { DIDRemoveVerificationMethodMessage } from '../message';
 
 export const DIDRemoveVerificationMethodMessageHederaCSMLifeCycle =

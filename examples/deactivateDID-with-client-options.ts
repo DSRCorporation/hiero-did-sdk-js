@@ -2,7 +2,7 @@
  * This example demonstrates how to deactivate a DID using the
  * `deactivateDID` function with custom client options.
  */
-import { deactivateDID } from "@swiss-digital-assets-institute/registrar";
+import { deactivateDID } from "@hiero-did-sdk/registrar";
 
 const accountId = process.env.HEDERA_TESTNET_ACCOUNT_ID;
 const privateKey = process.env.HEDERA_TESTNET_PRIVATE_KEY;
