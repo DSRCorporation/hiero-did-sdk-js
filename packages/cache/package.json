@@ -1,0 +1,37 @@
+{
+  "name": "@hiero-did-sdk/cache",
+  "main": "src/index",
+  "version": "0.0.1",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/DSRCorporation/hiero-did-sdk-js.git",
+  "bugs": {
+    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js.git",
+    "directory": "packages/cache"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "main": "dist/index",
+    "types": "dist/index",
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com",
+    "scope": "@hiero-did-sdk"
+  },
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "compile": "tsup",
+    "test": "jest",
+    "build": "pnpm run clean && pnpm run compile"
+  },
+  "dependencies": {
+    "@hiero-did-sdk/core": "workspace:*"
+  }
+}

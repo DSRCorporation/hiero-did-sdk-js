@@ -36,8 +36,10 @@
     "node": ">=20"
   },
   "scripts": {
+    "clean": "rimraf ./dist",
+    "compile": "tsup",
     "test": "jest",
-    "build": "tsup"
+    "build": "pnpm run clean && pnpm run compile"
   },
   "publishConfig": {
     "access": "restricted",

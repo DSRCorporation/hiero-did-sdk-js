@@ -14,27 +14,19 @@
     "declarationMap": true,
     "paths": {
       "@hiero-did-sdk/core": ["packages/core/src/index.ts"],
-      "@hiero-did-sdk/lifecycle": [
-        "packages/lifecycle/src/index.ts"
-      ],
-      "@hiero-did-sdk/messages": [
-        "packages/messages/src/index.ts"
-      ],
-      "@hiero-did-sdk/publisher-internal": [
-        "packages/publisher-internal/src/index.ts"
-      ],
-      "@hiero-did-sdk/registrar": [
-        "packages/registrar/src/index.ts"
-      ],
-      "@hiero-did-sdk/resolver": [
-        "packages/resolver/src/index.ts"
-      ],
-      "@hiero-did-sdk/signer-internal": [
-        "packages/signer-internal/src/index.ts"
-      ],
-      "@hiero-did-sdk/verifier-internal": [
-        "packages/verifier-internal/src/index.ts"
-      ]
+      "@hiero-did-sdk/lifecycle": ["packages/lifecycle/src/index.ts"],
+      "@hiero-did-sdk/messages": ["packages/messages/src/index.ts"],
+      "@hiero-did-sdk/publisher-internal": ["packages/publisher-internal/src/index.ts"],
+      "@hiero-did-sdk/registrar": ["packages/registrar/src/index.ts"],
+      "@hiero-did-sdk/resolver": ["packages/resolver/src/index.ts"],
+      "@hiero-did-sdk/signer-internal": ["packages/signer-internal/src/index.ts"],
+      "@hiero-did-sdk/verifier-internal": ["packages/verifier-internal/src/index.ts"],
+      "@hiero-did-sdk-js/anoncreds": ["packages/anoncreds/src/*"],
+      "@hiero-did-sdk-js/cache": ["packages/cache/src/*"],
+      "@hiero-did-sdk-js/client": ["packages/client/src/*"],
+      "@hiero-did-sdk-js/crypto": ["packages/crypto/src/*"],
+      "@hiero-did-sdk-js/hcs": ["packages/hcs/src/*"],
+      "@hiero-did-sdk-js/zstd": ["packages/zstd/src/*"]
     }
   },
   "exclude": ["node_modules", "**/*.spec.ts", "tests/**/*.ts", "dist"],
