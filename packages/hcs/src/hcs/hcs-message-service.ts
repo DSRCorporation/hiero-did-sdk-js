@@ -7,7 +7,9 @@ import {
   TopicMessageQuery,
   TopicMessageSubmitTransaction,
 } from '@hashgraph/sdk'
-import { CacheService } from '../cache'
+import { HcsCacheService } from '../cache'
+import { CacheConfig } from '../hedera-hcs-service.configuration';
+import { Cache } from '@hiero-did-sdk/core';
 
 const DEFAULT_TIMEOUT_SECONDS = 2
 
@@ -26,9 +28,12 @@ export interface SubmitMessageResult {
 export interface GetTopicMessagesProps {
   topicId: string
   maxWaitSeconds?: number
-  timestampFrom?: Date
-  timestampTo?: Date
+  toDate?: Date
   limit?: number
+}
+
+type ReadTopicMessagesProps = GetTopicMessagesProps & {
+  fromDate?: Date
 }
 
 export interface TopicMessageData {
@@ -37,10 +42,14 @@ export interface TopicMessageData {
 }
 
 export class HcsMessageService {
+  private readonly cacheService?: HcsCacheService
+
   constructor(
     private readonly client: Client,
-    private readonly cacheService?: CacheService
-  ) {}
+    cache?: CacheConfig | Cache | HcsCacheService
+  ) {
+      this.cacheService = cache ? (cache instanceof HcsCacheService ? cache : new HcsCacheService(cache)) : undefined
+  }
 
   /**
    * Submit message to a topic
@@ -80,13 +89,13 @@ export class HcsMessageService {
       currentCachedMessages.length > 0 ? currentCachedMessages[currentCachedMessages.length - 1] : undefined
 
     const lastCachedMessageDate = lastCachedMessage ? lastCachedMessage.consensusTime : new Date(0)
-    const borderlineDate = new Date((props.timestampTo ? props.timestampTo : new Date()).getTime() + 1) // +1ms to remove the influence of nanoseconds
+    const borderlineDate = new Date((props.toDate ? props.toDate : new Date()).getTime() + 1) // +1ms to remove the influence of nanoseconds
 
     if (lastCachedMessageDate < borderlineDate) {
       const messages = await this.readTopicMessages({
         ...props,
-        timestampFrom: lastCachedMessageDate,
-        timestampTo: borderlineDate,
+        fromDate: lastCachedMessageDate,
+        toDate: borderlineDate,
       })
       if (messages.length) {
         currentCachedMessages = this.joinMessages(currentCachedMessages, messages)
@@ -94,7 +103,7 @@ export class HcsMessageService {
       }
     }
 
-    return currentCachedMessages.filter((m, index) => m.consensusTime >= (props.timestampFrom ?? new Date(0)) && m.consensusTime <= borderlineDate)
+    return currentCachedMessages.filter((m) => m.consensusTime <= borderlineDate)
   }
 
   /**
@@ -102,18 +111,19 @@ export class HcsMessageService {
    * @param props
    * @private
    */
-  private async readTopicMessages(props: GetTopicMessagesProps): Promise<TopicMessageData[]> {
-    const { maxWaitSeconds = DEFAULT_TIMEOUT_SECONDS, timestampFrom, timestampTo, limit } = props ?? {}
+  private async readTopicMessages(props: ReadTopicMessagesProps): Promise<TopicMessageData[]> {
+    const { maxWaitSeconds = DEFAULT_TIMEOUT_SECONDS, fromDate, toDate, limit } = props ?? {}
     let subscription: SubscriptionHandle
     const results: TopicMessageData[] = []
 
     return new Promise((resolve, reject) => {
       const query = new TopicMessageQuery()
         .setTopicId(TopicId.fromString(props.topicId))
-        .setStartTime(timestampFrom ?? 0)
+        .setMaxAttempts(0)
+        .setStartTime(fromDate ?? 0)
 
-      if (timestampTo !== undefined) {
-        query.setEndTime(timestampTo)
+      if (toDate !== undefined) {
+        query.setEndTime(toDate)
       }
 
       if (limit !== undefined) {
@@ -166,7 +176,7 @@ export class HcsMessageService {
   private joinMessages(first: TopicMessageData[], second: TopicMessageData[]): TopicMessageData[] {
     const messagesMap = new Map<string, TopicMessageData>()
 
-    const toKey = (msg: TopicMessageData) => `${msg.consensusTime}`
+    const toKey = (msg: TopicMessageData) => `${msg.consensusTime.getTime()}`
 
     for (const msg of first) {
       messagesMap.set(toKey(msg), msg)

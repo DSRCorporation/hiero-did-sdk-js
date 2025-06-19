@@ -378,7 +378,7 @@ export class HederaAnoncredsRegistry {
     let messages = await this.hcsService.getTopicMessages({
       networkName,
       topicId: entriesTopicId,
-      timestampTo: new Date(timestamp),
+      toDate: new Date(timestamp),
     })
 
     // If the query did not return anything, and the cache is empty, then most likely the timestamp is less

@@ -1,9 +1,11 @@
 import { type Client, PrivateKey } from '@hashgraph/sdk'
 import { Crypto } from '@hiero-did-sdk/crypto'
 import { Zstd } from '@hiero-did-sdk/zstd'
-import { CacheService } from '../cache'
+import { HcsCacheService } from '../cache'
 import { HcsMessageService } from './hcs-message-service'
 import { HcsTopicService } from './hcs-topic-service'
+import { CacheConfig } from '../hedera-hcs-service.configuration';
+import { Cache } from '@hiero-did-sdk/core';
 
 const HCS_FILE_TOPIC_MEMO_REGEX = /^[A-Fa-f0-9]{64}:zstd:base64$/
 
@@ -27,10 +29,14 @@ export interface ResolveFileProps {
 }
 
 export class HcsFileService {
+  private readonly cacheService?: HcsCacheService
+
   constructor(
     private readonly client: Client,
-    private readonly cacheService?: CacheService
-  ) {}
+    cache?: CacheConfig | Cache | HcsCacheService
+  ) {
+    this.cacheService = cache ? (cache instanceof HcsCacheService ? cache : new HcsCacheService(cache)) : undefined
+  }
 
   /**
    * Submit and store file in HCS-1 file

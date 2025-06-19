@@ -4,7 +4,7 @@ import { Cache } from '@hiero-did-sdk/core'
 import { TopicInfo, TopicMessageData } from '../hcs'
 import { CacheConfig } from '../hedera-hcs-service.configuration'
 
-export class CacheService {
+export class HcsCacheService {
   private readonly cache?: Cache
 
   constructor(cacheConfig?: CacheConfig | Cache) {
@@ -99,7 +99,7 @@ export class CacheService {
    * Remove data from cache
    * @param key - The cache key
    */
-  private async removeFromCache<T>(key: string): Promise<void> {
+  private async removeFromCache(key: string): Promise<void> {
     if (!this.cache) return
     await this.cache.remove(key)
   }

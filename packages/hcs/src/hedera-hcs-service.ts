@@ -1,5 +1,5 @@
 import { HederaClientService, NetworkName } from '@hiero-did-sdk/client'
-import { CacheService } from './cache'
+import { HcsCacheService } from './cache'
 import {
   CreateTopicProps,
   DeleteTopicProps,
@@ -19,11 +19,11 @@ import { HederaHcsServiceConfiguration } from './hedera-hcs-service.configuratio
 
 export class HederaHcsService {
   private readonly clientService: HederaClientService
-  private readonly cacheService: CacheService
+  private readonly cacheService: HcsCacheService
 
   constructor(config: HederaHcsServiceConfiguration) {
     this.clientService = new HederaClientService(config)
-    this.cacheService = new CacheService(config.cache)
+    this.cacheService = new HcsCacheService(config.cache)
   }
 
   public async createTopic(props?: CreateTopicProps & NetworkName) {

@@ -241,6 +241,9 @@ importers:
       '@hiero-did-sdk/core':
         specifier: workspace:*
         version: link:../core
+      '@hiero-did-sdk/hcs':
+        specifier: workspace:*
+        version: link:../hcs
       '@hiero-did-sdk/verifier-internal':
         specifier: workspace:*
         version: link:../verifier-internal

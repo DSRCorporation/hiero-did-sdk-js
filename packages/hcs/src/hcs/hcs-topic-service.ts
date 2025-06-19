@@ -10,7 +10,9 @@ import {
 import Duration from '@hashgraph/sdk/lib/Duration'
 import Timestamp from '@hashgraph/sdk/lib/Timestamp'
 import AccountId from '@hashgraph/sdk/lib/account/AccountId'
-import { CacheService } from '../cache'
+import { HcsCacheService } from '../cache'
+import { CacheConfig } from '../hedera-hcs-service.configuration';
+import { Cache } from '@hiero-did-sdk/core';
 
 const DEFAULT_AUTO_RENEW_PERIOD = 90 * 24 * 60 * 60 // 90 days
 
@@ -53,10 +55,14 @@ export interface TopicInfo {
 }
 
 export class HcsTopicService {
+  private readonly cacheService?: HcsCacheService
+
   constructor(
     private readonly client: Client,
-    private readonly cacheService?: CacheService
-  ) {}
+    cache?: CacheConfig | Cache | HcsCacheService
+  ) {
+    this.cacheService = cache ? (cache instanceof HcsCacheService ? cache : new HcsCacheService(cache)) : undefined
+  }
 
   /**
    * Create topic

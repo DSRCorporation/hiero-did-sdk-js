@@ -10,3 +10,4 @@ export {
   TopicReaderMessage,
 } from './interfaces';
 export * from './topic-readers';
+export * from './helpers';
