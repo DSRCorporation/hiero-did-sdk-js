@@ -1,7 +1,17 @@
 {
   "name": "@hiero-did-sdk/crypto",
-  "main": "src/index",
-  "version": "0.0.1",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "browser": "./dist/browser/index.esm.js",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "browser": "./dist/browser/index.esm.js",
+    "require": "./dist/index.cjs.js",
+    "import": "./dist/index.esm.js",
+    "default": "./dist/index.esm.js"
+  },
+  "version": "0.0.2",
   "license": "Apache-2.0",
   "homepage": "https://github.com/DSRCorporation/hiero-did-sdk-js.git",
   "bugs": {

@@ -1,15 +1,6 @@
 {
   "name": "@hiero-did-sdk/core",
-  "version": "0.0.1",
-  "description": "This package forms the foundation of the Hashgraph DID SDK. It provides essential interfaces, utilities, and validation tools for working with Decentralized Identifiers (DIDs) on the Hedera network.",
-  "author": {
-    "name": "The Hashgraph Association",
-    "url": "https://www.hashgraph.swiss/"
-  },
-  "bugs": {
-    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js/issues"
-  },
-  "license": "Apache-2.0",
+  "version": "0.0.4",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
   "types": "./dist/index.d.ts",
@@ -21,6 +12,15 @@
     "import": "./dist/index.esm.js",
     "default": "./dist/index.esm.js"
   },
+  "description": "This package forms the foundation of the Hashgraph DID SDK. It provides essential interfaces, utilities, and validation tools for working with Decentralized Identifiers (DIDs) on the Hedera network.",
+  "author": {
+    "name": "The Hashgraph Association",
+    "url": "https://www.hashgraph.swiss/"
+  },
+  "bugs": {
+    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js/issues"
+  },
+  "license": "Apache-2.0",
   "files": [
     "dist",
     "package.json",
