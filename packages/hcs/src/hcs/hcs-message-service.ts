@@ -155,6 +155,15 @@ export class HcsMessageService {
           if (error) {
             if (timeoutId) clearTimeout(timeoutId)
             subscription.unsubscribe()
+
+            if (
+              error instanceof Error &&
+              error.message.startsWith('5 NOT_FOUND:')
+            ) {
+              resolve(results);
+              return;
+            }
+
             reject(error)
           }
         },
