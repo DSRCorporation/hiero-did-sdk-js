@@ -59,7 +59,7 @@ export class HcsMessageService {
    * @param props
    */
   public async submitMessage(props: SubmitMessageProps): Promise<SubmitMessageResult> {
-    const startFrom = new Date(Date.now() - 500);
+    const startFrom = new Date(Date.now() - 1000);
 
     const transaction = new TopicMessageSubmitTransaction().setTopicId(props.topicId).setMessage(props.message)
 

@@ -11,8 +11,7 @@ import {
 import { ConsoleLogger, LogLevel, getUUID } from './utils'
 import { FakeCache } from './utils/fake-cache'
 
-//const WAIT_CONSENSUS_TIMEOUT = 5000
-const LOG_DEBUG_MASSAGES = true
+const LOG_DEBUG_MASSAGES = false
 const TEST_WITH_CACHE = true
 
 const GET_DATA_TIMEOUT = 100
