@@ -8,11 +8,11 @@ import {
   AnonCredsRevocationRegistryDefinition,
   AnonCredsSchema,
 } from '../src/specification'
-import { ConsoleLogger, LogLevel, getUUID, waitTimeout } from './utils'
+import { ConsoleLogger, LogLevel, getUUID } from './utils'
 import { FakeCache } from './utils/fake-cache'
 
-const WAIT_CONSENSUS_TIMEOUT = 5000
-const LOG_DEBUG_MASSAGES = false
+//const WAIT_CONSENSUS_TIMEOUT = 5000
+const LOG_DEBUG_MASSAGES = true
 const TEST_WITH_CACHE = true
 
 const GET_DATA_TIMEOUT = 100
@@ -105,7 +105,7 @@ describe('Hedera AnonCreds Registry', () => {
 
   afterAll(async () => {
     // Wait for messages to flush out
-    await waitTimeout(1000)
+    await new Promise((resolve) => setTimeout(resolve, 1000))
   })
 
   it('Register and resolve a schema', async () => {
@@ -117,7 +117,7 @@ describe('Hedera AnonCreds Registry', () => {
     logger.debug('=== SchemaResult ===', { schemaResult })
     expect(schemaResult?.schemaState?.schemaId).toBeDefined()
 
-    await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+    //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
     // Resolve
     const resolvedSchema = await anoncredsRegistry.getSchema(schemaResult.schemaState.schemaId ?? '')
@@ -145,7 +145,7 @@ describe('Hedera AnonCreds Registry', () => {
     logger.debug('=== SchemaResult ===', { schemaResult })
     expect(schemaResult?.schemaState?.schemaId).toBeDefined()
 
-    const schemaId = schemaResult.schemaState.schemaId!
+    const schemaId = schemaResult.schemaState.schemaId
 
     // Register a credential definition
     const credDefResult = await anoncredsRegistry.registerCredentialDefinition({
@@ -158,7 +158,7 @@ describe('Hedera AnonCreds Registry', () => {
     expect(credDefResult?.credentialDefinitionState?.state).toEqual('finished')
     const credentialDefinitionId = credDefResult.credentialDefinitionState.credentialDefinitionId ?? ''
 
-    await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+    //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
     // Resolve a credential definition
     const resolvedCredDef = await anoncredsRegistry.getCredentialDefinition(credentialDefinitionId)
@@ -185,7 +185,7 @@ describe('Hedera AnonCreds Registry', () => {
     logger.debug('=== SchemaResult ===', { schemaResult })
     expect(schemaResult?.schemaState?.schemaId).toBeDefined()
 
-    const schemaId = schemaResult.schemaState.schemaId!
+    const schemaId = schemaResult.schemaState.schemaId
 
     const credDefResult = await anoncredsRegistry.registerCredentialDefinition({
       credentialDefinition: { ...credentialDefinitionPayload, issuerId: issuerDid, schemaId },
@@ -205,7 +205,7 @@ describe('Hedera AnonCreds Registry', () => {
     logger.debug('=== RevRegDefRegResult ===', { revRegDefRegResult })
     expect(revRegDefRegResult?.revocationRegistryDefinitionState?.revocationRegistryDefinitionId).toBeDefined()
 
-    await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+    //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
     const resolvedRevRegDef = await anoncredsRegistry.getRevocationRegistryDefinition(
       revRegDefRegResult?.revocationRegistryDefinitionState?.revocationRegistryDefinitionId ?? ''
@@ -239,7 +239,7 @@ describe('Hedera AnonCreds Registry', () => {
     logger.debug('=== SchemaResult ===', { schemaResult })
     expect(schemaResult?.schemaState?.schemaId).toBeDefined()
 
-    const schemaId = schemaResult.schemaState.schemaId!
+    const schemaId = schemaResult.schemaState.schemaId
 
     const credDefResult = await anoncredsRegistry.registerCredentialDefinition({
       credentialDefinition: { ...credentialDefinitionPayload, issuerId: issuerDid, schemaId },
@@ -259,7 +259,7 @@ describe('Hedera AnonCreds Registry', () => {
     logger.debug('=== RevRegDefRegResult ===', { revRegDefRegResult })
     expect(revRegDefRegResult?.revocationRegistryDefinitionState?.revocationRegistryDefinitionId).toBeDefined()
 
-    await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+    //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
     const resolvedRevRegDef = await anoncredsRegistry.getRevocationRegistryDefinition(
       revRegDefRegResult?.revocationRegistryDefinitionState?.revocationRegistryDefinitionId ?? ''
@@ -278,7 +278,7 @@ describe('Hedera AnonCreds Registry', () => {
     expect(registerRevocationStatusListResponse?.revocationStatusListState.state).toEqual('finished')
     expect(registerRevocationStatusListResponse?.revocationStatusListState.revocationStatusList).toBeDefined()
 
-    await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+    //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
     const revocationStatusListResponse = await anoncredsRegistry.getRevocationStatusList(
       revRegDefId,
@@ -319,7 +319,7 @@ describe('Hedera AnonCreds Registry', () => {
         options: {},
       })
       expect(schemaResult?.schemaState?.schemaId).toBeDefined()
-      schemaId = schemaResult.schemaState.schemaId!
+      schemaId = schemaResult.schemaState.schemaId
 
       // CredDef
       const credDefResult = await registry.registerCredentialDefinition({
@@ -341,7 +341,7 @@ describe('Hedera AnonCreds Registry', () => {
 
       const entriesTopicId = revRegDefRegResult.revocationRegistryDefinitionMetadata.entriesTopicId as string
 
-      await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+      //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
       // StatusList and timestamps
       const registerRevocationStatusListResponse1 = await registry.registerRevocationStatusList({
@@ -355,7 +355,7 @@ describe('Hedera AnonCreds Registry', () => {
       })
       expect(registerRevocationStatusListResponse1?.revocationStatusListState?.revocationStatusList).toBeDefined()
 
-      await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+      //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
       const registerRevocationStatusListResponse2 = await registry.registerRevocationStatusList({
         revocationStatusList: {
@@ -368,7 +368,7 @@ describe('Hedera AnonCreds Registry', () => {
       })
       expect(registerRevocationStatusListResponse2?.revocationStatusListState?.revocationStatusList).toBeDefined()
 
-      await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+      //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
       const messages = await hcs.getTopicMessages({ topicId: entriesTopicId })
 

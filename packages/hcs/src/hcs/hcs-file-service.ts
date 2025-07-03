@@ -3,9 +3,10 @@ import { Crypto } from '@hiero-did-sdk/crypto'
 import { Zstd } from '@hiero-did-sdk/zstd'
 import { HcsCacheService } from '../cache'
 import { HcsMessageService } from './hcs-message-service'
-import { HcsTopicService } from './hcs-topic-service'
+import { HcsTopicService } from './hcs-topic-service';
 import { CacheConfig } from '../hedera-hcs-service.configuration';
 import { Cache } from '@hiero-did-sdk/core';
+import { waitChangesVisibility } from '../shared';
 
 const HCS_FILE_TOPIC_MEMO_REGEX = /^[A-Fa-f0-9]{64}:zstd:base64$/
 
@@ -22,6 +23,8 @@ export interface HcsFileChunkMessage {
 export interface SubmitFileProps {
   payload: Buffer
   submitKey?: PrivateKey
+  waitChangesVisibility?: boolean
+  waitChangesVisibilityTimeout?: number
 }
 
 export interface ResolveFileProps {
@@ -54,8 +57,22 @@ export class HcsFileService {
     const chunks = this.buildChunkMessagesFromFile(props.payload)
     for (const chunk of chunks) {
       const message = JSON.stringify({ o: chunk.orderIndex, c: chunk.content })
-      await hcsMessagesService.submitMessage({ ...props, topicId, message })
+      await hcsMessagesService.submitMessage({
+        topicId,
+        message,
+        submitKey: props.submitKey,
+        waitChangesVisibility: false
+      })
     }
+
+    if (props?.waitChangesVisibility) {
+      await waitChangesVisibility<Buffer>({
+        fetchFn: () => this.resolveFileWithoutCache({ topicId }),
+        checkFn: (file: Buffer) => file.equals(props.payload),
+        waitTimeout: props?.waitChangesVisibilityTimeout
+      })
+    }
+
     return topicId
   }
 
@@ -67,6 +84,18 @@ export class HcsFileService {
     const cachedFile = await this.cacheService?.getTopicFile(this.client, props.topicId)
     if (cachedFile) return cachedFile
 
+    const payload = await this.resolveFileWithoutCache(props)
+
+    await this.cacheService?.setTopicFile(this.client, props.topicId, payload)
+
+    return payload
+  }
+
+  /**
+   * Resolve file from HCS-1 format without cahce using
+   * @param props
+   */
+  private async resolveFileWithoutCache(props: ResolveFileProps): Promise<Buffer> {
     const hcsTopicService = new HcsTopicService(this.client, this.cacheService)
 
     const topicInfo = await hcsTopicService.getTopicInfo(props)
@@ -88,8 +117,6 @@ export class HcsFileService {
     if (!this.isHCS1ChecksumValid(topicInfo.topicMemo, await Crypto.sha256(payload))) {
       throw new Error('Resolved HCS file payload is invalid')
     }
-
-    await this.cacheService?.setTopicFile(this.client, props.topicId, payload)
 
     return payload
   }

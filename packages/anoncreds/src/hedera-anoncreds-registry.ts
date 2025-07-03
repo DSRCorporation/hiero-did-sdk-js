@@ -44,7 +44,7 @@ export class HederaAnoncredsRegistry {
     const { networkName, schema } = options
     try {
       const payload = new Buffer(JSON.stringify(schema))
-      const schemaTopicId = await this.hcsService.submitFile({ payload, networkName })
+      const schemaTopicId = await this.hcsService.submitFile({ payload, networkName, waitChangesVisibility: true })
       return {
         schemaState: {
           state: 'finished',
@@ -94,11 +94,9 @@ export class HederaAnoncredsRegistry {
   ): Promise<RegisterCredentialDefinitionReturn> {
     const { networkName, credentialDefinition } = options
     try {
-      // todo: Validate to schema exists????
-
       const payload = new Buffer(JSON.stringify(credentialDefinition))
       const metadata = { ...options.options }
-      const credentialDefinitionTopicId = await this.hcsService.submitFile({ payload, networkName })
+      const credentialDefinitionTopicId = await this.hcsService.submitFile({ payload, networkName, waitChangesVisibility: true })
       return {
         credentialDefinitionState: {
           state: 'finished',
@@ -152,9 +150,7 @@ export class HederaAnoncredsRegistry {
   ): Promise<RegisterRevocationRegistryDefinitionReturn> {
     const { networkName, revocationRegistryDefinition } = options
     try {
-      // todo: Validate to credential definition exists????
-
-      const entriesTopicId = await this.hcsService.createTopic()
+      const entriesTopicId = await this.hcsService.createTopic({ waitChangesVisibility: true })
       const hcsMetadata = { entriesTopicId }
 
       const revocationRegistryDefinitionWithMetadata = {
@@ -163,7 +159,7 @@ export class HederaAnoncredsRegistry {
       }
       const payload = new Buffer(JSON.stringify(revocationRegistryDefinitionWithMetadata))
 
-      const revocationRegistryDefinitionTopic = await this.hcsService.submitFile({ payload, networkName })
+      const revocationRegistryDefinitionTopic = await this.hcsService.submitFile({ payload, networkName, waitChangesVisibility: true })
 
       return {
         revocationRegistryDefinitionState: {
@@ -246,7 +242,7 @@ export class HederaAnoncredsRegistry {
         },
       })
 
-      await this.hcsService.submitMessage({ topicId: entriesTopicId, message, networkName })
+      await this.hcsService.submitMessage({ topicId: entriesTopicId, message, networkName, waitChangesVisibility: true })
 
       return {
         revocationStatusListState: {

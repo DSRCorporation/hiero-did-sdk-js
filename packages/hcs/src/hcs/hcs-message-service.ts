@@ -6,10 +6,11 @@ import {
   TopicId,
   TopicMessageQuery,
   TopicMessageSubmitTransaction,
-} from '@hashgraph/sdk'
+} from '@hashgraph/sdk';
 import { HcsCacheService } from '../cache'
 import { CacheConfig } from '../hedera-hcs-service.configuration';
 import { Cache } from '@hiero-did-sdk/core';
+import { waitChangesVisibility } from '../shared';
 
 const DEFAULT_TIMEOUT_SECONDS = 2
 
@@ -17,6 +18,8 @@ export interface SubmitMessageProps {
   topicId: string
   message: string
   submitKey?: PrivateKey
+  waitChangesVisibility?: boolean
+  waitChangesVisibilityTimeout?: number
 }
 
 export interface SubmitMessageResult {
@@ -56,6 +59,8 @@ export class HcsMessageService {
    * @param props
    */
   public async submitMessage(props: SubmitMessageProps): Promise<SubmitMessageResult> {
+    const startFrom = new Date(Date.now() - 500);
+
     const transaction = new TopicMessageSubmitTransaction().setTopicId(props.topicId).setMessage(props.message)
 
     const frozenTransaction = transaction.freezeWith(this.client)
@@ -70,6 +75,14 @@ export class HcsMessageService {
     }
 
     await this.cacheService?.removeTopicMessages(this.client, props.topicId)
+
+    if (props?.waitChangesVisibility) {
+      await waitChangesVisibility<string[]>({
+        fetchFn: () => this.getNewMessages({topicId: props.topicId, startFrom}),
+        checkFn: (messages) => messages.indexOf(props.message) >= 0,
+        waitTimeout: props?.waitChangesVisibilityTimeout
+      })
+    }
 
     return {
       nodeId: response.nodeId.toString(),
@@ -138,7 +151,7 @@ export class HcsMessageService {
           clearTimeout(timeoutId)
           subscription.unsubscribe()
           resolve(results)
-        }, interval * 1000)
+        }, interval * 500)
       }
 
       restartTimeout(2 * maxWaitSeconds)
@@ -199,5 +212,21 @@ export class HcsMessageService {
     mergedArray.sort((a, b) => a.consensusTime.getTime() - b.consensusTime.getTime())
 
     return mergedArray
+  }
+
+  /**
+   * Get messages from Date
+   * @param options
+   * @private
+   */
+  private async getNewMessages(options: {
+    topicId: string,
+    startFrom: Date
+  }): Promise<string[]> {
+    const { topicId, startFrom } = options
+    const messages = await this.readTopicMessages({
+      topicId, fromDate: startFrom
+    })
+    return messages.map(m => Buffer.from(m.contents).toString('utf-8'))
   }
 }

@@ -2,17 +2,18 @@ import {
   type Client,
   PrivateKey,
   Status,
+  Timestamp,
   TopicCreateTransaction,
   TopicDeleteTransaction,
   TopicInfoQuery,
   TopicUpdateTransaction,
-} from '@hashgraph/sdk'
-import Duration from '@hashgraph/sdk/lib/Duration'
-import Timestamp from '@hashgraph/sdk/lib/Timestamp'
-import AccountId from '@hashgraph/sdk/lib/account/AccountId'
-import { HcsCacheService } from '../cache'
+} from '@hashgraph/sdk';
+import Duration from '@hashgraph/sdk/lib/Duration';
+import AccountId from '@hashgraph/sdk/lib/account/AccountId';
+import { HcsCacheService } from '../cache';
 import { CacheConfig } from '../hedera-hcs-service.configuration';
 import { Cache } from '@hiero-did-sdk/core';
+import { waitChangesVisibility } from '../shared';
 
 const DEFAULT_AUTO_RENEW_PERIOD = 90 * 24 * 60 * 60 // 90 days
 
@@ -27,6 +28,8 @@ export interface CreateTopicProps {
   autoRenewPeriod?: Duration | Long | number
   autoRenewAccountId?: AccountId | string
   autoRenewAccountKey?: PrivateKey
+  waitChangesVisibility?: boolean
+  waitChangesVisibilityTimeout?: number
 }
 
 export type UpdateTopicProps = {
@@ -111,7 +114,17 @@ export class HcsTopicService {
       throw new Error('Topic create transaction failed: No topicId received')
     }
 
-    return receipt.topicId.toString()
+    const topicId = receipt.topicId.toString()
+
+    if (props?.waitChangesVisibility) {
+      await waitChangesVisibility<TopicInfo>({
+        fetchFn: () => this.getTopicInfoWithoutCache({topicId}),
+        checkFn: (topicInfo: TopicInfo) => topicInfo.topicId === topicId,
+        waitTimeout: props?.waitChangesVisibilityTimeout
+      })
+    }
+
+    return topicId
   }
 
   /**
@@ -163,6 +176,21 @@ export class HcsTopicService {
     }
 
     await this.cacheService?.removeTopicInfo(this.client, props.topicId)
+
+    if (props?.waitChangesVisibility) {
+      await waitChangesVisibility({
+        fetchFn: () => this.getTopicInfoWithoutCache({topicId: props.topicId}),
+        checkFn: (topicInfo: TopicInfo) =>
+          (props.topicId === topicInfo.topicId)
+          && (props.topicMemo === undefined || props.topicMemo === topicInfo.topicMemo)
+          && (props.submitKey === undefined || !!props.submitKey === topicInfo.submitKey)
+          && (props.adminKey === undefined || !!props.adminKey === topicInfo.adminKey)
+          && (props.autoRenewPeriod === undefined || props.autoRenewPeriod === topicInfo.autoRenewPeriod)
+          && (props.autoRenewAccountId === undefined || props.autoRenewAccountId === topicInfo.autoRenewAccountId)
+          && (props.expirationTime === undefined || this.convertExpirationTimeToSeconds(props.expirationTime) === topicInfo.expirationTime),
+        waitTimeout: props?.waitChangesVisibilityTimeout
+      })
+    }
   }
 
   /**
@@ -192,9 +220,21 @@ export class HcsTopicService {
     const cachedInfo = await this.cacheService?.getTopicInfo(this.client, props.topicId)
     if (cachedInfo) return cachedInfo
 
+    const result = await this.getTopicInfoWithoutCache(props)
+
+    await this.cacheService?.setTopicInfo(this.client, props.topicId, result)
+
+    return result
+  }
+
+  /**
+   * Get topic info
+   * @param props
+   */
+  private async getTopicInfoWithoutCache(props: GetTopicInfoProps): Promise<TopicInfo> {
     const topicInfoQuery = new TopicInfoQuery().setTopicId(props.topicId)
     const info = await topicInfoQuery.execute(this.client)
-    const result = {
+    return {
       topicId: info.topicId.toString(),
       topicMemo: info.topicMemo,
       adminKey: !!info.adminKey,
@@ -203,9 +243,19 @@ export class HcsTopicService {
       autoRenewAccountId: info.autoRenewAccountId?.toString(),
       expirationTime: info.expirationTime?.seconds.low,
     }
+  }
 
-    await this.cacheService?.setTopicInfo(this.client, props.topicId, result)
+  private convertExpirationTimeToSeconds = (expirationTime?: Timestamp | Date): number | undefined => {
+    if (!expirationTime) return undefined;
 
-    return result
+    if (expirationTime instanceof Timestamp) {
+      return Math.floor(expirationTime.toDate().getTime() / 1000);
+    }
+
+    if (expirationTime instanceof Date) {
+      return Math.floor(expirationTime.getTime() / 1000);
+    }
+
+    throw new Error("Invalid expirationTime type");
   }
 }

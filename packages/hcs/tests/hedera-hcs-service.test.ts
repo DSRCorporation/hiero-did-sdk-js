@@ -1,8 +1,7 @@
 import { PrivateKey } from '@hashgraph/sdk'
 import { HederaHcsService } from '../src/hedera-hcs-service'
-import { getRandomStr, waitTimeout } from './utils/utils'
+import { getRandomStr } from './utils/utils'
 
-const WAIT_CONSENSUS_TIMEOUT = 2000
 const operatorId = process.env.HEDERA_TESTNET_OPERATOR_ID ?? ''
 const operatorKey = process.env.HEDERA_TESTNET_OPERATOR_KEY ?? ''
 
@@ -29,6 +28,7 @@ describe('Hedera HCS Service', () => {
       autoRenewPeriod,
       autoRenewAccountId: operatorId,
       autoRenewAccountKey: PrivateKey.fromStringDer(operatorKey),
+      waitChangesVisibility: true,
     })
     expect(topicId).toBeDefined()
     const topicInfo = await ledgerService.getTopicInfo({
@@ -47,11 +47,9 @@ describe('Hedera HCS Service', () => {
     const topicId = await ledgerService.createTopic({
       topicMemo,
       adminKey: PrivateKey.fromStringDer(operatorKey),
+      waitChangesVisibility: true,
     })
     expect(topicId).toBeDefined()
-
-    // Wait timeout
-    await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
     // Resolve topic info
     const topicInfo = await ledgerService.getTopicInfo({ topicId })
@@ -76,10 +74,9 @@ describe('Hedera HCS Service', () => {
     const topicId = await ledgerService.createTopic({
       topicMemo,
       adminKey: admin1Key,
+      waitChangesVisibility: true,
     })
     expect(topicId).toBeDefined()
-
-    await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
     let topicInfo = await ledgerService.getTopicInfo({ topicId })
 
@@ -96,9 +93,8 @@ describe('Hedera HCS Service', () => {
       autoRenewAccountId: renewAccountId,
       autoRenewAccountKey: PrivateKey.fromStringDer(renewAccountKey),
       expirationTime: newExpirationTime,
+      waitChangesVisibility: true,
     })
-
-    await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
     topicInfo = await ledgerService.getTopicInfo({ topicId })
     expect(topicInfo.topicMemo).toEqual(newTopicMemo)
@@ -118,9 +114,8 @@ describe('Hedera HCS Service', () => {
       adminKey: admin1Key,
       topicMemo: nextNewTopicMemo,
       autoRenewPeriod: nextNewAutoRenewPeriod,
+      waitChangesVisibility: true,
     })
-
-    await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
     topicInfo = await ledgerService.getTopicInfo({ topicId })
     expect(topicInfo.topicMemo).toEqual(nextNewTopicMemo)
@@ -136,9 +131,8 @@ describe('Hedera HCS Service', () => {
       currentAdminKey: admin1Key,
       autoRenewAccountId: operatorId,
       autoRenewAccountKey: PrivateKey.fromStringDer(operatorKey),
+      waitChangesVisibility: true,
     })
-
-    await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
     topicInfo = await ledgerService.getTopicInfo({ topicId })
     expect(topicInfo.topicMemo).toEqual(nextNewTopicMemo)
@@ -154,9 +148,8 @@ describe('Hedera HCS Service', () => {
       currentAdminKey: admin1Key,
       adminKey: admin2Key,
       submitKey: admin2Key,
+      waitChangesVisibility: true,
     })
-
-    await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
     topicInfo = await ledgerService.getTopicInfo({ topicId })
     expect(topicInfo.topicMemo).toEqual(nextNewTopicMemo)
@@ -172,10 +165,9 @@ describe('Hedera HCS Service', () => {
     const topicId = await ledgerService.createTopic({
       topicMemo,
       adminKey: PrivateKey.fromStringDer(operatorKey),
+      waitChangesVisibility: true,
     })
     expect(topicId).toBeDefined()
-
-    await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
     const topicInfo = await ledgerService.getTopicInfo({ topicId })
     expect(topicInfo).toBeDefined()
@@ -184,8 +176,6 @@ describe('Hedera HCS Service', () => {
       topicId,
       currentAdminKey: PrivateKey.fromStringDer(operatorKey),
     })
-
-    await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
     await expect(ledgerService.getTopicInfo({ topicId })).rejects.toThrow(
       expect.objectContaining({
@@ -199,6 +189,7 @@ describe('Hedera HCS Service', () => {
     const content = `___${getRandomStr(1200)}___`
     const fileTopicId = await ledgerService.submitFile({
       payload: Buffer.from(content),
+      waitChangesVisibility: true,
     })
     expect(fileTopicId).toBeDefined()
   })
@@ -208,11 +199,9 @@ describe('Hedera HCS Service', () => {
     const content = `___${getRandomStr(1200)}___`
     const topicId = await ledgerService.submitFile({
       payload: Buffer.from(content),
+      waitChangesVisibility: true,
     })
     expect(topicId).toBeDefined()
-
-    // Wait timeout
-    await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
     // Resolve submitted file
     const resolvedFile = await ledgerService.resolveFile({ topicId })
@@ -223,6 +212,7 @@ describe('Hedera HCS Service', () => {
     // Create topic
     const topicId = await ledgerService.createTopic({
       topicMemo: 'test',
+      waitChangesVisibility: true,
     })
     expect(topicId).toBeDefined()
 
@@ -231,6 +221,7 @@ describe('Hedera HCS Service', () => {
     const messageTransactionId = await ledgerService.submitMessage({
       topicId,
       message,
+      waitChangesVisibility: true,
     })
     expect(messageTransactionId).toBeDefined()
   })
@@ -242,6 +233,7 @@ describe('Hedera HCS Service', () => {
     const topicId = await ledgerService.createTopic({
       topicMemo: 'test',
       submitKey,
+      waitChangesVisibility: true,
     })
     expect(topicId).toBeDefined()
 
@@ -250,6 +242,7 @@ describe('Hedera HCS Service', () => {
       ledgerService.submitMessage({
         topicId,
         message: 'test message',
+        waitChangesVisibility: true,
       })
     ).rejects.toThrow()
 
@@ -258,6 +251,7 @@ describe('Hedera HCS Service', () => {
       topicId,
       message: 'test message',
       submitKey,
+      waitChangesVisibility: true,
     })
     expect(messageTransactionId).toBeDefined()
   })
@@ -266,6 +260,7 @@ describe('Hedera HCS Service', () => {
     // Create topic
     const topicId = await ledgerService.createTopic({
       topicMemo: '',
+      waitChangesVisibility: true,
     })
     expect(topicId).toBeDefined()
 
@@ -273,16 +268,15 @@ describe('Hedera HCS Service', () => {
     const messageTransactionId_1 = await ledgerService.submitMessage({
       topicId,
       message: 'test message 1',
+      waitChangesVisibility: true,
     })
     expect(messageTransactionId_1).toBeDefined()
     const messageTransactionId_2 = await ledgerService.submitMessage({
       topicId,
       message: 'test message 2',
+      waitChangesVisibility: true,
     })
     expect(messageTransactionId_2).toBeDefined()
-
-    // Wait consensus
-    await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
 
     // Resolve messages
     const messages = await ledgerService.getTopicMessages({ topicId })
