@@ -58,7 +58,7 @@ export class HcsFileService {
   public async submitFile(props: SubmitFileProps): Promise<string> {
     const hcsMessagesService = new HcsMessageService(this.client, this.cacheService);
 
-    const payloadHash = await Crypto.sha256(props.payload);
+    const payloadHash = Crypto.sha256(props.payload);
     const topicId = await new HcsTopicService(this.client, this.cacheService).createTopic({
       topicMemo: this.createHCS1Memo(payloadHash),
       submitKey: props.submitKey,
@@ -124,7 +124,7 @@ export class HcsFileService {
     const chunkMessages = messages.map((message) => JSON.parse(message.contents.toString()) as ChunkMessage);
     const payload = this.buildFileFromChunkMessages(chunkMessages);
 
-    if (!this.isValidHCS1Checksum(topicInfo.topicMemo, await Crypto.sha256(payload))) {
+    if (!this.isValidHCS1Checksum(topicInfo.topicMemo, Crypto.sha256(payload))) {
       throw new Error('Resolved HCS file payload is invalid');
     }
 
