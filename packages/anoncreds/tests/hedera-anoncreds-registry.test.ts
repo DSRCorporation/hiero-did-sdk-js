@@ -83,7 +83,7 @@ const revocationStatusListPayload = {
 } satisfies AnonCredsRevocationStatusListWithoutTimestamp;
 
 describe('Hedera AnonCreds Registry', () => {
-  jest.setTimeout(1000000);
+  jest.setTimeout(60000);
 
   let anoncredsRegistry: HederaAnoncredsRegistry;
 

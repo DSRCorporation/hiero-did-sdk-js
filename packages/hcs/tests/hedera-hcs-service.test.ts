@@ -6,7 +6,7 @@ const operatorId = process.env.HEDERA_TESTNET_OPERATOR_ID ?? '';
 const operatorKey = process.env.HEDERA_TESTNET_OPERATOR_KEY ?? '';
 
 describe('Hedera HCS Service', () => {
-  jest.setTimeout(120000);
+  jest.setTimeout(60000);
 
   const ledgerService = new HederaHcsService({
     networks: [

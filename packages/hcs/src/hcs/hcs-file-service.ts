@@ -66,7 +66,7 @@ export class HcsFileService {
 
     const chunks = this.buildChunkMessagesFromFile(props.payload);
     for (const chunk of chunks) {
-      const message = JSON.stringify({ o: chunk.orderIndex, c: chunk.content });
+      const message = JSON.stringify({ o: chunk.orderIndex, c: chunk.content } satisfies ChunkMessage);
       await hcsMessagesService.submitMessage({
         topicId,
         message,
