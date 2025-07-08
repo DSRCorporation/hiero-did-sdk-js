@@ -31,6 +31,12 @@ export interface ResolveFileProps {
   topicId: string
 }
 
+export interface ChunkMessage {
+  o: number
+  c: string
+}
+
+
 export class HcsFileService {
   private readonly cacheService?: HcsCacheService
 
@@ -111,8 +117,8 @@ export class HcsFileService {
     const hcsMessagesService = new HcsMessageService(this.client, this.cacheService)
 
     const messages = await hcsMessagesService.getTopicMessages({ topicId: props.topicId })
-    const chunkMessages = messages.map((message) => JSON.parse(message.contents.toString()))
-    const payload = this.buildFileFromChunkMessages(chunkMessages as any[])
+    const chunkMessages = messages.map((message) => JSON.parse(message.contents.toString()) as ChunkMessage)
+    const payload = this.buildFileFromChunkMessages(chunkMessages)
 
     if (!this.isHCS1ChecksumValid(topicInfo.topicMemo, await Crypto.sha256(payload))) {
       throw new Error('Resolved HCS file payload is invalid')
@@ -126,7 +132,7 @@ export class HcsFileService {
    * @param chunkMessages
    * @private
    */
-  private buildFileFromChunkMessages(chunkMessages: any[]): Buffer {
+  private buildFileFromChunkMessages(chunkMessages: ChunkMessage[]): Buffer {
     let messageContent = ''
     try {
       for (const chunkMessage of chunkMessages.sort((a, b) => a.o - b.o)) {

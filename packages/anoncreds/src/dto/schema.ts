@@ -1,4 +1,4 @@
-import { AnonCredsSchema } from '../specification'
+import { AnonCredsSchema } from '../specification';
 import {
   AnonCredsOperationStateAction,
   AnonCredsOperationStateFailed,
@@ -6,41 +6,41 @@ import {
   AnonCredsOperationStateWait,
   AnonCredsResolutionMetadata,
   Extensible,
-} from './base'
+} from './base';
 
 export interface GetSchemaReturn {
-  schema?: AnonCredsSchema
-  schemaId: string
-  resolutionMetadata: AnonCredsResolutionMetadata
-  schemaMetadata: Extensible
+  schema?: AnonCredsSchema;
+  schemaId: string;
+  resolutionMetadata: AnonCredsResolutionMetadata;
+  schemaMetadata: Extensible;
 }
 export interface RegisterSchemaOptions {
-  schema: AnonCredsSchema
-  options: Extensible
+  schema: AnonCredsSchema;
+  options: Extensible;
 }
 export interface RegisterSchemaReturnStateFailed extends AnonCredsOperationStateFailed {
-  schema?: AnonCredsSchema
-  schemaId?: string
+  schema?: AnonCredsSchema;
+  schemaId?: string;
 }
 export interface RegisterSchemaReturnStateFinished extends AnonCredsOperationStateFinished {
-  schema: AnonCredsSchema
-  schemaId: string
+  schema: AnonCredsSchema;
+  schemaId: string;
 }
 export interface RegisterSchemaReturnStateAction extends AnonCredsOperationStateAction {
-  schema: AnonCredsSchema
-  schemaId: string
+  schema: AnonCredsSchema;
+  schemaId: string;
 }
 export interface RegisterSchemaReturnStateWait extends AnonCredsOperationStateWait {
-  schema?: AnonCredsSchema
-  schemaId?: string
+  schema?: AnonCredsSchema;
+  schemaId?: string;
 }
 export interface RegisterSchemaReturn {
-  jobId?: string
+  jobId?: string;
   schemaState:
     | RegisterSchemaReturnStateWait
     | RegisterSchemaReturnStateAction
     | RegisterSchemaReturnStateFinished
-    | RegisterSchemaReturnStateFailed
-  schemaMetadata: Extensible
-  registrationMetadata: Extensible
+    | RegisterSchemaReturnStateFailed;
+  schemaMetadata: Extensible;
+  registrationMetadata: Extensible;
 }

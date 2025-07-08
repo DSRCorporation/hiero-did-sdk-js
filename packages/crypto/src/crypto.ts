@@ -14,21 +14,27 @@ export class Crypto {
   private static detectCryptoModule(): CryptoModule {
     // 1. Try to use react-native-quick-crypto (React Native)
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const rnCrypto = require('react-native-quick-crypto')
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
       if (rnCrypto.createHash) return rnCrypto
-    } catch {}
+    } catch { /* empty */ }
 
     // 2. Try to use Node.js crypto
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const nodeCrypto = require('crypto')
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
       if (nodeCrypto.createHash) return nodeCrypto
-    } catch {}
+    } catch { /* empty */ }
 
     // 3. Fallback to crypto-js
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const cryptoJs = require('crypto-js')
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
       if (cryptoJs.SHA256) return cryptoJs
-    } catch {}
+    } catch { /* empty */ }
 
     throw new Error('No compatible crypto module found')
   }
@@ -46,7 +52,7 @@ export class Crypto {
     return data
   }
 
-  static async sha256(data: HashInput): Promise<string> {
+  static sha256(data: HashInput): string {
     const cryptoModule = Crypto.detectCryptoModule()
 
     if (cryptoModule.createHash) {

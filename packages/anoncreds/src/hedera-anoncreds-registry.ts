@@ -1,5 +1,5 @@
-import { HederaHcsService } from '@hiero-did-sdk/hcs'
-import { Zstd } from '@hiero-did-sdk/zstd'
+import { HederaHcsService } from '@hiero-did-sdk/hcs';
+import { Zstd } from '@hiero-did-sdk/zstd';
 import {
   AnonCredsResolutionMetadataError,
   GetCredentialDefinitionReturn,
@@ -16,23 +16,20 @@ import {
   RegisterSchemaReturn,
   RevocationRegistryEntryMessage,
   RevocationRegistryEntryMessageWrapper,
-} from './dto'
-import { HederaAnoncredsRegistryConfiguration } from './hedera-anoncreds-registry.configuration'
-import { AnonCredsRevocationStatusList } from './specification'
-import { AnonCredsObjectType, buildAnoncredsIdentifier, parseAnoncredsIdentifier } from './utils'
+} from './dto';
+import { HederaAnoncredsRegistryConfiguration } from './hedera-anoncreds-registry.configuration';
+import { AnonCredsRevocationStatusList } from './specification';
+import { AnonCredsObjectType, buildAnoncredsIdentifier, parseAnoncredsIdentifier } from './utils';
 
 type NetworkName = {
-  networkName?: string
-}
+  networkName?: string;
+};
 
 export class HederaAnoncredsRegistry {
-  private readonly methodName = 'hedera'
-  private readonly supportedIdentifier = /^did:hedera:.*$/
-
-  private readonly hcsService: HederaHcsService
+  private readonly hcsService: HederaHcsService;
 
   constructor(config: HederaAnoncredsRegistryConfiguration) {
-    this.hcsService = new HederaHcsService(config)
+    this.hcsService = new HederaHcsService(config);
   }
 
   /**
@@ -41,10 +38,14 @@ export class HederaAnoncredsRegistry {
    * @param options
    */
   async registerSchema(options: RegisterSchemaOptions & NetworkName): Promise<RegisterSchemaReturn> {
-    const { networkName, schema } = options
+    const { networkName, schema } = options;
     try {
-      const payload = new Buffer(JSON.stringify(schema))
-      const schemaTopicId = await this.hcsService.submitFile({ payload, networkName, waitChangesVisibility: true })
+      const payload = new Buffer(JSON.stringify(schema));
+      const schemaTopicId = await this.hcsService.submitFile({
+        payload,
+        networkName,
+        waitChangesVisibility: true,
+      });
       return {
         schemaState: {
           state: 'finished',
@@ -53,17 +54,17 @@ export class HederaAnoncredsRegistry {
         },
         schemaMetadata: {},
         registrationMetadata: {},
-      }
-    } catch (error: any) {
+      };
+    } catch (error) {
       return {
         schemaState: {
           state: 'failed',
           schema,
-          reason: `UnknownError: ${error.message}`,
+          reason: error instanceof Error ? error.message : `UnknownError: ${JSON.stringify(error)}`,
         },
         schemaMetadata: {},
         registrationMetadata: {},
-      }
+      };
     }
   }
 
@@ -73,15 +74,15 @@ export class HederaAnoncredsRegistry {
    * @returns Schema definition resolution result
    */
   async getSchema(schemaId: string): Promise<GetSchemaReturn> {
-    const { topicId, networkName } = parseAnoncredsIdentifier(schemaId)
-    const payload = await this.hcsService.resolveFile({ topicId, networkName })
-    const schema = JSON.parse(payload.toString())
+    const { topicId, networkName } = parseAnoncredsIdentifier(schemaId);
+    const payload = await this.hcsService.resolveFile({ topicId, networkName });
+    const schema = JSON.parse(payload.toString());
     return {
       schemaId,
       schema,
       schemaMetadata: {},
       resolutionMetadata: {},
-    }
+    };
   }
 
   /**
@@ -92,11 +93,15 @@ export class HederaAnoncredsRegistry {
   async registerCredentialDefinition(
     options: RegisterCredentialDefinitionOptions & NetworkName
   ): Promise<RegisterCredentialDefinitionReturn> {
-    const { networkName, credentialDefinition } = options
+    const { networkName, credentialDefinition } = options;
     try {
-      const payload = new Buffer(JSON.stringify(credentialDefinition))
-      const metadata = { ...options.options }
-      const credentialDefinitionTopicId = await this.hcsService.submitFile({ payload, networkName, waitChangesVisibility: true })
+      const payload = new Buffer(JSON.stringify(credentialDefinition));
+      const metadata = { ...options.options };
+      const credentialDefinitionTopicId = await this.hcsService.submitFile({
+        payload,
+        networkName,
+        waitChangesVisibility: true,
+      });
       return {
         credentialDefinitionState: {
           state: 'finished',
@@ -109,17 +114,17 @@ export class HederaAnoncredsRegistry {
         },
         credentialDefinitionMetadata: { ...metadata },
         registrationMetadata: {},
-      }
-    } catch (error: any) {
+      };
+    } catch (error) {
       return {
         credentialDefinitionState: {
           state: 'failed',
           credentialDefinition,
-          reason: `UnknownError: ${error}`,
+          reason: error instanceof Error ? error.message : `UnknownError: ${JSON.stringify(error)}`,
         },
         credentialDefinitionMetadata: {},
         registrationMetadata: {},
-      }
+      };
     }
   }
 
@@ -129,15 +134,15 @@ export class HederaAnoncredsRegistry {
    * @returns Credential definition resolution result
    */
   async getCredentialDefinition(credentialDefinitionId: string): Promise<GetCredentialDefinitionReturn> {
-    const { topicId, networkName } = parseAnoncredsIdentifier(credentialDefinitionId)
-    const payload = await this.hcsService.resolveFile({ topicId, networkName })
-    const credentialDefinition = JSON.parse(payload.toString())
+    const { topicId, networkName } = parseAnoncredsIdentifier(credentialDefinitionId);
+    const payload = await this.hcsService.resolveFile({ topicId, networkName });
+    const credentialDefinition = JSON.parse(payload.toString());
     return {
       credentialDefinitionId,
       credentialDefinition,
       credentialDefinitionMetadata: {},
       resolutionMetadata: {},
-    }
+    };
   }
 
   /**
@@ -148,18 +153,24 @@ export class HederaAnoncredsRegistry {
   async registerRevocationRegistryDefinition(
     options: RegisterRevocationRegistryDefinitionOptions & NetworkName
   ): Promise<RegisterRevocationRegistryDefinitionReturn> {
-    const { networkName, revocationRegistryDefinition } = options
+    const { networkName, revocationRegistryDefinition } = options;
     try {
-      const entriesTopicId = await this.hcsService.createTopic({ waitChangesVisibility: true })
-      const hcsMetadata = { entriesTopicId }
+      const entriesTopicId = await this.hcsService.createTopic({
+        waitChangesVisibility: true,
+      });
+      const hcsMetadata = { entriesTopicId };
 
       const revocationRegistryDefinitionWithMetadata = {
         revRegDef: options.revocationRegistryDefinition,
         hcsMetadata,
-      }
-      const payload = new Buffer(JSON.stringify(revocationRegistryDefinitionWithMetadata))
+      };
+      const payload = new Buffer(JSON.stringify(revocationRegistryDefinitionWithMetadata));
 
-      const revocationRegistryDefinitionTopic = await this.hcsService.submitFile({ payload, networkName, waitChangesVisibility: true })
+      const revocationRegistryDefinitionTopic = await this.hcsService.submitFile({
+        payload,
+        networkName,
+        waitChangesVisibility: true,
+      });
 
       return {
         revocationRegistryDefinitionState: {
@@ -173,17 +184,17 @@ export class HederaAnoncredsRegistry {
         },
         revocationRegistryDefinitionMetadata: hcsMetadata,
         registrationMetadata: {},
-      }
-    } catch (error: any) {
+      };
+    } catch (error) {
       return {
         revocationRegistryDefinitionState: {
           state: 'failed',
           revocationRegistryDefinition,
-          reason: `UnknownError: ${error}`,
+          reason: error instanceof Error ? error.message : `UnknownError: ${JSON.stringify(error)}`,
         },
         revocationRegistryDefinitionMetadata: {},
         registrationMetadata: {},
-      }
+      };
     }
   }
 
@@ -196,7 +207,7 @@ export class HederaAnoncredsRegistry {
     revocationRegistryDefinitionId: string
   ): Promise<GetRevocationRegistryDefinitionReturn> {
     try {
-      return await this.resolveRevocationRegistryDefinition(revocationRegistryDefinitionId)
+      return await this.resolveRevocationRegistryDefinition(revocationRegistryDefinitionId);
     } catch (error) {
       return {
         revocationRegistryDefinitionId,
@@ -208,30 +219,32 @@ export class HederaAnoncredsRegistry {
               ? error.message
               : `Unable to resolve revocation registry definition: ${JSON.stringify(error)}`,
         },
-      }
+      };
     }
   }
 
   /**
-   * Register revocation list in the registry.
+   * Register the revocation list in the registry.
    * @param options - Revocation list options
    * @returns Register revocation list result
    */
   async registerRevocationStatusList(
     options: RegisterRevocationStatusListOptions & NetworkName
   ): Promise<RegisterRevocationStatusListReturn> {
-    const { networkName, revocationStatusList } = options
+    const { networkName, revocationStatusList } = options;
     try {
-      const timestamp = Date.now() / 1000
+      const timestamp = Date.now() / 1000;
       const { entriesTopicId, statusList } = await this.resolveRevocationStatusList(
         options.revocationStatusList.revRegDefId,
         timestamp
-      )
+      );
 
-      const modifiedStatusList = revocationStatusList?.revocationList ?? []
-      const originalStatusList = statusList ? statusList.revocationList : new Array(modifiedStatusList.length).fill(0)
+      const modifiedStatusList = revocationStatusList?.revocationList ?? [];
+      const originalStatusList = statusList
+        ? statusList.revocationList
+        : new Array<number>(modifiedStatusList.length).fill(0);
 
-      const diff = this.getStatusListDiff(originalStatusList, modifiedStatusList)
+      const diff = this.getStatusListDiff(originalStatusList, modifiedStatusList);
 
       const message = this.packRevocationRegistryEntryMessage({
         value: {
@@ -240,9 +253,14 @@ export class HederaAnoncredsRegistry {
           ...(diff.issued.length ? { issued: diff.issued } : undefined),
           ...(diff.revoked.length ? { revoked: diff.revoked } : undefined),
         },
-      })
+      });
 
-      await this.hcsService.submitMessage({ topicId: entriesTopicId, message, networkName, waitChangesVisibility: true })
+      await this.hcsService.submitMessage({
+        topicId: entriesTopicId,
+        message,
+        networkName,
+        waitChangesVisibility: true,
+      });
 
       return {
         revocationStatusListState: {
@@ -251,7 +269,7 @@ export class HederaAnoncredsRegistry {
         },
         registrationMetadata: {},
         revocationStatusListMetadata: {},
-      }
+      };
     } catch (error) {
       return {
         revocationStatusListState: {
@@ -264,14 +282,14 @@ export class HederaAnoncredsRegistry {
         },
         registrationMetadata: {},
         revocationStatusListMetadata: {},
-      }
+      };
     }
   }
 
   /**
    * Get a revocation list from the registry.
    * @param revocationRegistryId - Revocation registry ID
-   * @param timestamp - Timestamp to resolve revocation list for
+   * @param timestamp - Timestamp to resolve a revocation list for
    * @returns Revocation list resolution result
    */
   async getRevocationStatusList(
@@ -279,19 +297,19 @@ export class HederaAnoncredsRegistry {
     timestamp: number
   ): Promise<GetRevocationStatusListReturn> {
     try {
-      const { statusList } = await this.resolveRevocationStatusList(revocationRegistryId, timestamp)
+      const { statusList } = await this.resolveRevocationStatusList(revocationRegistryId, timestamp);
       // If the list is completely empty, then we return an error
       if (!statusList) {
         throw new AnonCredsResolutionMetadataError(
           'notFound',
           `Registered revocation list for registry id "${revocationRegistryId}" is not found`
-        )
+        );
       }
       return {
         revocationStatusList: statusList,
         resolutionMetadata: {},
         revocationStatusListMetadata: {},
-      }
+      };
     } catch (error) {
       return {
         resolutionMetadata: {
@@ -301,7 +319,7 @@ export class HederaAnoncredsRegistry {
         },
         revocationStatusList: undefined,
         revocationStatusListMetadata: {},
-      }
+      };
     }
   }
 
@@ -313,97 +331,112 @@ export class HederaAnoncredsRegistry {
   private resolveRevocationRegistryDefinition = async (
     revocationRegistryDefinitionId: string
   ): Promise<GetRevocationRegistryDefinitionReturn> => {
-    const { topicId, networkName } = parseAnoncredsIdentifier(revocationRegistryDefinitionId)
+    const { topicId, networkName } = parseAnoncredsIdentifier(revocationRegistryDefinitionId);
 
-    const payloadBuffer = await this.hcsService.resolveFile({ topicId, networkName })
+    const payloadBuffer = await this.hcsService.resolveFile({
+      topicId,
+      networkName,
+    });
     if (!payloadBuffer) {
       throw new AnonCredsResolutionMetadataError(
         'invalid',
         'Resolve revocation registry definition error (hcs1 file loading)'
-      )
+      );
     }
-    const payload = JSON.parse(payloadBuffer.toString())
+    const payload = JSON.parse(payloadBuffer.toString());
     const revRegDef = {
       revocationRegistryDefinitionId: revocationRegistryDefinitionId,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       revocationRegistryDefinition: { ...payload?.revRegDef },
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       revocationRegistryDefinitionMetadata: { ...payload?.hcsMetadata },
       resolutionMetadata: {},
-    }
+    } satisfies GetRevocationRegistryDefinitionReturn;
 
     if (!revRegDef) {
       throw new AnonCredsResolutionMetadataError(
         'invalid',
         'Resolve revocation registry definition error (hcs1 file parsing)'
-      )
+      );
     }
     if (!revRegDef.revocationRegistryDefinition) {
       throw new AnonCredsResolutionMetadataError(
         'invalid',
         'Resolve revocation registry definition error (revocationRegistryDefinition not found)'
-      )
+      );
     }
 
-    return revRegDef
-  }
+    return revRegDef;
+  };
 
   private resolveRevocationStatusList = async (
     revocationRegistryDefinitionId: string,
     onTimestamp?: number
-  ): Promise<{ entriesTopicId: string; statusList?: AnonCredsRevocationStatusList }> => {
-    const timestamp = onTimestamp ? 1000 * onTimestamp : Date.now()
-    const revRegDefResult = await this.getRevocationRegistryDefinition(revocationRegistryDefinitionId)
+  ): Promise<{
+    entriesTopicId: string;
+    statusList?: AnonCredsRevocationStatusList;
+  }> => {
+    const timestamp = onTimestamp ? 1000 * onTimestamp : Date.now();
+    const revRegDefResult = await this.getRevocationRegistryDefinition(revocationRegistryDefinitionId);
 
-    const revocationRegistryDefinition = revRegDefResult.revocationRegistryDefinition
+    const revocationRegistryDefinition = revRegDefResult.revocationRegistryDefinition;
     if (!revocationRegistryDefinition) {
       throw new AnonCredsResolutionMetadataError(
         'invalid',
         `AnonCreds revocation registry with id "${revocationRegistryDefinitionId}" not found`
-      )
+      );
     }
 
-    const entriesTopicId: string = revRegDefResult.revocationRegistryDefinitionMetadata.entriesTopicId as string
+    const entriesTopicId: string = revRegDefResult.revocationRegistryDefinitionMetadata.entriesTopicId as string;
     if (!entriesTopicId) {
       throw new AnonCredsResolutionMetadataError(
         'invalid',
         'notFound: Entries topic ID is missing from revocation registry metadata'
-      )
+      );
     }
 
-    const { networkName } = parseAnoncredsIdentifier(revocationRegistryDefinitionId)
+    const { networkName } = parseAnoncredsIdentifier(revocationRegistryDefinitionId);
 
     let messages = await this.hcsService.getTopicMessages({
       networkName,
       topicId: entriesTopicId,
       toDate: new Date(timestamp),
-    })
+    });
 
     // If the query did not return anything, and the cache is empty, then most likely the timestamp is less
     // than the timestamp of the first entry. In this case, we return the first element from the status list.
     if (messages.length === 0) {
-      messages = await this.hcsService.getTopicMessages({ networkName, topicId: entriesTopicId, limit: 1 })
+      messages = await this.hcsService.getTopicMessages({
+        networkName,
+        topicId: entriesTopicId,
+        limit: 1,
+      });
       if (messages.length === 0) {
         return {
           entriesTopicId,
           statusList: undefined,
-        }
+        };
       }
     }
 
     // Extract entries
     const entries = messages
-      .map((m) => ({ ...m, entry: this.extractRevocationRegistryEntryMessage(m.contents) }))
-      .filter((payload) => payload.entry && this.verifyRevocationRegistryEntryMessage(payload.entry))
+      .map((m) => ({
+        ...m,
+        entry: this.extractRevocationRegistryEntryMessage(m.contents),
+      }))
+      .filter((payload) => payload.entry && this.verifyRevocationRegistryEntryMessage(payload.entry));
 
     // Build status list
-    const statusList = new Array<number>(revocationRegistryDefinition.value.maxCredNum).fill(0)
+    const statusList = new Array<number>(revocationRegistryDefinition.value.maxCredNum).fill(0);
     for (let i = 0; i < entries.length; i++) {
-      const issued = entries[i].entry?.value?.issued ?? []
+      const issued = entries[i].entry?.value?.issued ?? [];
       for (let j = 0; j < issued.length; j++) {
-        statusList[issued[j]] = 0
+        statusList[issued[j]] = 0;
       }
-      const revoked = entries[i].entry?.value?.revoked ?? []
+      const revoked = entries[i].entry?.value?.revoked ?? [];
       for (let j = 0; j < revoked.length; j++) {
-        statusList[revoked[j]] = 1
+        statusList[revoked[j]] = 1;
       }
     }
 
@@ -417,8 +450,8 @@ export class HederaAnoncredsRegistry {
         revocationList: statusList,
         currentAccumulator: entries.length ? (entries[entries.length - 1].entry?.value?.accum ?? '') : '',
       },
-    }
-  }
+    };
+  };
 
   /**
    * Get diff betwen two status lists
@@ -430,35 +463,35 @@ export class HederaAnoncredsRegistry {
     originalStatusList: number[],
     modifiedStatusList: number[]
   ): { issued: number[]; revoked: number[] } {
-    const issuedToRevoked: number[] = []
-    const revokedToIssued: number[] = []
+    const issuedToRevoked: number[] = [];
+    const revokedToIssued: number[] = [];
 
     if (originalStatusList.length !== modifiedStatusList.length) {
-      throw new Error('Original and modifies status lists should have the same lengths')
+      throw new Error('Original and modifies status lists should have the same lengths');
     }
 
     for (let i = 0; i < originalStatusList.length; i++) {
-      const original = originalStatusList[i]
-      const modified = modifiedStatusList[i]
+      const original = originalStatusList[i];
+      const modified = modifiedStatusList[i];
 
       if (original !== 0 && original !== 1) {
-        throw new Error('Original status list should have only 0 or 1')
+        throw new Error('Original status list should have only 0 or 1');
       }
       if (modified !== 0 && modified !== 1) {
-        throw new Error('Modified status list should have only 0 or 1')
+        throw new Error('Modified status list should have only 0 or 1');
       }
 
       if (original === 1 && modified === 0) {
-        revokedToIssued.push(i) // revoked → issued
+        revokedToIssued.push(i); // revoked → issued
       } else if (original === 0 && modified === 1) {
-        issuedToRevoked.push(i) // issued → revoked
+        issuedToRevoked.push(i); // issued → revoked
       }
     }
 
     return {
       issued: revokedToIssued,
       revoked: issuedToRevoked,
-    }
+    };
   }
 
   /**
@@ -466,11 +499,11 @@ export class HederaAnoncredsRegistry {
    * @param data - The revocation register entry
    */
   private packRevocationRegistryEntryMessage(data: RevocationRegistryEntryMessage): string {
-    const json = JSON.stringify(data)
-    const compressedJson = Zstd.compress(Buffer.from(json, 'utf-8'))
-    const payload = Buffer.from(compressedJson).toString('base64')
-    const message = { payload } as RevocationRegistryEntryMessageWrapper
-    return JSON.stringify(message)
+    const json = JSON.stringify(data);
+    const compressedJson = Zstd.compress(Buffer.from(json, 'utf-8'));
+    const payload = Buffer.from(compressedJson).toString('base64');
+    const message = { payload } as RevocationRegistryEntryMessageWrapper;
+    return JSON.stringify(message);
   }
 
   /**
@@ -480,11 +513,11 @@ export class HederaAnoncredsRegistry {
    */
   private extractRevocationRegistryEntryMessage(data: Uint8Array): RevocationRegistryEntryMessage | undefined {
     try {
-      const wrapper = JSON.parse(data.toString()) as RevocationRegistryEntryMessageWrapper
-      const encoded = Buffer.from(Zstd.decompress(Buffer.from(wrapper.payload, 'base64')))
-      return JSON.parse(encoded.toString()) as RevocationRegistryEntryMessage
+      const wrapper = JSON.parse(data.toString()) as RevocationRegistryEntryMessageWrapper;
+      const encoded = Buffer.from(Zstd.decompress(Buffer.from(wrapper.payload, 'base64')));
+      return JSON.parse(encoded.toString()) as RevocationRegistryEntryMessage;
     } catch {
-      return undefined
+      return undefined;
     }
   }
 
@@ -494,6 +527,6 @@ export class HederaAnoncredsRegistry {
    * @returns True if the data is verified, false for opposite
    */
   private verifyRevocationRegistryEntryMessage(data: RevocationRegistryEntryMessage) {
-    return !!data.value?.accum
+    return !!data.value?.accum;
   }
 }

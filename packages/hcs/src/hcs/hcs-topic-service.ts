@@ -239,8 +239,10 @@ export class HcsTopicService {
       topicMemo: info.topicMemo,
       adminKey: !!info.adminKey,
       submitKey: !!info.submitKey,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       autoRenewPeriod: info.autoRenewPeriod?.seconds.low,
       autoRenewAccountId: info.autoRenewAccountId?.toString(),
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expirationTime: info.expirationTime?.seconds.low,
     }
   }

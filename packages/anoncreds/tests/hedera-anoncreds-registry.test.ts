@@ -1,31 +1,31 @@
-import { LRUMemoryCache } from '@hiero-did-sdk/cache'
-import { NetworkConfig } from '@hiero-did-sdk/client'
-import { HederaHcsService } from '@hiero-did-sdk/hcs'
-import { HederaAnoncredsRegistry } from '../src'
-import { AnonCredsRevocationStatusListWithoutTimestamp, GetRevocationStatusListReturn } from '../src/dto'
+import { LRUMemoryCache } from '@hiero-did-sdk/cache';
+import { NetworkConfig } from '@hiero-did-sdk/client';
+import { HederaHcsService } from '@hiero-did-sdk/hcs';
+import { HederaAnoncredsRegistry } from '../src';
+import { AnonCredsRevocationStatusListWithoutTimestamp, GetRevocationStatusListReturn } from '../src/dto';
 import {
   AnonCredsCredentialDefinition,
   AnonCredsRevocationRegistryDefinition,
   AnonCredsSchema,
-} from '../src/specification'
-import { ConsoleLogger, LogLevel, getUUID } from './utils'
-import { FakeCache } from './utils/fake-cache'
+} from '../src/specification';
+import { ConsoleLogger, LogLevel, getUUID } from './utils';
+import { FakeCache } from './utils/fake-cache';
 
-const LOG_DEBUG_MASSAGES = false
-const TEST_WITH_CACHE = true
+const LOG_DEBUG_MASSAGES = false;
+const TEST_WITH_CACHE = true;
 
-const GET_DATA_TIMEOUT = 100
-const GET_CACHED_DATA_TIMEOUT = 10
+const GET_DATA_TIMEOUT = 100;
+const GET_CACHED_DATA_TIMEOUT = 10;
 
-const operatorId = process.env.HEDERA_TESTNET_OPERATOR_ID ?? ''
-const operatorKey = process.env.HEDERA_TESTNET_OPERATOR_KEY ?? ''
+const operatorId = process.env.HEDERA_TESTNET_OPERATOR_ID ?? '';
+const operatorKey = process.env.HEDERA_TESTNET_OPERATOR_KEY ?? '';
 
 const schemaPayload = {
   issuerId: '',
   name: getUUID(),
   version: '1',
   attrNames: ['field1', 'field2'],
-} as AnonCredsSchema
+} as AnonCredsSchema;
 
 const testnetNetwork: NetworkConfig[] = [
   {
@@ -33,7 +33,7 @@ const testnetNetwork: NetworkConfig[] = [
     operatorId,
     operatorKey,
   },
-]
+];
 
 const credentialDefinitionPayload = {
   issuerId: '',
@@ -55,7 +55,7 @@ const credentialDefinitionPayload = {
     },
     revocation: true,
   },
-} as AnonCredsCredentialDefinition
+} as AnonCredsCredentialDefinition;
 
 const revocationRegistryDefinition = {
   issuerId: '',
@@ -72,7 +72,7 @@ const revocationRegistryDefinition = {
     tailsHash: '91zvq2cFmBZmHCcLqFyzv7bfehHH5rMhdAG5wTjqy2PE',
   },
   revocDefType: 'CL_ACCUM',
-} as AnonCredsRevocationRegistryDefinition
+} as AnonCredsRevocationRegistryDefinition;
 
 const revocationStatusListPayload = {
   issuerId: '',
@@ -80,267 +80,293 @@ const revocationStatusListPayload = {
   revocationList: [0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
   currentAccumulator:
     '21 124C594B6B20E41B681E92B2C43FD165EA9E68BC3C9D63A82C8893124983CAE94 21 124C5341937827427B0A3A32113BD5E64FB7AB39BD3E5ABDD7970874501CA4897 6 5438CB6F442E2F807812FD9DC0C39AFF4A86B1E6766DBB5359E86A4D70401B0F 4 39D1CA5C4716FFC4FE0853C4FF7F081DFD8DF8D2C2CA79705211680AC77BF3A1 6 70504A5493F89C97C225B68310811A41AD9CD889301F238E93C95AD085E84191 4 39582252194D756D5D86D0EED02BF1B95CE12AED2FA5CD3C53260747D891993C',
-} as AnonCredsRevocationStatusListWithoutTimestamp
+} as AnonCredsRevocationStatusListWithoutTimestamp;
 
 describe('Hedera AnonCreds Registry', () => {
   jest.setTimeout(1200000);
 
-  let anoncredsRegistry: HederaAnoncredsRegistry
+  let anoncredsRegistry: HederaAnoncredsRegistry;
 
-  const issuerDid: string = 'did:hedera:testnet:zFAeKMsqnNc2bwEsC8oqENBvGqjpGu9tpUi3VWaFEBXBo_0.0.5896419'
+  const issuerDid: string = 'did:hedera:testnet:zFAeKMsqnNc2bwEsC8oqENBvGqjpGu9tpUi3VWaFEBXBo_0.0.5896419';
 
-  const logger = new ConsoleLogger(LOG_DEBUG_MASSAGES ? LogLevel.debug : LogLevel.off)
-  const cache = TEST_WITH_CACHE ? new LRUMemoryCache() : new FakeCache()
+  const logger = new ConsoleLogger(LOG_DEBUG_MASSAGES ? LogLevel.debug : LogLevel.off);
+  const cache = TEST_WITH_CACHE ? new LRUMemoryCache() : new FakeCache();
 
-  beforeAll(async () => {})
+  beforeAll(async () => {});
 
   beforeEach(async () => {
-    await cache.cleanup()
+    await cache.cleanup();
     anoncredsRegistry = new HederaAnoncredsRegistry({
       networks: testnetNetwork,
       cache,
-    })
-  })
+    });
+  });
 
   afterAll(async () => {
     // Wait for messages to flush out
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-  })
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  });
 
   it('Register and resolve a schema', async () => {
     // Register
     const schemaResult = await anoncredsRegistry.registerSchema({
       schema: { ...schemaPayload, issuerId: issuerDid },
       options: {},
-    })
-    logger.debug('=== SchemaResult ===', { schemaResult })
-    expect(schemaResult?.schemaState?.schemaId).toBeDefined()
-
-    //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+    });
+    logger.debug('=== SchemaResult ===', { schemaResult });
+    expect(schemaResult?.schemaState?.schemaId).toBeDefined();
 
     // Resolve
-    const resolvedSchema = await anoncredsRegistry.getSchema(schemaResult.schemaState.schemaId ?? '')
-    logger.debug('=== ResolvedSchema ===', { resolvedSchema })
-    expect(resolvedSchema.schemaId).toEqual(schemaResult.schemaState.schemaId)
+    const resolvedSchema = await anoncredsRegistry.getSchema(schemaResult.schemaState.schemaId ?? '');
+    logger.debug('=== ResolvedSchema ===', { resolvedSchema });
+    expect(resolvedSchema.schemaId).toEqual(schemaResult.schemaState.schemaId);
 
     // Resolve with cache
     if (TEST_WITH_CACHE) {
-      const start = performance.now()
-      const cachedResolvedSchema = await anoncredsRegistry.getSchema(schemaResult.schemaState.schemaId ?? '')
-      const duration = performance.now() - start
+      const start = performance.now();
+      const cachedResolvedSchema = await anoncredsRegistry.getSchema(schemaResult.schemaState.schemaId ?? '');
+      const duration = performance.now() - start;
 
-      logger.debug('=== CachedResolvedSchema ===', { cachedResolvedSchema })
-      expect(cachedResolvedSchema.schemaId).toEqual(schemaResult.schemaState.schemaId)
-      expect(duration).toBeLessThan(GET_CACHED_DATA_TIMEOUT)
+      logger.debug('=== CachedResolvedSchema ===', { cachedResolvedSchema });
+      expect(cachedResolvedSchema.schemaId).toEqual(schemaResult.schemaState.schemaId);
+      expect(duration).toBeLessThan(GET_CACHED_DATA_TIMEOUT);
     }
-  })
+  });
 
   it('Register and resolve a credential definition', async () => {
     // Register a schema
     const schemaResult = await anoncredsRegistry.registerSchema({
       schema: { ...schemaPayload, issuerId: issuerDid },
       options: {},
-    })
-    logger.debug('=== SchemaResult ===', { schemaResult })
-    expect(schemaResult?.schemaState?.schemaId).toBeDefined()
+    });
+    logger.debug('=== SchemaResult ===', { schemaResult });
+    expect(schemaResult?.schemaState?.schemaId).toBeDefined();
 
-    const schemaId = schemaResult.schemaState.schemaId
+    const schemaId = schemaResult.schemaState.schemaId;
 
     // Register a credential definition
     const credDefResult = await anoncredsRegistry.registerCredentialDefinition({
-      credentialDefinition: { ...credentialDefinitionPayload, issuerId: issuerDid, schemaId },
+      credentialDefinition: {
+        ...credentialDefinitionPayload,
+        issuerId: issuerDid,
+        schemaId,
+      },
       options: {
         supportRevocation: true,
       },
-    })
-    logger.debug('=== CredDefResult ===', { credDefResult })
-    expect(credDefResult?.credentialDefinitionState?.state).toEqual('finished')
-    const credentialDefinitionId = credDefResult.credentialDefinitionState.credentialDefinitionId ?? ''
-
-    //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+    });
+    logger.debug('=== CredDefResult ===', { credDefResult });
+    expect(credDefResult?.credentialDefinitionState?.state).toEqual('finished');
+    const credentialDefinitionId = credDefResult.credentialDefinitionState.credentialDefinitionId ?? '';
 
     // Resolve a credential definition
-    const resolvedCredDef = await anoncredsRegistry.getCredentialDefinition(credentialDefinitionId)
-    logger.debug('=== ResolvedCredDef ===', { resolvedCredDef })
-    expect(resolvedCredDef.credentialDefinitionId).toEqual(credentialDefinitionId)
+    const resolvedCredDef = await anoncredsRegistry.getCredentialDefinition(credentialDefinitionId);
+    logger.debug('=== ResolvedCredDef ===', { resolvedCredDef });
+    expect(resolvedCredDef.credentialDefinitionId).toEqual(credentialDefinitionId);
 
     // Resolve with cache
     if (TEST_WITH_CACHE) {
-      const start = performance.now()
-      const cachedResolvedCredDef = await anoncredsRegistry.getCredentialDefinition(credentialDefinitionId)
-      const duration = performance.now() - start
+      const start = performance.now();
+      const cachedResolvedCredDef = await anoncredsRegistry.getCredentialDefinition(credentialDefinitionId);
+      const duration = performance.now() - start;
 
-      logger.debug('=== cachedResolvedCredDef ===', { cachedResolvedCredDef })
-      expect(cachedResolvedCredDef.credentialDefinitionId).toEqual(credentialDefinitionId)
-      expect(duration).toBeLessThan(GET_CACHED_DATA_TIMEOUT)
+      logger.debug('=== cachedResolvedCredDef ===', { cachedResolvedCredDef });
+      expect(cachedResolvedCredDef.credentialDefinitionId).toEqual(credentialDefinitionId);
+      expect(duration).toBeLessThan(GET_CACHED_DATA_TIMEOUT);
     }
-  })
+  });
 
   it('Register and resolve a revocation registry definition', async () => {
     const schemaResult = await anoncredsRegistry.registerSchema({
       schema: { ...schemaPayload, issuerId: issuerDid },
       options: {},
-    })
-    logger.debug('=== SchemaResult ===', { schemaResult })
-    expect(schemaResult?.schemaState?.schemaId).toBeDefined()
+    });
+    logger.debug('=== SchemaResult ===', { schemaResult });
+    expect(schemaResult?.schemaState?.schemaId).toBeDefined();
 
-    const schemaId = schemaResult.schemaState.schemaId
+    const schemaId = schemaResult.schemaState.schemaId;
 
     const credDefResult = await anoncredsRegistry.registerCredentialDefinition({
-      credentialDefinition: { ...credentialDefinitionPayload, issuerId: issuerDid, schemaId },
+      credentialDefinition: {
+        ...credentialDefinitionPayload,
+        issuerId: issuerDid,
+        schemaId,
+      },
       options: {
         supportRevocation: true,
       },
-    })
-    logger.debug('=== CredDefResult ===', { credDefResult })
-    expect(credDefResult?.credentialDefinitionState?.state).toEqual('finished')
+    });
+    logger.debug('=== CredDefResult ===', { credDefResult });
+    expect(credDefResult?.credentialDefinitionState?.state).toEqual('finished');
 
-    const credDefId = credDefResult.credentialDefinitionState.credentialDefinitionId ?? ''
+    const credDefId = credDefResult.credentialDefinitionState.credentialDefinitionId ?? '';
 
     const revRegDefRegResult = await anoncredsRegistry.registerRevocationRegistryDefinition({
-      revocationRegistryDefinition: { ...revocationRegistryDefinition, issuerId: issuerDid, credDefId },
+      revocationRegistryDefinition: {
+        ...revocationRegistryDefinition,
+        issuerId: issuerDid,
+        credDefId,
+      },
       options: {},
-    })
-    logger.debug('=== RevRegDefRegResult ===', { revRegDefRegResult })
-    expect(revRegDefRegResult?.revocationRegistryDefinitionState?.revocationRegistryDefinitionId).toBeDefined()
-
-    //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+    });
+    logger.debug('=== RevRegDefRegResult ===', { revRegDefRegResult });
+    expect(revRegDefRegResult?.revocationRegistryDefinitionState?.revocationRegistryDefinitionId).toBeDefined();
 
     const resolvedRevRegDef = await anoncredsRegistry.getRevocationRegistryDefinition(
       revRegDefRegResult?.revocationRegistryDefinitionState?.revocationRegistryDefinitionId ?? ''
-    )
-    logger.debug('=== ResolvedRevRegDef ===', { resolvedRevRegDef })
+    );
+    logger.debug('=== ResolvedRevRegDef ===', { resolvedRevRegDef });
     expect(resolvedRevRegDef.revocationRegistryDefinitionId).toEqual(
       revRegDefRegResult.revocationRegistryDefinitionState.revocationRegistryDefinitionId
-    )
+    );
 
     // Resolve with cache
     if (TEST_WITH_CACHE) {
-      const start = performance.now()
+      const start = performance.now();
       const cachedResolvedRevRegDef = await anoncredsRegistry.getRevocationRegistryDefinition(
         revRegDefRegResult?.revocationRegistryDefinitionState?.revocationRegistryDefinitionId ?? ''
-      )
-      const duration = performance.now() - start
+      );
+      const duration = performance.now() - start;
 
-      logger.debug('=== cachedResolvedRevRegDef ===', { cachedResolvedRevRegDef })
+      logger.debug('=== cachedResolvedRevRegDef ===', {
+        cachedResolvedRevRegDef,
+      });
       expect(cachedResolvedRevRegDef.revocationRegistryDefinitionId).toEqual(
         revRegDefRegResult.revocationRegistryDefinitionState.revocationRegistryDefinitionId
-      )
-      expect(duration).toBeLessThan(GET_CACHED_DATA_TIMEOUT)
+      );
+      expect(duration).toBeLessThan(GET_CACHED_DATA_TIMEOUT);
     }
-  })
+  });
 
   it('Register and resolve a revocation status list', async () => {
     const schemaResult = await anoncredsRegistry.registerSchema({
       schema: { ...schemaPayload, issuerId: issuerDid },
       options: {},
-    })
-    logger.debug('=== SchemaResult ===', { schemaResult })
-    expect(schemaResult?.schemaState?.schemaId).toBeDefined()
+    });
+    logger.debug('=== SchemaResult ===', { schemaResult });
+    expect(schemaResult?.schemaState?.schemaId).toBeDefined();
 
-    const schemaId = schemaResult.schemaState.schemaId
+    const schemaId = schemaResult.schemaState.schemaId;
 
     const credDefResult = await anoncredsRegistry.registerCredentialDefinition({
-      credentialDefinition: { ...credentialDefinitionPayload, issuerId: issuerDid, schemaId },
+      credentialDefinition: {
+        ...credentialDefinitionPayload,
+        issuerId: issuerDid,
+        schemaId,
+      },
       options: {
         supportRevocation: true,
       },
-    })
-    logger.debug('=== CredDefResult ===', { credDefResult })
-    expect(credDefResult?.credentialDefinitionState?.state).toEqual('finished')
+    });
+    logger.debug('=== CredDefResult ===', { credDefResult });
+    expect(credDefResult?.credentialDefinitionState?.state).toEqual('finished');
 
-    const credDefId = credDefResult.credentialDefinitionState.credentialDefinitionId ?? ''
+    const credDefId = credDefResult.credentialDefinitionState.credentialDefinitionId ?? '';
 
     const revRegDefRegResult = await anoncredsRegistry.registerRevocationRegistryDefinition({
-      revocationRegistryDefinition: { ...revocationRegistryDefinition, issuerId: issuerDid, credDefId },
+      revocationRegistryDefinition: {
+        ...revocationRegistryDefinition,
+        issuerId: issuerDid,
+        credDefId,
+      },
       options: {},
-    })
-    logger.debug('=== RevRegDefRegResult ===', { revRegDefRegResult })
-    expect(revRegDefRegResult?.revocationRegistryDefinitionState?.revocationRegistryDefinitionId).toBeDefined()
-
-    //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+    });
+    logger.debug('=== RevRegDefRegResult ===', { revRegDefRegResult });
+    expect(revRegDefRegResult?.revocationRegistryDefinitionState?.revocationRegistryDefinitionId).toBeDefined();
 
     const resolvedRevRegDef = await anoncredsRegistry.getRevocationRegistryDefinition(
       revRegDefRegResult?.revocationRegistryDefinitionState?.revocationRegistryDefinitionId ?? ''
-    )
-    logger.debug('=== ResolvedRevRegDef ===', { resolvedRevRegDef })
+    );
+    logger.debug('=== ResolvedRevRegDef ===', { resolvedRevRegDef });
     expect(resolvedRevRegDef.revocationRegistryDefinitionId).toEqual(
       revRegDefRegResult.revocationRegistryDefinitionState.revocationRegistryDefinitionId
-    )
-    const revRegDefId = resolvedRevRegDef.revocationRegistryDefinitionId
+    );
+    const revRegDefId = resolvedRevRegDef.revocationRegistryDefinitionId;
 
     const registerRevocationStatusListResponse = await anoncredsRegistry.registerRevocationStatusList({
-      revocationStatusList: { ...revocationStatusListPayload, issuerId: issuerDid, revRegDefId },
+      revocationStatusList: {
+        ...revocationStatusListPayload,
+        issuerId: issuerDid,
+        revRegDefId,
+      },
       options: {},
-    })
-    logger.debug('=== RegisterRevocationStatusListResponse ===', { registerRevocationStatusListResponse })
-    expect(registerRevocationStatusListResponse?.revocationStatusListState.state).toEqual('finished')
-    expect(registerRevocationStatusListResponse?.revocationStatusListState.revocationStatusList).toBeDefined()
-
-    //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+    });
+    logger.debug('=== RegisterRevocationStatusListResponse ===', {
+      registerRevocationStatusListResponse,
+    });
+    expect(registerRevocationStatusListResponse?.revocationStatusListState.state).toEqual('finished');
+    expect(registerRevocationStatusListResponse?.revocationStatusListState.revocationStatusList).toBeDefined();
 
     const revocationStatusListResponse = await anoncredsRegistry.getRevocationStatusList(
       revRegDefId,
       Math.floor(Date.now() / 1000)
-    )
-    logger.debug('=== RevocationStatusListResponse ===', { revocationStatusListResponse })
+    );
+    logger.debug('=== RevocationStatusListResponse ===', {
+      revocationStatusListResponse,
+    });
     expect(revocationStatusListResponse.revocationStatusList).toMatchObject({
       ...revocationStatusListPayload,
       issuerId: issuerDid,
       revRegDefId,
-    })
-  })
+    });
+  });
 
   describe('Resolve a revocation status list by timestamps', () => {
-    let schemaId: string
-    let credDefId: string
+    let schemaId: string;
+    let credDefId: string;
 
-    let revRegDefId: string
+    let revRegDefId: string;
 
-    let tsBeforeStatusListEntryDate: number
-    let tsFirstStatusListEntryDate: number
-    let tsBetweenStatusListEntryDate: number
-    let tsLastStatusListEntryDate: number
-    let tsAfterStatusListEntryDate: number
+    let tsBeforeStatusListEntryDate: number;
+    let tsFirstStatusListEntryDate: number;
+    let tsBetweenStatusListEntryDate: number;
+    let tsLastStatusListEntryDate: number;
+    let tsAfterStatusListEntryDate: number;
 
     beforeAll(async () => {
       const registry = new HederaAnoncredsRegistry({
         networks: testnetNetwork,
         cache,
-      })
+      });
       const hcs = new HederaHcsService({
         networks: testnetNetwork,
-      })
+      });
 
       // Schema
       const schemaResult = await registry.registerSchema({
         schema: { ...schemaPayload, issuerId: issuerDid },
         options: {},
-      })
-      expect(schemaResult?.schemaState?.schemaId).toBeDefined()
-      schemaId = schemaResult.schemaState.schemaId
+      });
+      expect(schemaResult?.schemaState?.schemaId).toBeDefined();
+      schemaId = schemaResult.schemaState.schemaId;
 
       // CredDef
       const credDefResult = await registry.registerCredentialDefinition({
-        credentialDefinition: { ...credentialDefinitionPayload, issuerId: issuerDid, schemaId },
+        credentialDefinition: {
+          ...credentialDefinitionPayload,
+          issuerId: issuerDid,
+          schemaId,
+        },
         options: {
           supportRevocation: true,
         },
-      })
-      expect(credDefResult?.credentialDefinitionState?.credentialDefinitionId).toBeDefined()
-      credDefId = credDefResult.credentialDefinitionState.credentialDefinitionId!
+      });
+      expect(credDefResult?.credentialDefinitionState?.credentialDefinitionId).toBeDefined();
+      credDefId = credDefResult.credentialDefinitionState.credentialDefinitionId!;
 
       // RevRegDef
       const revRegDefRegResult = await registry.registerRevocationRegistryDefinition({
-        revocationRegistryDefinition: { ...revocationRegistryDefinition, issuerId: issuerDid, credDefId },
+        revocationRegistryDefinition: {
+          ...revocationRegistryDefinition,
+          issuerId: issuerDid,
+          credDefId,
+        },
         options: {},
-      })
-      expect(revRegDefRegResult?.revocationRegistryDefinitionState?.revocationRegistryDefinitionId).toBeDefined()
-      revRegDefId = revRegDefRegResult.revocationRegistryDefinitionState.revocationRegistryDefinitionId!
+      });
+      expect(revRegDefRegResult?.revocationRegistryDefinitionState?.revocationRegistryDefinitionId).toBeDefined();
+      revRegDefId = revRegDefRegResult.revocationRegistryDefinitionState.revocationRegistryDefinitionId!;
 
-      const entriesTopicId = revRegDefRegResult.revocationRegistryDefinitionMetadata.entriesTopicId as string
-
-      //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+      const entriesTopicId = revRegDefRegResult.revocationRegistryDefinitionMetadata.entriesTopicId as string;
 
       // StatusList and timestamps
       const registerRevocationStatusListResponse1 = await registry.registerRevocationStatusList({
@@ -351,10 +377,8 @@ describe('Hedera AnonCreds Registry', () => {
           revocationList: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         },
         options: {},
-      })
-      expect(registerRevocationStatusListResponse1?.revocationStatusListState?.revocationStatusList).toBeDefined()
-
-      //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+      });
+      expect(registerRevocationStatusListResponse1?.revocationStatusListState?.revocationStatusList).toBeDefined();
 
       const registerRevocationStatusListResponse2 = await registry.registerRevocationStatusList({
         revocationStatusList: {
@@ -364,123 +388,124 @@ describe('Hedera AnonCreds Registry', () => {
           revocationList: [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
         },
         options: {},
-      })
-      expect(registerRevocationStatusListResponse2?.revocationStatusListState?.revocationStatusList).toBeDefined()
+      });
+      expect(registerRevocationStatusListResponse2?.revocationStatusListState?.revocationStatusList).toBeDefined();
 
-      //await waitTimeout(WAIT_CONSENSUS_TIMEOUT)
+      const messages = await hcs.getTopicMessages({ topicId: entriesTopicId });
 
-      const messages = await hcs.getTopicMessages({ topicId: entriesTopicId })
+      const consensusTimestampFirst = messages[0].consensusTime.getTime();
+      const consensusTimestampLast = messages[1].consensusTime.getTime();
 
-      const consensusTimestampFirst = messages[0].consensusTime.getTime()
-      const consensusTimestampLast = messages[1].consensusTime.getTime()
-
-      tsBeforeStatusListEntryDate = new Date(consensusTimestampFirst - 1000000).getTime() / 1000
-      tsFirstStatusListEntryDate = new Date(consensusTimestampFirst).getTime() / 1000
-      tsBetweenStatusListEntryDate = new Date((consensusTimestampFirst + consensusTimestampLast) / 2).getTime() / 1000
-      tsLastStatusListEntryDate = new Date(consensusTimestampLast).getTime() / 1000
-      tsAfterStatusListEntryDate = new Date(consensusTimestampLast + 1000000).getTime() / 1000
-    })
+      tsBeforeStatusListEntryDate = new Date(consensusTimestampFirst - 1000000).getTime() / 1000;
+      tsFirstStatusListEntryDate = new Date(consensusTimestampFirst).getTime() / 1000;
+      tsBetweenStatusListEntryDate = new Date((consensusTimestampFirst + consensusTimestampLast) / 2).getTime() / 1000;
+      tsLastStatusListEntryDate = new Date(consensusTimestampLast).getTime() / 1000;
+      tsAfterStatusListEntryDate = new Date(consensusTimestampLast + 1000000).getTime() / 1000;
+    });
 
     it('should resolve a first revocation status list when valid id is passed but the timestamp earlier than first item', async () => {
-      const statusList = await anoncredsRegistry.getRevocationStatusList(revRegDefId, tsBeforeStatusListEntryDate)
-      expect(statusList.revocationStatusList?.revRegDefId).toBe(revRegDefId)
-      expect(statusList.revocationStatusList?.revocationList[0]).toEqual(0)
-      expect(statusList.revocationStatusList?.revocationList[5]).toEqual(0)
-      expect(statusList.revocationStatusList?.revocationList[9]).toEqual(0)
-    })
+      const statusList = await anoncredsRegistry.getRevocationStatusList(revRegDefId, tsBeforeStatusListEntryDate);
+      expect(statusList.revocationStatusList?.revRegDefId).toBe(revRegDefId);
+      expect(statusList.revocationStatusList?.revocationList[0]).toEqual(0);
+      expect(statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(statusList.revocationStatusList?.revocationList[9]).toEqual(0);
+    });
 
     it('should resolve a revocation status list when valid id is passed and return status list on first entries commit', async () => {
-      const statusList = await anoncredsRegistry.getRevocationStatusList(revRegDefId, tsFirstStatusListEntryDate)
-      expect(statusList.revocationStatusList?.revRegDefId).toBe(revRegDefId)
-      expect(statusList.revocationStatusList?.revocationList[0]).toEqual(0)
-      expect(statusList.revocationStatusList?.revocationList[5]).toEqual(0)
-      expect(statusList.revocationStatusList?.revocationList[9]).toEqual(0)
-    })
+      const statusList = await anoncredsRegistry.getRevocationStatusList(revRegDefId, tsFirstStatusListEntryDate);
+      expect(statusList.revocationStatusList?.revRegDefId).toBe(revRegDefId);
+      expect(statusList.revocationStatusList?.revocationList[0]).toEqual(0);
+      expect(statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(statusList.revocationStatusList?.revocationList[9]).toEqual(0);
+    });
 
     it('should resolve a revocation status list when valid id is passed and return actual status list on between first and last entry date', async () => {
-      const statusList = await anoncredsRegistry.getRevocationStatusList(revRegDefId, tsBetweenStatusListEntryDate)
-      expect(statusList.revocationStatusList?.revRegDefId).toBe(revRegDefId)
-      expect(statusList.revocationStatusList?.revocationList[0]).toEqual(0)
-      expect(statusList.revocationStatusList?.revocationList[5]).toEqual(0)
-      expect(statusList.revocationStatusList?.revocationList[9]).toEqual(0)
-    })
+      const statusList = await anoncredsRegistry.getRevocationStatusList(revRegDefId, tsBetweenStatusListEntryDate);
+      expect(statusList.revocationStatusList?.revRegDefId).toBe(revRegDefId);
+      expect(statusList.revocationStatusList?.revocationList[0]).toEqual(0);
+      expect(statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(statusList.revocationStatusList?.revocationList[9]).toEqual(0);
+    });
 
     it('should resolve a revocation status list when valid id is passed and return actual status list on last entry date', async () => {
-      const statusList = await anoncredsRegistry.getRevocationStatusList(revRegDefId, tsLastStatusListEntryDate)
-      expect(statusList.revocationStatusList?.revRegDefId).toBe(revRegDefId)
-      expect(statusList.revocationStatusList?.revocationList[0]).toEqual(1)
-      expect(statusList.revocationStatusList?.revocationList[5]).toEqual(0)
-      expect(statusList.revocationStatusList?.revocationList[9]).toEqual(1)
-    })
+      const statusList = await anoncredsRegistry.getRevocationStatusList(revRegDefId, tsLastStatusListEntryDate);
+      expect(statusList.revocationStatusList?.revRegDefId).toBe(revRegDefId);
+      expect(statusList.revocationStatusList?.revocationList[0]).toEqual(1);
+      expect(statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(statusList.revocationStatusList?.revocationList[9]).toEqual(1);
+    });
 
     it('should resolve a revocation status list when valid id is passed and return actual status list on current date', async () => {
-      const statusList = await anoncredsRegistry.getRevocationStatusList(revRegDefId, Math.floor(Date.now() / 1000))
-      expect(statusList.revocationStatusList?.revRegDefId).toBe(revRegDefId)
-      expect(statusList.revocationStatusList?.revocationList[0]).toEqual(1)
-      expect(statusList.revocationStatusList?.revocationList[5]).toEqual(0)
-      expect(statusList.revocationStatusList?.revocationList[9]).toEqual(1)
-    })
+      const statusList = await anoncredsRegistry.getRevocationStatusList(revRegDefId, Math.floor(Date.now() / 1000));
+      expect(statusList.revocationStatusList?.revRegDefId).toBe(revRegDefId);
+      expect(statusList.revocationStatusList?.revocationList[0]).toEqual(1);
+      expect(statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(statusList.revocationStatusList?.revocationList[9]).toEqual(1);
+    });
 
     it('test the cache using', async () => {
       if (!TEST_WITH_CACHE) {
-        logger.info('The test skipped because the cache is not used')
-        return
+        logger.info('The test skipped because the cache is not used');
+        return;
       }
 
-      await cache.cleanup()
+      await cache.cleanup();
 
       const step = async (
         timestamp: number
-      ): Promise<{ duration: number; statusList: GetRevocationStatusListReturn }> => {
-        const start = performance.now()
-        const statusList = await anoncredsRegistry.getRevocationStatusList(revRegDefId, timestamp)
+      ): Promise<{
+        duration: number;
+        statusList: GetRevocationStatusListReturn;
+      }> => {
+        const start = performance.now();
+        const statusList = await anoncredsRegistry.getRevocationStatusList(revRegDefId, timestamp);
         return {
           statusList,
           duration: performance.now() - start,
-        }
-      }
+        };
+      };
 
-      let stepResult = await step(tsBeforeStatusListEntryDate)
-      expect(stepResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0)
+      let stepResult = await step(tsBeforeStatusListEntryDate);
+      expect(stepResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0);
 
-      stepResult = await step(tsFirstStatusListEntryDate)
-      expect(stepResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0)
+      stepResult = await step(tsFirstStatusListEntryDate);
+      expect(stepResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0);
 
-      stepResult = await step(tsBetweenStatusListEntryDate)
-      expect(stepResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0)
+      stepResult = await step(tsBetweenStatusListEntryDate);
+      expect(stepResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0);
 
-      stepResult = await step(tsAfterStatusListEntryDate)
-      expect(stepResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(1)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(1)
+      stepResult = await step(tsAfterStatusListEntryDate);
+      expect(stepResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(1);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(1);
 
-      stepResult = await step(tsLastStatusListEntryDate)
-      expect(stepResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(1)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(1)
+      stepResult = await step(tsLastStatusListEntryDate);
+      expect(stepResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(1);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(1);
 
-      stepResult = await step(tsBetweenStatusListEntryDate)
-      expect(stepResult.duration).toBeLessThan(GET_CACHED_DATA_TIMEOUT)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0)
+      stepResult = await step(tsBetweenStatusListEntryDate);
+      expect(stepResult.duration).toBeLessThan(GET_CACHED_DATA_TIMEOUT);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0);
 
-      stepResult = await step(tsFirstStatusListEntryDate)
-      expect(stepResult.duration).toBeLessThan(GET_CACHED_DATA_TIMEOUT)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0)
-      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0)
-    })
-  })
-})
+      stepResult = await step(tsFirstStatusListEntryDate);
+      expect(stepResult.duration).toBeLessThan(GET_CACHED_DATA_TIMEOUT);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0);
+    });
+  });
+});

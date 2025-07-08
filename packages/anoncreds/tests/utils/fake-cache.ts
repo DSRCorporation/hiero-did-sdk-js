@@ -1,8 +1,3 @@
-interface CacheEntry<CacheValue> {
-  value: CacheValue
-  expiresAt?: number
-}
-
 interface ICache {
   get<CacheValue>(key: string): Promise<CacheValue | null>
   set<CacheValue>(key: string, value: CacheValue, expiresInSeconds?: number): Promise<void>
@@ -13,15 +8,26 @@ interface ICache {
 }
 
 export class FakeCache implements ICache {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async get<CacheValue>(key: string): Promise<CacheValue | null> {
-    return null
+    return new Promise(() => null)
   }
 
-  async set<CacheValue>(key: string, value: CacheValue, expiresInSeconds?: number): Promise<void> {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  set<CacheValue>(key: string, value: CacheValue, expiresInSeconds?: number): Promise<void> {
+    throw new Error('Method not implemented.')
+  }
 
-  async remove(key: string): Promise<void> {}
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  remove(key: string): Promise<void> {
+    throw new Error('Method not implemented.')
+  }
 
-  async cleanup(): Promise<void> {}
+  cleanup(): Promise<void> {
+    throw new Error('Method not implemented.')
+  }
 
-  async cleanupExpired(): Promise<void> {}
+  cleanupExpired(): Promise<void> {
+    throw new Error('Method not implemented.')
+  }
 }

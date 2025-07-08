@@ -7,15 +7,19 @@ export class Zstd {
   private static detectZstdModule(): ZstdModule {
     // 1. Try to use react-native-zstd (React Native ZSTD)
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const rnZstd = require('react-native-zstd')
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
       if (rnZstd.compress) return rnZstd
-    } catch {}
+    } catch { /* empty */ }
 
     // 2. Try to use Node.js zstd-napi
     try {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const nodeZstd = require('zstd-napi')
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
       if (nodeZstd.compress) return nodeZstd
-    } catch {}
+    } catch { /* empty */ }
 
     throw new Error('No compatible zstd module found')
   }

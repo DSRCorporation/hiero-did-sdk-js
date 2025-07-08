@@ -1,4 +1,4 @@
-import { AnonCredsCredentialDefinition } from '../specification'
+import { AnonCredsCredentialDefinition } from '../specification';
 import {
   AnonCredsOperationStateAction,
   AnonCredsOperationStateFailed,
@@ -6,41 +6,41 @@ import {
   AnonCredsOperationStateWait,
   AnonCredsResolutionMetadata,
   Extensible,
-} from './base'
+} from './base';
 
 export interface GetCredentialDefinitionReturn {
-  credentialDefinition?: AnonCredsCredentialDefinition
-  credentialDefinitionId: string
-  resolutionMetadata: AnonCredsResolutionMetadata
-  credentialDefinitionMetadata: Extensible
+  credentialDefinition?: AnonCredsCredentialDefinition;
+  credentialDefinitionId: string;
+  resolutionMetadata: AnonCredsResolutionMetadata;
+  credentialDefinitionMetadata: Extensible;
 }
 export interface RegisterCredentialDefinitionOptions {
-  credentialDefinition: AnonCredsCredentialDefinition
-  options: Extensible
+  credentialDefinition: AnonCredsCredentialDefinition;
+  options: Extensible;
 }
 export interface RegisterCredentialDefinitionReturnStateFailed extends AnonCredsOperationStateFailed {
-  credentialDefinition?: AnonCredsCredentialDefinition
-  credentialDefinitionId?: string
+  credentialDefinition?: AnonCredsCredentialDefinition;
+  credentialDefinitionId?: string;
 }
 export interface RegisterCredentialDefinitionReturnStateFinished extends AnonCredsOperationStateFinished {
-  credentialDefinition: AnonCredsCredentialDefinition
-  credentialDefinitionId: string
+  credentialDefinition: AnonCredsCredentialDefinition;
+  credentialDefinitionId: string;
 }
 export interface RegisterCredentialDefinitionReturnStateWait extends AnonCredsOperationStateWait {
-  credentialDefinition?: AnonCredsCredentialDefinition
-  credentialDefinitionId?: string
+  credentialDefinition?: AnonCredsCredentialDefinition;
+  credentialDefinitionId?: string;
 }
 export interface RegisterCredentialDefinitionReturnStateAction extends AnonCredsOperationStateAction {
-  credentialDefinitionId: string
-  credentialDefinition: AnonCredsCredentialDefinition
+  credentialDefinitionId: string;
+  credentialDefinition: AnonCredsCredentialDefinition;
 }
 export interface RegisterCredentialDefinitionReturn {
-  jobId?: string
+  jobId?: string;
   credentialDefinitionState:
     | RegisterCredentialDefinitionReturnStateWait
     | RegisterCredentialDefinitionReturnStateAction
     | RegisterCredentialDefinitionReturnStateFinished
-    | RegisterCredentialDefinitionReturnStateFailed
-  credentialDefinitionMetadata: Extensible
-  registrationMetadata: Extensible
+    | RegisterCredentialDefinitionReturnStateFailed;
+  credentialDefinitionMetadata: Extensible;
+  registrationMetadata: Extensible;
 }

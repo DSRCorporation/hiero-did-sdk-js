@@ -39,7 +39,9 @@
     "clean": "rimraf ./dist",
     "compile": "tsup",
     "test": "jest",
-    "build": "pnpm run clean && pnpm run compile"
+    "build": "pnpm run clean && pnpm run compile",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/*.ts\"",
+    "format-check": "prettier --check \"src/*.ts\" \"tests/*.ts\""
   },
   "dependencies": {
     "crypto": "^1.0.1",

@@ -1,13 +1,13 @@
 export interface RevocationRegistryEntryMessageWrapper {
-  payload: string
+  payload: string;
 }
 
 export interface RevocationRegistryEntryMessage {
-  ver?: string
+  ver?: string;
   value?: {
-    accum?: string
-    prevAccum?: string
-    issued?: number[]
-    revoked?: number[]
-  }
+    accum?: string;
+    prevAccum?: string;
+    issued?: number[];
+    revoked?: number[];
+  };
 }

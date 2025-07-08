@@ -10,6 +10,9 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "eslint",
+    "lint:fix": "eslint --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"test/*.ts\"",
+    "format-check": "prettier --check \"src/*.ts\" \"test/*.ts\"",
     "release": "pnpm build && pnpm changeset publish --no-git-tag",
     "changeset-version": "pnpm changeset version && pnpm style:fix",
     "examples:run": "tsx --env-file examples/.env"

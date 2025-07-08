@@ -46,7 +46,7 @@ jest.mock('./../src/hcs/hcs-file-service', () => ({
 }))
 
 describe('Hedera HCS networks', () => {
-  it('Init library with empty networks', async () => {
+  it('Init library with empty networks', () => {
     expect(() => {
       new HederaHcsService({
         networks: [],
@@ -54,7 +54,7 @@ describe('Hedera HCS networks', () => {
     }).toThrow('Networks should be defined.')
   })
 
-  it('Init library with not unique network names', async () => {
+  it('Init library with not unique network names', () => {
     expect(() => {
       new HederaHcsService({
         networks: [
@@ -246,8 +246,6 @@ describe('Hedera HCS networks', () => {
   })
 
   it('Using many networks with incorrect required network name', async () => {
-    const _networkName = 'custom-net'
-
     const ledgerService = new HederaHcsService({
       networks: [
         { network: 'testnet', operatorId, operatorKey },

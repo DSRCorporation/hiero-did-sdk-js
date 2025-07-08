@@ -6,7 +6,7 @@ const config: Config = {
   ...baseConfig,
   displayName: '@hiero-did-sdk/anoncreds',
   rootDir: '../..',
-  testMatch: [`<rootDir>/packages/anoncreds/**/*.test.ts`]
+  testMatch: [`<rootDir>/packages/anoncreds/**/*.test.ts`],
 }
 
 export default config

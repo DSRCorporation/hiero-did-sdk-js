@@ -16,19 +16,19 @@ export class ConsoleLogger {
     this.logLevel = logLevel ?? LogLevel.off
   }
 
-  public test = (message: string, data?: Record<string, any>) => this.write(LogLevel.test, message, data)
-  public trace = (message: string, data?: Record<string, any>) => this.write(LogLevel.trace, message, data)
-  public debug = (message: string, data?: Record<string, any>) => this.write(LogLevel.debug, message, data)
-  public info = (message: string, data?: Record<string, any>) => this.write(LogLevel.info, message, data)
-  public warn = (message: string, data?: Record<string, any>) => this.write(LogLevel.warn, message, data)
-  public error = (message: string, data?: Record<string, any>) => this.write(LogLevel.error, message, data)
-  public fatal = (message: string, data?: Record<string, any>) => this.write(LogLevel.fatal, message, data)
+  public test = <T>(message: string, data?: Record<string, T>) => this.write(LogLevel.test, message, data)
+  public trace = <T>(message: string, data?: Record<string, T>) => this.write(LogLevel.trace, message, data)
+  public debug = <T>(message: string, data?: Record<string, T>) => this.write(LogLevel.debug, message, data)
+  public info = <T>(message: string, data?: Record<string, T>) => this.write(LogLevel.info, message, data)
+  public warn = <T>(message: string, data?: Record<string, T>) => this.write(LogLevel.warn, message, data)
+  public error = <T>(message: string, data?: Record<string, T>) => this.write(LogLevel.error, message, data)
+  public fatal = <T>(message: string, data?: Record<string, T>) => this.write(LogLevel.fatal, message, data)
 
   private isEnabled(logLevel: LogLevel): boolean {
     return this.logLevel <= logLevel
   }
 
-  public write(logLevel: LogLevel, message: string, data?: Record<string, any>): void {
+  public write<T>(logLevel: LogLevel, message: string, data?: Record<string, T>): void {
     if (!this.isEnabled(logLevel)) return
     //console.log(message, JSON.stringify(data, null, 2))
     console.log(message, JSON.stringify(data))
