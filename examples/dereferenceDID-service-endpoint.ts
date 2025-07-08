@@ -13,7 +13,7 @@ async function main() {
   try {
     const serviceEndpoint = await dereferenceDID(
       didUrl,
-      'application/ld+json;profile="https://w3id.org/did-resolution"',
+      'application/ld+json;profile="https://w3id.org/did-resolution"'
     );
     console.log(serviceEndpoint);
   } catch (error) {

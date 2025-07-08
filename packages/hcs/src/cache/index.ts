@@ -1,1 +1,1 @@
-export * from './hcs-cache-service'
+export * from './hcs-cache-service';

@@ -8,9 +8,7 @@ import { isObject, isString } from './base';
  * @param eventObject The object to check
  * @returns True if the object is a RemoveServiceEvent, false otherwise
  */
-export function isRemoveServiceEvent(
-  eventObject: unknown,
-): eventObject is RemoveServiceEvent {
+export function isRemoveServiceEvent(eventObject: unknown): eventObject is RemoveServiceEvent {
   if (!isObject(eventObject)) {
     return false;
   }
@@ -25,11 +23,7 @@ export function isRemoveServiceEvent(
     return false;
   }
 
-  if (
-    !('id' in Service) ||
-    !isString(Service.id) ||
-    !isHederaDIDUrl(Service.id)
-  ) {
+  if (!('id' in Service) || !isString(Service.id) || !isHederaDIDUrl(Service.id)) {
     return false;
   }
 

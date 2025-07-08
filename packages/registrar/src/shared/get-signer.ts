@@ -12,11 +12,7 @@ import { PrivateKey } from '@hashgraph/sdk';
  * @throws If no signer or private key is provided and `autoCreate` is false
  * @returns The signer instance
  */
-export function getSigner(
-  signer?: Signer,
-  privateKey?: string | PrivateKey,
-  autoCreate = false,
-): Signer {
+export function getSigner(signer?: Signer, privateKey?: string | PrivateKey, autoCreate = false): Signer {
   if (signer) {
     return signer;
   }
@@ -26,10 +22,7 @@ export function getSigner(
   }
 
   if (!autoCreate) {
-    throw new DIDError(
-      'invalidArgument',
-      'Signer or private key is required to perform the operation',
-    );
+    throw new DIDError('invalidArgument', 'Signer or private key is required to perform the operation');
   }
 
   return InternalSigner.generate();

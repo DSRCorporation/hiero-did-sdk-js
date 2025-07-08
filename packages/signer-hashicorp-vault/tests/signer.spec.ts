@@ -40,10 +40,7 @@ describe('Vault Signer', () => {
     const receivedSignature = await signer.sign(message);
 
     expect(receivedSignature).toEqual(signature);
-    expect(clientApi.signMock).toHaveBeenCalledWith(
-      'test-key',
-      message.toString('base64'),
-    );
+    expect(clientApi.signMock).toHaveBeenCalledWith('test-key', message.toString('base64'));
   });
 
   it('should verify a signature', async () => {
@@ -64,7 +61,7 @@ describe('Vault Signer', () => {
     expect(clientApi.verifyMock).toHaveBeenCalledWith(
       'test-key',
       message.toString('base64'),
-      signature.toString('base64'),
+      signature.toString('base64')
     );
   });
 });

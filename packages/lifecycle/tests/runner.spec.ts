@@ -84,7 +84,7 @@ describe('Lifecycle runner class', () => {
           args: {
             verifier,
           },
-        },
+        }
       );
 
       expect(signWithMock).toHaveBeenCalledTimes(1);
@@ -102,7 +102,7 @@ describe('Lifecycle runner class', () => {
       await expect(
         runner.process({} as never, {
           publisher,
-        }),
+        })
       ).rejects.toThrow('Signer and verifier are required for the sign step');
     });
 
@@ -128,7 +128,7 @@ describe('Lifecycle runner class', () => {
             signature,
             verifier,
           },
-        },
+        }
       );
 
       expect(setSignatureMock).toHaveBeenCalledTimes(1);
@@ -152,11 +152,9 @@ describe('Lifecycle runner class', () => {
           } as never,
           {
             publisher,
-          },
-        ),
-      ).rejects.toThrow(
-        'Signature and verifier are required for the signature step',
-      );
+          }
+        )
+      ).rejects.toThrow('Signature and verifier are required for the signature step');
     });
 
     it('should be able to process pause step', async () => {
@@ -228,7 +226,7 @@ describe('Lifecycle runner class', () => {
       await expect(
         runner.process({} as never, {
           publisher,
-        }),
+        })
       ).rejects.toThrow(error);
     });
   });
@@ -240,10 +238,7 @@ describe('Lifecycle runner class', () => {
     const step1Callback = jest.fn();
     const step2Callback = jest.fn();
 
-    builder
-      .callback('s1', step1Callback)
-      .pause('s2')
-      .callback('s3', step2Callback);
+    builder.callback('s1', step1Callback).pause('s2').callback('s3', step2Callback);
 
     const state = await runner.process({} as never, {
       publisher,
@@ -274,10 +269,7 @@ describe('Lifecycle runner class', () => {
     const step1Callback = jest.fn();
     const step2Callback = jest.fn();
 
-    builder
-      .callback('s1', step1Callback)
-      .pause('s2')
-      .callback('s3', step2Callback);
+    builder.callback('s1', step1Callback).pause('s2').callback('s3', step2Callback);
 
     const context = {
       foo: 'bar',
@@ -316,10 +308,7 @@ describe('Lifecycle runner class', () => {
     const step1Callback = jest.fn();
     const step2Callback = jest.fn();
 
-    builder
-      .pause('s1')
-      .callback('s2', step1Callback)
-      .callback('s3', step2Callback);
+    builder.pause('s1').callback('s2', step1Callback).callback('s3', step2Callback);
 
     const state = await runner.process({} as never, {
       publisher,
@@ -358,9 +347,7 @@ describe('Lifecycle runner class', () => {
 
     expect(hookFunction).toHaveBeenCalledTimes(1);
 
-    expect(callbackFunction.mock.invocationCallOrder[0]).toBeLessThan(
-      hookFunction.mock.invocationCallOrder[0],
-    );
+    expect(callbackFunction.mock.invocationCallOrder[0]).toBeLessThan(hookFunction.mock.invocationCallOrder[0]);
   });
 
   it('should call a hook with pause step in correct order', async () => {
@@ -370,10 +357,7 @@ describe('Lifecycle runner class', () => {
     const callbackFunction = jest.fn();
     const hookFunction = jest.fn();
 
-    builder
-      .callback('s1', callbackFunction)
-      .pause('s2')
-      .callback('s3', callbackFunction);
+    builder.callback('s1', callbackFunction).pause('s2').callback('s3', callbackFunction);
 
     runner.onComplete('s2', hookFunction);
 
@@ -387,12 +371,8 @@ describe('Lifecycle runner class', () => {
 
     expect(hookFunction).toHaveBeenCalledTimes(1);
 
-    expect(callbackFunction.mock.invocationCallOrder[0]).toBeLessThan(
-      hookFunction.mock.invocationCallOrder[0],
-    );
+    expect(callbackFunction.mock.invocationCallOrder[0]).toBeLessThan(hookFunction.mock.invocationCallOrder[0]);
 
-    expect(hookFunction.mock.invocationCallOrder[0]).toBeLessThan(
-      callbackFunction.mock.invocationCallOrder[1],
-    );
+    expect(hookFunction.mock.invocationCallOrder[0]).toBeLessThan(callbackFunction.mock.invocationCallOrder[1]);
   });
 });

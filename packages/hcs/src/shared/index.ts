@@ -1,1 +1,1 @@
-export * from './changes-awaiter'
+export * from './changes-awaiter';

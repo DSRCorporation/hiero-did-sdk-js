@@ -6,9 +6,9 @@
 export async function waitChangesVisibility<T>(options: {
   fetchFn: () => Promise<T>;
   checkFn: (item: T) => boolean;
-  waitTimeout?: number;}
-): Promise<boolean> {
-  const { fetchFn, checkFn, waitTimeout} = options
+  waitTimeout?: number;
+}): Promise<boolean> {
+  const { fetchFn, checkFn, waitTimeout } = options;
   const timeout = waitTimeout ?? 5000;
   const interval = 500;
   const startTime = Date.now();
@@ -21,10 +21,12 @@ export async function waitChangesVisibility<T>(options: {
         isChangesAvailable = true;
         break;
       }
-    } catch { /* empty */ }
+    } catch {
+      /* empty */
+    }
 
-    await new Promise(resolve => setTimeout(resolve, interval));
+    await new Promise((resolve) => setTimeout(resolve, interval));
   }
 
-  return isChangesAvailable
+  return isChangesAvailable;
 }

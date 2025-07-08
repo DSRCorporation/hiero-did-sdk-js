@@ -1,8 +1,8 @@
-import { PrivateKey, Timestamp } from '@hashgraph/sdk'
-import { HederaHcsService } from '../src/hedera-hcs-service'
+import { PrivateKey, Timestamp } from '@hashgraph/sdk';
+import { HederaHcsService } from '../src/hedera-hcs-service';
 
-const operatorId = process.env.HEDERA_TESTNET_OPERATOR_ID ?? ''
-const operatorKey = process.env.HEDERA_TESTNET_OPERATOR_KEY ?? ''
+const operatorId = process.env.HEDERA_TESTNET_OPERATOR_ID ?? '';
+const operatorKey = process.env.HEDERA_TESTNET_OPERATOR_KEY ?? '';
 
 jest.mock('./../src/hcs/hcs-topic-service', () => ({
   HcsTopicService: jest.fn().mockImplementation(() => ({
@@ -16,7 +16,7 @@ jest.mock('./../src/hcs/hcs-topic-service', () => ({
       submitKey: false,
     }),
   })),
-}))
+}));
 
 jest.mock('./../src/hcs/hcs-message-service', () => ({
   HcsMessageService: jest.fn().mockImplementation(() => ({
@@ -36,23 +36,23 @@ jest.mock('./../src/hcs/hcs-message-service', () => ({
       },
     ]),
   })),
-}))
+}));
 
 jest.mock('./../src/hcs/hcs-file-service', () => ({
   HcsFileService: jest.fn().mockImplementation(() => ({
     submitFile: jest.fn().mockReturnValue('MOCK_FILE_TOPIC_ID'),
     resolveFile: jest.fn().mockReturnValue(Buffer.from('MOCK_FILE_CONTENT')),
   })),
-}))
+}));
 
 describe('Hedera HCS networks', () => {
   it('Init library with empty networks', () => {
     expect(() => {
       new HederaHcsService({
         networks: [],
-      })
-    }).toThrow('Networks should be defined.')
-  })
+      });
+    }).toThrow('Networks should be defined.');
+  });
 
   it('Init library with not unique network names', () => {
     expect(() => {
@@ -75,84 +75,84 @@ describe('Hedera HCS networks', () => {
             operatorKey,
           },
         ],
-      })
-    }).toThrow('Network names must be unique.')
-  })
+      });
+    }).toThrow('Network names must be unique.');
+  });
 
   it('Using one network without required network name', async () => {
-    const ledgerService = new HederaHcsService({ networks: [{ network: 'testnet', operatorId, operatorKey }] })
+    const ledgerService = new HederaHcsService({ networks: [{ network: 'testnet', operatorId, operatorKey }] });
 
     // Topic service
-    const createTopicResult = await ledgerService.createTopic()
-    expect(createTopicResult).toBeDefined()
-    const getTopicInfoResult = await ledgerService.getTopicInfo({ topicId: 'topicId' })
-    expect(getTopicInfoResult.topicId).toBeDefined()
+    const createTopicResult = await ledgerService.createTopic();
+    expect(createTopicResult).toBeDefined();
+    const getTopicInfoResult = await ledgerService.getTopicInfo({ topicId: 'topicId' });
+    expect(getTopicInfoResult.topicId).toBeDefined();
     await expect(
       ledgerService.updateTopic({ topicId: 'topicId', currentAdminKey: PrivateKey.fromStringDer(operatorKey) })
-    ).resolves.not.toThrow()
+    ).resolves.not.toThrow();
     await expect(
       ledgerService.deleteTopic({ topicId: 'topicId', currentAdminKey: PrivateKey.fromStringDer(operatorKey) })
-    ).resolves.not.toThrow()
+    ).resolves.not.toThrow();
 
     // Message service
     const submitMessageResult = await ledgerService.submitMessage({
       topicId: 'topicId',
       message: 'message',
-    })
-    expect(submitMessageResult).toBeDefined()
-    const getMessagesResult = await ledgerService.getTopicMessages({ topicId: 'topicId' })
-    expect(getMessagesResult.length).toEqual(2)
+    });
+    expect(submitMessageResult).toBeDefined();
+    const getMessagesResult = await ledgerService.getTopicMessages({ topicId: 'topicId' });
+    expect(getMessagesResult.length).toEqual(2);
 
     // File service
     const submitFileResult = await ledgerService.submitFile({
       payload: Buffer.from('test'),
-    })
-    expect(submitFileResult).toBeDefined()
-    const resolveFileResult = await ledgerService.resolveFile({ topicId: 'topicId' })
-    expect(resolveFileResult).toBeDefined()
-  })
+    });
+    expect(submitFileResult).toBeDefined();
+    const resolveFileResult = await ledgerService.resolveFile({ topicId: 'topicId' });
+    expect(resolveFileResult).toBeDefined();
+  });
 
   it('Using one network with correct required network name', async () => {
-    const networkName = 'testnet'
+    const networkName = 'testnet';
 
-    const ledgerService = new HederaHcsService({ networks: [{ network: networkName, operatorId, operatorKey }] })
+    const ledgerService = new HederaHcsService({ networks: [{ network: networkName, operatorId, operatorKey }] });
 
     // Topic service
-    const createTopicResult = await ledgerService.createTopic({ networkName })
-    expect(createTopicResult).toBeDefined()
-    const getTopicInfoResult = await ledgerService.getTopicInfo({ networkName, topicId: 'topicId' })
-    expect(getTopicInfoResult.topicId).toBeDefined()
+    const createTopicResult = await ledgerService.createTopic({ networkName });
+    expect(createTopicResult).toBeDefined();
+    const getTopicInfoResult = await ledgerService.getTopicInfo({ networkName, topicId: 'topicId' });
+    expect(getTopicInfoResult.topicId).toBeDefined();
 
     // Message service
     const submitMessageResult = await ledgerService.submitMessage({
       networkName,
       topicId: 'topicId',
       message: 'message',
-    })
-    expect(submitMessageResult).toBeDefined()
-    const getMessagesResult = await ledgerService.getTopicMessages({ networkName, topicId: 'topicId' })
-    expect(getMessagesResult.length).toEqual(2)
+    });
+    expect(submitMessageResult).toBeDefined();
+    const getMessagesResult = await ledgerService.getTopicMessages({ networkName, topicId: 'topicId' });
+    expect(getMessagesResult.length).toEqual(2);
 
     // File service
     const submitFileResult = await ledgerService.submitFile({
       networkName,
       payload: Buffer.from('test'),
-    })
-    expect(submitFileResult).toBeDefined()
-    const resolveFileResult = await ledgerService.resolveFile({ networkName, topicId: 'topicId' })
-    expect(resolveFileResult).toBeDefined()
-  })
+    });
+    expect(submitFileResult).toBeDefined();
+    const resolveFileResult = await ledgerService.resolveFile({ networkName, topicId: 'topicId' });
+    expect(resolveFileResult).toBeDefined();
+  });
 
   it('Using one network with incorrect required network name', async () => {
-    const networkName = 'custom-net'
+    const networkName = 'custom-net';
 
-    const ledgerService = new HederaHcsService({ networks: [{ network: 'testnet', operatorId, operatorKey }] })
+    const ledgerService = new HederaHcsService({ networks: [{ network: 'testnet', operatorId, operatorKey }] });
 
     // Topic service
-    await expect(ledgerService.createTopic({ networkName })).rejects.toThrow('Unknown Hedera network')
+    await expect(ledgerService.createTopic({ networkName })).rejects.toThrow('Unknown Hedera network');
     await expect(ledgerService.getTopicInfo({ networkName, topicId: 'topicId' })).rejects.toThrow(
       'Unknown Hedera network'
-    )
+    );
 
     // Message service
     await expect(
@@ -161,10 +161,10 @@ describe('Hedera HCS networks', () => {
         topicId: 'topicId',
         message: 'message',
       })
-    ).rejects.toThrow('Unknown Hedera network')
+    ).rejects.toThrow('Unknown Hedera network');
     await expect(ledgerService.getTopicMessages({ networkName, topicId: 'topicId' })).rejects.toThrow(
       'Unknown Hedera network'
-    )
+    );
 
     // File service
     await expect(
@@ -172,11 +172,11 @@ describe('Hedera HCS networks', () => {
         networkName,
         payload: Buffer.from('test'),
       })
-    ).rejects.toThrow('Unknown Hedera network')
+    ).rejects.toThrow('Unknown Hedera network');
     await expect(ledgerService.resolveFile({ networkName, topicId: 'topicId' })).rejects.toThrow(
       'Unknown Hedera network'
-    )
-  })
+    );
+  });
 
   it('Using many networks without required network name', async () => {
     const ledgerService = new HederaHcsService({
@@ -184,11 +184,11 @@ describe('Hedera HCS networks', () => {
         { network: 'testnet', operatorId, operatorKey },
         { network: 'previewnet', operatorId, operatorKey },
       ],
-    })
+    });
 
     // Topic service
-    await expect(ledgerService.createTopic()).rejects.toThrow('Unknown Hedera network')
-    await expect(ledgerService.getTopicInfo({ topicId: 'topicId' })).rejects.toThrow('Unknown Hedera network')
+    await expect(ledgerService.createTopic()).rejects.toThrow('Unknown Hedera network');
+    await expect(ledgerService.getTopicInfo({ topicId: 'topicId' })).rejects.toThrow('Unknown Hedera network');
 
     // Message service
     await expect(
@@ -196,33 +196,33 @@ describe('Hedera HCS networks', () => {
         topicId: 'topicId',
         message: 'message',
       })
-    ).rejects.toThrow('Unknown Hedera network')
-    await expect(ledgerService.getTopicMessages({ topicId: 'topicId' })).rejects.toThrow('Unknown Hedera network')
+    ).rejects.toThrow('Unknown Hedera network');
+    await expect(ledgerService.getTopicMessages({ topicId: 'topicId' })).rejects.toThrow('Unknown Hedera network');
 
     // File service
     await expect(
       ledgerService.submitFile({
         payload: Buffer.from('test'),
       })
-    ).rejects.toThrow('Unknown Hedera network')
-    await expect(ledgerService.resolveFile({ topicId: 'topicId' })).rejects.toThrow('Unknown Hedera network')
-  })
+    ).rejects.toThrow('Unknown Hedera network');
+    await expect(ledgerService.resolveFile({ topicId: 'topicId' })).rejects.toThrow('Unknown Hedera network');
+  });
 
   it('Using many networks with correct required network name', async () => {
-    const networkName = 'testnet'
+    const networkName = 'testnet';
 
     const ledgerService = new HederaHcsService({
       networks: [
         { network: 'testnet', operatorId, operatorKey },
         { network: 'previewnet', operatorId, operatorKey },
       ],
-    })
+    });
 
     // Topic service
-    const createTopicResult = await ledgerService.createTopic({ networkName })
-    expect(createTopicResult).toBeDefined()
-    const getTopicInfoResult = await ledgerService.getTopicInfo({ networkName, topicId: 'topicId' })
-    expect(getTopicInfoResult.topicId).toBeDefined()
+    const createTopicResult = await ledgerService.createTopic({ networkName });
+    expect(createTopicResult).toBeDefined();
+    const getTopicInfoResult = await ledgerService.getTopicInfo({ networkName, topicId: 'topicId' });
+    expect(getTopicInfoResult.topicId).toBeDefined();
 
     // Message service
     const submitMessageResult = await ledgerService.submitMessage({
@@ -230,20 +230,20 @@ describe('Hedera HCS networks', () => {
       topicId: 'topicId',
       message: 'message',
       //operatorKey: PrivateKey.fromStringDer(operatorKey),
-    })
-    expect(submitMessageResult).toBeDefined()
-    const getMessagesResult = await ledgerService.getTopicMessages({ networkName, topicId: 'topicId' })
-    expect(getMessagesResult.length).toEqual(2)
+    });
+    expect(submitMessageResult).toBeDefined();
+    const getMessagesResult = await ledgerService.getTopicMessages({ networkName, topicId: 'topicId' });
+    expect(getMessagesResult.length).toEqual(2);
 
     // File service
     const submitFileResult = await ledgerService.submitFile({
       networkName,
       payload: Buffer.from('test'),
-    })
-    expect(submitFileResult).toBeDefined()
-    const resolveFileResult = await ledgerService.resolveFile({ networkName, topicId: 'topicId' })
-    expect(resolveFileResult).toBeDefined()
-  })
+    });
+    expect(submitFileResult).toBeDefined();
+    const resolveFileResult = await ledgerService.resolveFile({ networkName, topicId: 'topicId' });
+    expect(resolveFileResult).toBeDefined();
+  });
 
   it('Using many networks with incorrect required network name', async () => {
     const ledgerService = new HederaHcsService({
@@ -251,11 +251,11 @@ describe('Hedera HCS networks', () => {
         { network: 'testnet', operatorId, operatorKey },
         { network: 'previewnet', operatorId, operatorKey },
       ],
-    })
+    });
 
     // Topic service
-    await expect(ledgerService.createTopic()).rejects.toThrow('Unknown Hedera network')
-    await expect(ledgerService.getTopicInfo({ topicId: 'topicId' })).rejects.toThrow('Unknown Hedera network')
+    await expect(ledgerService.createTopic()).rejects.toThrow('Unknown Hedera network');
+    await expect(ledgerService.getTopicInfo({ topicId: 'topicId' })).rejects.toThrow('Unknown Hedera network');
 
     // Message service
     await expect(
@@ -263,15 +263,15 @@ describe('Hedera HCS networks', () => {
         topicId: 'topicId',
         message: 'message',
       })
-    ).rejects.toThrow('Unknown Hedera network')
-    await expect(ledgerService.getTopicMessages({ topicId: 'topicId' })).rejects.toThrow('Unknown Hedera network')
+    ).rejects.toThrow('Unknown Hedera network');
+    await expect(ledgerService.getTopicMessages({ topicId: 'topicId' })).rejects.toThrow('Unknown Hedera network');
 
     // File service
     await expect(
       ledgerService.submitFile({
         payload: Buffer.from('test'),
       })
-    ).rejects.toThrow('Unknown Hedera network')
-    await expect(ledgerService.resolveFile({ topicId: 'topicId' })).rejects.toThrow('Unknown Hedera network')
-  })
-})
+    ).rejects.toThrow('Unknown Hedera network');
+    await expect(ledgerService.resolveFile({ topicId: 'topicId' })).rejects.toThrow('Unknown Hedera network');
+  });
+});

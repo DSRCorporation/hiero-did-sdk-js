@@ -23,17 +23,14 @@ export function getPublisher(providers: Providers): Publisher {
   }
 
   if (!providers.clientOptions) {
-    throw new DIDError(
-      'invalidArgument',
-      'Providers must contain client options or client or publisher',
-    );
+    throw new DIDError('invalidArgument', 'Providers must contain client options or client or publisher');
   }
 
   const clientOptions = providers.clientOptions;
 
   const client = Client.forName(providers.clientOptions.network).setOperator(
     clientOptions.accountId,
-    clientOptions.privateKey,
+    clientOptions.privateKey
   );
 
   return new InternalPublisher(client);

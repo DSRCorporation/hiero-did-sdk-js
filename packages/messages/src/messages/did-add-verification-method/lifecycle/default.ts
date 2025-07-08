@@ -7,16 +7,8 @@ export const DIDAddVerificationMethodMessageHederaDefaultLifeCycle =
   new LifecycleBuilder<DIDAddVerificationMethodMessage>()
     .signWithSigner('signature')
     .pause('pause')
-    .callback(
-      'publish-message',
-      async (
-        message: DIDAddVerificationMethodMessage,
-        publisher: Publisher,
-      ) => {
-        await publisher.publish(
-          new TopicMessageSubmitTransaction()
-            .setTopicId(message.topicId)
-            .setMessage(message.payload),
-        );
-      },
-    );
+    .callback('publish-message', async (message: DIDAddVerificationMethodMessage, publisher: Publisher) => {
+      await publisher.publish(
+        new TopicMessageSubmitTransaction().setTopicId(message.topicId).setMessage(message.payload)
+      );
+    });

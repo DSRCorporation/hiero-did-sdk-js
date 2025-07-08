@@ -7,51 +7,51 @@ import {
   TopicMessageQuery,
   TopicMessageSubmitTransaction,
 } from '@hashgraph/sdk';
-import { HcsCacheService } from '../cache'
+import { HcsCacheService } from '../cache';
 import { CacheConfig } from '../hedera-hcs-service.configuration';
 import { Cache } from '@hiero-did-sdk/core';
 import { waitChangesVisibility } from '../shared';
 
-const DEFAULT_TIMEOUT_SECONDS = 2
+const DEFAULT_TIMEOUT_SECONDS = 2;
 
 export interface SubmitMessageProps {
-  topicId: string
-  message: string
-  submitKey?: PrivateKey
-  waitChangesVisibility?: boolean
-  waitChangesVisibilityTimeout?: number
+  topicId: string;
+  message: string;
+  submitKey?: PrivateKey;
+  waitChangesVisibility?: boolean;
+  waitChangesVisibilityTimeout?: number;
 }
 
 export interface SubmitMessageResult {
-  nodeId: string
-  transactionId: string
-  transactionHash: Uint8Array
+  nodeId: string;
+  transactionId: string;
+  transactionHash: Uint8Array;
 }
 
 export interface GetTopicMessagesProps {
-  topicId: string
-  maxWaitSeconds?: number
-  toDate?: Date
-  limit?: number
+  topicId: string;
+  maxWaitSeconds?: number;
+  toDate?: Date;
+  limit?: number;
 }
 
 type ReadTopicMessagesProps = GetTopicMessagesProps & {
-  fromDate?: Date
-}
+  fromDate?: Date;
+};
 
 export interface TopicMessageData {
-  consensusTime: Date
-  contents: Uint8Array
+  consensusTime: Date;
+  contents: Uint8Array;
 }
 
 export class HcsMessageService {
-  private readonly cacheService?: HcsCacheService
+  private readonly cacheService?: HcsCacheService;
 
   constructor(
     private readonly client: Client,
     cache?: CacheConfig | Cache | HcsCacheService
   ) {
-      this.cacheService = cache ? (cache instanceof HcsCacheService ? cache : new HcsCacheService(cache)) : undefined
+    this.cacheService = cache ? (cache instanceof HcsCacheService ? cache : new HcsCacheService(cache)) : undefined;
   }
 
   /**
@@ -61,34 +61,34 @@ export class HcsMessageService {
   public async submitMessage(props: SubmitMessageProps): Promise<SubmitMessageResult> {
     const startFrom = new Date(Date.now() - 1000);
 
-    const transaction = new TopicMessageSubmitTransaction().setTopicId(props.topicId).setMessage(props.message)
+    const transaction = new TopicMessageSubmitTransaction().setTopicId(props.topicId).setMessage(props.message);
 
-    const frozenTransaction = transaction.freezeWith(this.client)
+    const frozenTransaction = transaction.freezeWith(this.client);
 
-    if (props?.submitKey) await frozenTransaction.sign(props.submitKey)
+    if (props?.submitKey) await frozenTransaction.sign(props.submitKey);
 
-    const response = await frozenTransaction.execute(this.client)
+    const response = await frozenTransaction.execute(this.client);
 
-    const receipt = await response.getReceipt(this.client)
+    const receipt = await response.getReceipt(this.client);
     if (receipt.status !== Status.Success) {
-      throw new Error(`Message submit transaction failed: ${receipt.status.toString()}`)
+      throw new Error(`Message submit transaction failed: ${receipt.status.toString()}`);
     }
 
-    await this.cacheService?.removeTopicMessages(this.client, props.topicId)
+    await this.cacheService?.removeTopicMessages(this.client, props.topicId);
 
     if (props?.waitChangesVisibility) {
       await waitChangesVisibility<string[]>({
-        fetchFn: () => this.getNewMessages({topicId: props.topicId, startFrom}),
+        fetchFn: () => this.getNewMessages({ topicId: props.topicId, startFrom }),
         checkFn: (messages) => messages.indexOf(props.message) >= 0,
-        waitTimeout: props?.waitChangesVisibilityTimeout
-      })
+        waitTimeout: props?.waitChangesVisibilityTimeout,
+      });
     }
 
     return {
       nodeId: response.nodeId.toString(),
       transactionId: response.transactionId.toString(),
       transactionHash: response.transactionHash,
-    }
+    };
   }
 
   /**
@@ -96,27 +96,27 @@ export class HcsMessageService {
    * @param props
    */
   public async getTopicMessages(props: GetTopicMessagesProps): Promise<TopicMessageData[]> {
-    let currentCachedMessages = (await this.cacheService?.getTopicMessages(this.client, props.topicId)) ?? []
+    let currentCachedMessages = (await this.cacheService?.getTopicMessages(this.client, props.topicId)) ?? [];
 
     const lastCachedMessage =
-      currentCachedMessages.length > 0 ? currentCachedMessages[currentCachedMessages.length - 1] : undefined
+      currentCachedMessages.length > 0 ? currentCachedMessages[currentCachedMessages.length - 1] : undefined;
 
-    const lastCachedMessageDate = lastCachedMessage ? lastCachedMessage.consensusTime : new Date(0)
-    const borderlineDate = new Date((props.toDate ? props.toDate : new Date()).getTime() + 1) // +1ms to remove the influence of nanoseconds
+    const lastCachedMessageDate = lastCachedMessage ? lastCachedMessage.consensusTime : new Date(0);
+    const borderlineDate = new Date((props.toDate ? props.toDate : new Date()).getTime() + 1); // +1ms to remove the influence of nanoseconds
 
     if (lastCachedMessageDate < borderlineDate) {
       const messages = await this.readTopicMessages({
         ...props,
         fromDate: lastCachedMessageDate,
         toDate: borderlineDate,
-      })
+      });
       if (messages.length) {
-        currentCachedMessages = this.joinMessages(currentCachedMessages, messages)
-        await this.cacheService?.setTopicMessages(this.client, props.topicId, currentCachedMessages)
+        currentCachedMessages = this.joinMessages(currentCachedMessages, messages);
+        await this.cacheService?.setTopicMessages(this.client, props.topicId, currentCachedMessages);
       }
     }
 
-    return currentCachedMessages.filter((m) => m.consensusTime <= borderlineDate)
+    return currentCachedMessages.filter((m) => m.consensusTime <= borderlineDate);
   }
 
   /**
@@ -125,67 +125,64 @@ export class HcsMessageService {
    * @private
    */
   private async readTopicMessages(props: ReadTopicMessagesProps): Promise<TopicMessageData[]> {
-    const { maxWaitSeconds = DEFAULT_TIMEOUT_SECONDS, fromDate, toDate, limit } = props ?? {}
-    let subscription: SubscriptionHandle
-    const results: TopicMessageData[] = []
+    const { maxWaitSeconds = DEFAULT_TIMEOUT_SECONDS, fromDate, toDate, limit } = props ?? {};
+    let subscription: SubscriptionHandle;
+    const results: TopicMessageData[] = [];
 
     return new Promise((resolve, reject) => {
       const query = new TopicMessageQuery()
         .setTopicId(TopicId.fromString(props.topicId))
         .setMaxAttempts(0)
-        .setStartTime(fromDate ?? 0)
+        .setStartTime(fromDate ?? 0);
 
       if (toDate !== undefined) {
-        query.setEndTime(toDate)
+        query.setEndTime(toDate);
       }
 
       if (limit !== undefined) {
-        query.setLimit(limit)
+        query.setLimit(limit);
       }
 
-      let timeoutId: NodeJS.Timeout | undefined
+      let timeoutId: NodeJS.Timeout | undefined;
 
       const restartTimeout = (interval: number) => {
-        if (timeoutId) clearTimeout(timeoutId)
+        if (timeoutId) clearTimeout(timeoutId);
         timeoutId = setTimeout(() => {
-          clearTimeout(timeoutId)
-          subscription.unsubscribe()
-          resolve(results)
-        }, interval * 500)
-      }
+          clearTimeout(timeoutId);
+          subscription.unsubscribe();
+          resolve(results);
+        }, interval * 500);
+      };
 
-      restartTimeout(2 * maxWaitSeconds)
+      restartTimeout(2 * maxWaitSeconds);
 
       query.setCompletionHandler(() => {
-        clearTimeout(timeoutId)
-        subscription.unsubscribe()
-        resolve(results)
-      })
+        clearTimeout(timeoutId);
+        subscription.unsubscribe();
+        resolve(results);
+      });
 
       subscription = query.subscribe(
         this.client,
         (_message, error) => {
           if (error) {
-            if (timeoutId) clearTimeout(timeoutId)
-            subscription.unsubscribe()
+            if (timeoutId) clearTimeout(timeoutId);
+            subscription.unsubscribe();
 
-            if (
-              error instanceof Error &&
-              error.message.startsWith('5 NOT_FOUND:')
-            ) {
+            if (error instanceof Error && error.message.startsWith('5 NOT_FOUND:')) {
               resolve(results);
               return;
             }
 
-            reject(error)
+            reject(error);
           }
         },
         (message) => {
-          if (message) results.push({ consensusTime: message.consensusTimestamp.toDate(), contents: message.contents })
-          restartTimeout(maxWaitSeconds)
+          if (message) results.push({ consensusTime: message.consensusTimestamp.toDate(), contents: message.contents });
+          restartTimeout(maxWaitSeconds);
         }
-      )
-    })
+      );
+    });
   }
 
   // todo: double-check and simplify approach
@@ -196,22 +193,22 @@ export class HcsMessageService {
    * @returns The array with joined messages. Messages are unique and sorted by consensus date
    */
   private joinMessages(first: TopicMessageData[], second: TopicMessageData[]): TopicMessageData[] {
-    const messagesMap = new Map<string, TopicMessageData>()
+    const messagesMap = new Map<string, TopicMessageData>();
 
-    const toKey = (msg: TopicMessageData) => `${msg.consensusTime.getTime()}`
+    const toKey = (msg: TopicMessageData) => `${msg.consensusTime.getTime()}`;
 
     for (const msg of first) {
-      messagesMap.set(toKey(msg), msg)
+      messagesMap.set(toKey(msg), msg);
     }
 
     for (const msg of second) {
-      messagesMap.set(toKey(msg), msg)
+      messagesMap.set(toKey(msg), msg);
     }
 
-    const mergedArray = Array.from(messagesMap.values())
-    mergedArray.sort((a, b) => a.consensusTime.getTime() - b.consensusTime.getTime())
+    const mergedArray = Array.from(messagesMap.values());
+    mergedArray.sort((a, b) => a.consensusTime.getTime() - b.consensusTime.getTime());
 
-    return mergedArray
+    return mergedArray;
   }
 
   /**
@@ -219,14 +216,12 @@ export class HcsMessageService {
    * @param options
    * @private
    */
-  private async getNewMessages(options: {
-    topicId: string,
-    startFrom: Date
-  }): Promise<string[]> {
-    const { topicId, startFrom } = options
+  private async getNewMessages(options: { topicId: string; startFrom: Date }): Promise<string[]> {
+    const { topicId, startFrom } = options;
     const messages = await this.readTopicMessages({
-      topicId, fromDate: startFrom
-    })
-    return messages.map(m => Buffer.from(m.contents).toString('utf-8'))
+      topicId,
+      fromDate: startFrom,
+    });
+    return messages.map((m) => Buffer.from(m.contents).toString('utf-8'));
   }
 }

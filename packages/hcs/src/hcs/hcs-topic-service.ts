@@ -15,56 +15,56 @@ import { CacheConfig } from '../hedera-hcs-service.configuration';
 import { Cache } from '@hiero-did-sdk/core';
 import { waitChangesVisibility } from '../shared';
 
-const DEFAULT_AUTO_RENEW_PERIOD = 90 * 24 * 60 * 60 // 90 days
+const DEFAULT_AUTO_RENEW_PERIOD = 90 * 24 * 60 * 60; // 90 days
 
 // Todo: Currently is not possible to clear (set to defaults) the properties
 //       looks like, methods clearXXX are not working
 //       If will require it can be added NULL values to CreateTopicProps and UpdateTopicProps and clear the values
 
 export interface CreateTopicProps {
-  topicMemo?: string
-  submitKey?: PrivateKey
-  adminKey?: PrivateKey
-  autoRenewPeriod?: Duration | Long | number
-  autoRenewAccountId?: AccountId | string
-  autoRenewAccountKey?: PrivateKey
-  waitChangesVisibility?: boolean
-  waitChangesVisibilityTimeout?: number
+  topicMemo?: string;
+  submitKey?: PrivateKey;
+  adminKey?: PrivateKey;
+  autoRenewPeriod?: Duration | Long | number;
+  autoRenewAccountId?: AccountId | string;
+  autoRenewAccountKey?: PrivateKey;
+  waitChangesVisibility?: boolean;
+  waitChangesVisibilityTimeout?: number;
 }
 
 export type UpdateTopicProps = {
-  topicId: string
-  currentAdminKey: PrivateKey
-  expirationTime?: Timestamp | Date
-} & CreateTopicProps
+  topicId: string;
+  currentAdminKey: PrivateKey;
+  expirationTime?: Timestamp | Date;
+} & CreateTopicProps;
 
 export type DeleteTopicProps = {
-  topicId: string
-  currentAdminKey: PrivateKey
-}
+  topicId: string;
+  currentAdminKey: PrivateKey;
+};
 
 export interface GetTopicInfoProps {
-  topicId: string
+  topicId: string;
 }
 
 export interface TopicInfo {
-  topicId: string
-  topicMemo: string
-  adminKey: boolean
-  submitKey: boolean
-  autoRenewPeriod?: number
-  autoRenewAccountId?: string
-  expirationTime?: number
+  topicId: string;
+  topicMemo: string;
+  adminKey: boolean;
+  submitKey: boolean;
+  autoRenewPeriod?: number;
+  autoRenewAccountId?: string;
+  expirationTime?: number;
 }
 
 export class HcsTopicService {
-  private readonly cacheService?: HcsCacheService
+  private readonly cacheService?: HcsCacheService;
 
   constructor(
     private readonly client: Client,
     cache?: CacheConfig | Cache | HcsCacheService
   ) {
-    this.cacheService = cache ? (cache instanceof HcsCacheService ? cache : new HcsCacheService(cache)) : undefined
+    this.cacheService = cache ? (cache instanceof HcsCacheService ? cache : new HcsCacheService(cache)) : undefined;
   }
 
   /**
@@ -73,58 +73,58 @@ export class HcsTopicService {
    */
   public async createTopic(props?: CreateTopicProps): Promise<string> {
     if (props?.autoRenewAccountId && !props?.autoRenewAccountKey) {
-      throw new Error('The autoRenewAccountKey is required for set the autoRenewAccountId')
+      throw new Error('The autoRenewAccountKey is required for set the autoRenewAccountId');
     }
 
-    let transaction = new TopicCreateTransaction()
+    let transaction = new TopicCreateTransaction();
 
     if (props?.topicMemo) {
-      transaction = transaction.setTopicMemo(props?.topicMemo)
+      transaction = transaction.setTopicMemo(props?.topicMemo);
     }
 
     if (props?.submitKey) {
-      transaction = transaction.setSubmitKey(props.submitKey)
+      transaction = transaction.setSubmitKey(props.submitKey);
     }
 
     if (props?.adminKey) {
-      transaction = transaction.setAdminKey(props.adminKey)
+      transaction = transaction.setAdminKey(props.adminKey);
     }
 
     if (props?.autoRenewPeriod) {
-      transaction = transaction.setAutoRenewPeriod(props.autoRenewPeriod)
+      transaction = transaction.setAutoRenewPeriod(props.autoRenewPeriod);
     }
 
     if (props?.autoRenewAccountId) {
-      transaction = transaction.setAutoRenewAccountId(props.autoRenewAccountId)
+      transaction = transaction.setAutoRenewAccountId(props.autoRenewAccountId);
     }
 
-    const frozenTransaction = transaction.freezeWith(this.client)
+    const frozenTransaction = transaction.freezeWith(this.client);
 
-    if (props?.autoRenewAccountKey) await frozenTransaction.sign(props.autoRenewAccountKey)
-    if (props?.adminKey) await frozenTransaction.sign(props.adminKey)
+    if (props?.autoRenewAccountKey) await frozenTransaction.sign(props.autoRenewAccountKey);
+    if (props?.adminKey) await frozenTransaction.sign(props.adminKey);
 
-    const response = await frozenTransaction.execute(this.client)
+    const response = await frozenTransaction.execute(this.client);
 
-    const receipt = await response.getReceipt(this.client)
+    const receipt = await response.getReceipt(this.client);
     if (receipt.status !== Status.Success) {
-      throw new Error(`Topic Create transaction failed: ${receipt.status.toString()}`)
+      throw new Error(`Topic Create transaction failed: ${receipt.status.toString()}`);
     }
 
     if (!receipt.topicId) {
-      throw new Error('Topic create transaction failed: No topicId received')
+      throw new Error('Topic create transaction failed: No topicId received');
     }
 
-    const topicId = receipt.topicId.toString()
+    const topicId = receipt.topicId.toString();
 
     if (props?.waitChangesVisibility) {
       await waitChangesVisibility<TopicInfo>({
-        fetchFn: () => this.getTopicInfoWithoutCache({topicId}),
+        fetchFn: () => this.getTopicInfoWithoutCache({ topicId }),
         checkFn: (topicInfo: TopicInfo) => topicInfo.topicId === topicId,
-        waitTimeout: props?.waitChangesVisibilityTimeout
-      })
+        waitTimeout: props?.waitChangesVisibilityTimeout,
+      });
     }
 
-    return topicId
+    return topicId;
   }
 
   /**
@@ -133,63 +133,64 @@ export class HcsTopicService {
    */
   public async updateTopic(props: UpdateTopicProps): Promise<void> {
     if (props?.autoRenewAccountId && !props?.autoRenewAccountKey) {
-      throw new Error('The autoRenewAccountKey is required for set the autoRenewAccountId')
+      throw new Error('The autoRenewAccountKey is required for set the autoRenewAccountId');
     }
 
-    let transaction = new TopicUpdateTransaction().setTopicId(props.topicId)
+    let transaction = new TopicUpdateTransaction().setTopicId(props.topicId);
 
     if (props.topicMemo !== undefined) {
-      transaction = transaction.setTopicMemo(props.topicMemo ?? '')
+      transaction = transaction.setTopicMemo(props.topicMemo ?? '');
     }
 
     if (props.submitKey !== undefined) {
-      transaction = transaction.setSubmitKey(props.submitKey)
+      transaction = transaction.setSubmitKey(props.submitKey);
     }
 
     if (props.adminKey !== undefined) {
-      transaction = transaction.setAdminKey(props.adminKey)
+      transaction = transaction.setAdminKey(props.adminKey);
     }
 
     if (props.autoRenewPeriod !== undefined) {
-      transaction = transaction.setAutoRenewPeriod(props.autoRenewPeriod ?? DEFAULT_AUTO_RENEW_PERIOD)
+      transaction = transaction.setAutoRenewPeriod(props.autoRenewPeriod ?? DEFAULT_AUTO_RENEW_PERIOD);
     }
 
     if (props.autoRenewAccountId !== undefined) {
-      transaction = transaction.setAutoRenewAccountId(props.autoRenewAccountId)
+      transaction = transaction.setAutoRenewAccountId(props.autoRenewAccountId);
     }
 
     if (props.expirationTime !== undefined) {
-      transaction = transaction.setExpirationTime(props.expirationTime)
+      transaction = transaction.setExpirationTime(props.expirationTime);
     }
 
-    const frozenTransaction = transaction.freezeWith(this.client)
+    const frozenTransaction = transaction.freezeWith(this.client);
 
-    if (props.autoRenewAccountKey) await frozenTransaction.sign(props.autoRenewAccountKey)
-    if (props.adminKey) await frozenTransaction.sign(props.adminKey)
-    await frozenTransaction.sign(props.currentAdminKey)
+    if (props.autoRenewAccountKey) await frozenTransaction.sign(props.autoRenewAccountKey);
+    if (props.adminKey) await frozenTransaction.sign(props.adminKey);
+    await frozenTransaction.sign(props.currentAdminKey);
 
-    const response = await frozenTransaction.execute(this.client)
+    const response = await frozenTransaction.execute(this.client);
 
-    const receipt = await response.getReceipt(this.client)
+    const receipt = await response.getReceipt(this.client);
     if (receipt.status !== Status.Success) {
-      throw new Error(`Topic update transaction failed: ${receipt.status.toString()}`)
+      throw new Error(`Topic update transaction failed: ${receipt.status.toString()}`);
     }
 
-    await this.cacheService?.removeTopicInfo(this.client, props.topicId)
+    await this.cacheService?.removeTopicInfo(this.client, props.topicId);
 
     if (props?.waitChangesVisibility) {
       await waitChangesVisibility({
-        fetchFn: () => this.getTopicInfoWithoutCache({topicId: props.topicId}),
+        fetchFn: () => this.getTopicInfoWithoutCache({ topicId: props.topicId }),
         checkFn: (topicInfo: TopicInfo) =>
-          (props.topicId === topicInfo.topicId)
-          && (props.topicMemo === undefined || props.topicMemo === topicInfo.topicMemo)
-          && (props.submitKey === undefined || !!props.submitKey === topicInfo.submitKey)
-          && (props.adminKey === undefined || !!props.adminKey === topicInfo.adminKey)
-          && (props.autoRenewPeriod === undefined || props.autoRenewPeriod === topicInfo.autoRenewPeriod)
-          && (props.autoRenewAccountId === undefined || props.autoRenewAccountId === topicInfo.autoRenewAccountId)
-          && (props.expirationTime === undefined || this.convertExpirationTimeToSeconds(props.expirationTime) === topicInfo.expirationTime),
-        waitTimeout: props?.waitChangesVisibilityTimeout
-      })
+          props.topicId === topicInfo.topicId &&
+          (props.topicMemo === undefined || props.topicMemo === topicInfo.topicMemo) &&
+          (props.submitKey === undefined || !!props.submitKey === topicInfo.submitKey) &&
+          (props.adminKey === undefined || !!props.adminKey === topicInfo.adminKey) &&
+          (props.autoRenewPeriod === undefined || props.autoRenewPeriod === topicInfo.autoRenewPeriod) &&
+          (props.autoRenewAccountId === undefined || props.autoRenewAccountId === topicInfo.autoRenewAccountId) &&
+          (props.expirationTime === undefined ||
+            this.convertExpirationTimeToSeconds(props.expirationTime) === topicInfo.expirationTime),
+        waitTimeout: props?.waitChangesVisibilityTimeout,
+      });
     }
   }
 
@@ -198,18 +199,18 @@ export class HcsTopicService {
    * @param props
    */
   public async deleteTopic(props: DeleteTopicProps): Promise<void> {
-    const topicDeleteTx = new TopicDeleteTransaction().setTopicId(props.topicId)
+    const topicDeleteTx = new TopicDeleteTransaction().setTopicId(props.topicId);
 
-    const topicDeleteSubmit = await topicDeleteTx.freezeWith(this.client).sign(props.currentAdminKey)
+    const topicDeleteSubmit = await topicDeleteTx.freezeWith(this.client).sign(props.currentAdminKey);
 
-    const topicDeleteSubmitResult = await topicDeleteSubmit.execute(this.client)
+    const topicDeleteSubmitResult = await topicDeleteSubmit.execute(this.client);
 
-    const receipt = await topicDeleteSubmitResult.getReceipt(this.client)
+    const receipt = await topicDeleteSubmitResult.getReceipt(this.client);
     if (receipt.status !== Status.Success) {
-      throw new Error(`Topic delete transaction failed: ${receipt.status.toString()}`)
+      throw new Error(`Topic delete transaction failed: ${receipt.status.toString()}`);
     }
 
-    await this.cacheService?.removeTopicInfo(this.client, props.topicId)
+    await this.cacheService?.removeTopicInfo(this.client, props.topicId);
   }
 
   /**
@@ -217,14 +218,14 @@ export class HcsTopicService {
    * @param props
    */
   public async getTopicInfo(props: GetTopicInfoProps): Promise<TopicInfo> {
-    const cachedInfo = await this.cacheService?.getTopicInfo(this.client, props.topicId)
-    if (cachedInfo) return cachedInfo
+    const cachedInfo = await this.cacheService?.getTopicInfo(this.client, props.topicId);
+    if (cachedInfo) return cachedInfo;
 
-    const result = await this.getTopicInfoWithoutCache(props)
+    const result = await this.getTopicInfoWithoutCache(props);
 
-    await this.cacheService?.setTopicInfo(this.client, props.topicId, result)
+    await this.cacheService?.setTopicInfo(this.client, props.topicId, result);
 
-    return result
+    return result;
   }
 
   /**
@@ -232,8 +233,8 @@ export class HcsTopicService {
    * @param props
    */
   private async getTopicInfoWithoutCache(props: GetTopicInfoProps): Promise<TopicInfo> {
-    const topicInfoQuery = new TopicInfoQuery().setTopicId(props.topicId)
-    const info = await topicInfoQuery.execute(this.client)
+    const topicInfoQuery = new TopicInfoQuery().setTopicId(props.topicId);
+    const info = await topicInfoQuery.execute(this.client);
     return {
       topicId: info.topicId.toString(),
       topicMemo: info.topicMemo,
@@ -244,7 +245,7 @@ export class HcsTopicService {
       autoRenewAccountId: info.autoRenewAccountId?.toString(),
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       expirationTime: info.expirationTime?.seconds.low,
-    }
+    };
   }
 
   private convertExpirationTimeToSeconds = (expirationTime?: Timestamp | Date): number | undefined => {
@@ -258,6 +259,6 @@ export class HcsTopicService {
       return Math.floor(expirationTime.getTime() / 1000);
     }
 
-    throw new Error("Invalid expirationTime type");
-  }
+    throw new Error('Invalid expirationTime type');
+  };
 }

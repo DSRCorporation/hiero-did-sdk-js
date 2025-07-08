@@ -11,9 +11,7 @@ export class CborCodec {
    * @returns The Uint8Array.
    */
   static decode(data: Uint8Array | string): Uint8Array {
-    const buffer = typeof data === 'string'
-      ? Buffer.from(data, 'hex')
-      : data;
+    const buffer = typeof data === 'string' ? Buffer.from(data, 'hex') : data;
 
     const decoder = new Decoder({
       useRecords: false,

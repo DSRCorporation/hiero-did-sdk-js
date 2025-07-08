@@ -21,7 +21,7 @@ async function main() {
     console.log(`DID: ${did}`);
     console.log(`DID Document: ${JSON.stringify(didDocument, null, 2)}`);
   } catch (error) {
-    console.error("Error creating DID:", error);
+    console.error('Error creating DID:', error);
   }
 }
 

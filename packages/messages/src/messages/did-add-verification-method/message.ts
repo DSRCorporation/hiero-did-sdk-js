@@ -5,10 +5,7 @@ import {
   isHederaDID,
   VerificationMethodProperties,
 } from '@hiero-did-sdk/core';
-import {
-  DIDAddVerificationMethodMessageConstructor,
-  MessageSerialized,
-} from './interfaces';
+import { DIDAddVerificationMethodMessageConstructor, MessageSerialized } from './interfaces';
 import { isPropertyID } from '../../validators/id-property-id';
 
 /**
@@ -34,24 +31,15 @@ export class DIDAddVerificationMethodMessage extends DIDMessage {
     }
 
     if (!isHederaDID(payload.controller)) {
-      throw new DIDError(
-        'invalidDid',
-        'The controller must be a valid Hedera DID',
-      );
+      throw new DIDError('invalidDid', 'The controller must be a valid Hedera DID');
     }
 
     if (!isPropertyID(payload.id)) {
-      throw new DIDError(
-        'invalidArgument',
-        'The ID must be a valid property ID',
-      );
+      throw new DIDError('invalidArgument', 'The ID must be a valid property ID');
     }
 
     if (!isEd25519PublicKey(payload.publicKeyMultibase)) {
-      throw new DIDError(
-        'invalidPublicKeyLength',
-        'Invalid length for the public key',
-      );
+      throw new DIDError('invalidPublicKeyLength', 'Invalid length for the public key');
     }
 
     this.controller = payload.controller;
@@ -127,9 +115,7 @@ export class DIDAddVerificationMethodMessage extends DIDMessage {
       id: this.id,
       did: this.did,
       timestamp: this.timestamp.toISOString(),
-      signature: this.signature
-        ? Buffer.from(this.signature).toString('base64')
-        : undefined,
+      signature: this.signature ? Buffer.from(this.signature).toString('base64') : undefined,
     };
 
     return Buffer.from(JSON.stringify(data)).toString('base64');
@@ -142,9 +128,7 @@ export class DIDAddVerificationMethodMessage extends DIDMessage {
    * @returns The deserialized message instance.
    */
   static fromBytes(bytes: string): DIDAddVerificationMethodMessage {
-    const data = JSON.parse(
-      Buffer.from(bytes, 'base64').toString('utf8'),
-    ) as MessageSerialized;
+    const data = JSON.parse(Buffer.from(bytes, 'base64').toString('utf8')) as MessageSerialized;
 
     return new DIDAddVerificationMethodMessage({
       publicKeyMultibase: data.publicKeyMultibase,
@@ -153,9 +137,7 @@ export class DIDAddVerificationMethodMessage extends DIDMessage {
       id: data.id,
       did: data.did,
       timestamp: new Date(data.timestamp),
-      signature: data.signature
-        ? Buffer.from(data.signature, 'base64')
-        : undefined,
+      signature: data.signature ? Buffer.from(data.signature, 'base64') : undefined,
     });
   }
 }

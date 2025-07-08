@@ -27,11 +27,7 @@ export class Verifier implements BaseVerifier {
     const base64Message = Buffer.from(message).toString('base64');
     const base64Signature = Buffer.from(signature).toString('base64');
 
-    const isValid = await this.options.clientApi.verify(
-      this.options.keyName,
-      base64Message,
-      base64Signature,
-    );
+    const isValid = await this.options.clientApi.verify(this.options.keyName, base64Message, base64Signature);
 
     return isValid;
   }

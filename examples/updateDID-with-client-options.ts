@@ -17,8 +17,7 @@ async function main() {
             operation: 'add-verification-method',
             id: '#key-1',
             property: 'verificationMethod',
-            publicKeyMultibase:
-              'z6MkkFf6yboMwr1LQVAHqatuGYD9foRe7L2wPkEn1A7LyoQb',
+            publicKeyMultibase: 'z6MkkFf6yboMwr1LQVAHqatuGYD9foRe7L2wPkEn1A7LyoQb',
           },
           {
             operation: 'add-service',
@@ -35,12 +34,10 @@ async function main() {
           accountId,
           privateKey: operatorPrivateKey,
         },
-      },
+      }
     );
 
-    console.log(
-      `Updated DID Document: ${JSON.stringify(updatedDidDocument, null, 2)}`,
-    );
+    console.log(`Updated DID Document: ${JSON.stringify(updatedDidDocument, null, 2)}`);
   } catch (error) {
     console.error('Error updating DID:', error);
   }

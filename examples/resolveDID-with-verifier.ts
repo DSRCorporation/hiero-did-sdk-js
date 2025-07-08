@@ -5,14 +5,11 @@
 import { resolveDID } from '@hiero-did-sdk/resolver';
 import { Verifier } from '@hiero-did-sdk/verifier-internal';
 
-const did =
-  'did:hedera:testnet:23g2MabDNq3KyB7oeH9yYZsJTRVeQ24DqX8o6scB98e3_0.0.5217215';
+const did = 'did:hedera:testnet:23g2MabDNq3KyB7oeH9yYZsJTRVeQ24DqX8o6scB98e3_0.0.5217215';
 
 async function main() {
   try {
-    const verifier = Verifier.fromBase58(
-      '23g2MabDNq3KyB7oeH9yYZsJTRVeQ24DqX8o6scB98e3',
-    );
+    const verifier = Verifier.fromBase58('23g2MabDNq3KyB7oeH9yYZsJTRVeQ24DqX8o6scB98e3');
     const didDocument = await resolveDID(did, 'application/did+ld+json', {
       verifier,
     });

@@ -20,12 +20,10 @@ async function main() {
       },
       {
         client,
-      },
+      }
     );
 
-    console.log(
-      `Deactivated DID Document: ${JSON.stringify(deactivatedDidDocument, null, 2)}`,
-    );
+    console.log(`Deactivated DID Document: ${JSON.stringify(deactivatedDidDocument, null, 2)}`);
   } catch (error) {
     console.error('Error deactivating DID:', error);
   }

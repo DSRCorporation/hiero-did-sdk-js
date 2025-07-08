@@ -1,21 +1,21 @@
-import { AccountId } from '@hashgraph/sdk'
+import { AccountId } from '@hashgraph/sdk';
 
-export type HederaNetwork = 'mainnet' | 'testnet' | 'previewnet' | 'local-node'
+export type HederaNetwork = 'mainnet' | 'testnet' | 'previewnet' | 'local-node';
 
 export type HederaCustomNetwork = {
-  name: string
+  name: string;
   nodes: {
-    [key: string]: string | AccountId
-  }
-  mirrorNodes?: string | string[] | undefined
-}
+    [key: string]: string | AccountId;
+  };
+  mirrorNodes?: string | string[] | undefined;
+};
 
 export interface NetworkConfig {
-  network: HederaNetwork | HederaCustomNetwork
-  operatorId: string
-  operatorKey: string
+  network: HederaNetwork | HederaCustomNetwork;
+  operatorId: string;
+  operatorKey: string;
 }
 
 export interface HederaClientConfiguration {
-  networks: NetworkConfig[]
+  networks: NetworkConfig[];
 }

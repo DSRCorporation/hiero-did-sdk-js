@@ -1,1 +1,1 @@
-export * from './zstd'
+export * from './zstd';

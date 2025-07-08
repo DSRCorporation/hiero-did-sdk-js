@@ -3,10 +3,7 @@
   This mode is useful when you want to manage the secret key yourself.
 */
 import { Client, PrivateKey } from '@hashgraph/sdk';
-import {
-  generateCreateDIDRequest,
-  submitCreateDIDRequest,
-} from '@hiero-did-sdk/registrar';
+import { generateCreateDIDRequest, submitCreateDIDRequest } from '@hiero-did-sdk/registrar';
 import { KeysUtility } from '@hiero-did-sdk/core';
 
 const accountId = process.env.HEDERA_TESTNET_ACCOUNT_ID;
@@ -18,9 +15,7 @@ client.setOperator(accountId, operatorPrivateKey);
 async function main() {
   try {
     const rootKey = PrivateKey.fromStringED25519(operatorPrivateKey);
-    const publicMultibaseRootKey = KeysUtility.fromPublicKey(
-      rootKey.publicKey,
-    ).toMultibase();
+    const publicMultibaseRootKey = KeysUtility.fromPublicKey(rootKey.publicKey).toMultibase();
 
     const { state, signingRequest } = await generateCreateDIDRequest(
       {
@@ -28,7 +23,7 @@ async function main() {
       },
       {
         client,
-      },
+      }
     );
 
     const signature = rootKey.sign(signingRequest.serializedPayload);
@@ -37,7 +32,7 @@ async function main() {
       { state, signature },
       {
         client,
-      },
+      }
     );
 
     console.log(`DID: ${did}`);

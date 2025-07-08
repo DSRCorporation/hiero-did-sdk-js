@@ -1,10 +1,4 @@
-import {
-  DIDDocument,
-  Publisher,
-  Signer,
-  DIDMessage,
-  Verifier,
-} from '@hiero-did-sdk/core';
+import { DIDDocument, Publisher, Signer, DIDMessage, Verifier } from '@hiero-did-sdk/core';
 import { RunnerState } from '@hiero-did-sdk/lifecycle';
 import { DIDUpdateOperation, UpdateDIDOptions } from '../interface';
 
@@ -18,19 +12,19 @@ export type PrepareFunction<
   clientMode: boolean,
   publisher: Publisher,
   signer?: Signer,
-  verifier?: Verifier,
+  verifier?: Verifier
 ) => Promise<RunnerState<Message>>;
 
 export type PreExecuteFunction<Message extends DIDMessage = DIDMessage> = (
   message: RunnerState<Message>,
   publisher: Publisher,
   signature: Uint8Array,
-  verifier: Verifier,
+  verifier: Verifier
 ) => Promise<RunnerState<Message>>;
 
 export type ExecuteFunction<Message extends DIDMessage = DIDMessage> = (
   message: RunnerState<Message>,
   clientMode: boolean,
   publisher: Publisher,
-  signer?: Signer,
+  signer?: Signer
 ) => Promise<RunnerState<Message>>;

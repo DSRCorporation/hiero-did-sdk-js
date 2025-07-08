@@ -11,8 +11,8 @@
     "test:coverage": "jest --coverage",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "format": "prettier --write \"src/**/*.ts\" \"test/*.ts\"",
-    "format-check": "prettier --check \"src/*.ts\" \"test/*.ts\"",
+    "format": "prettier --write \"packages/**/src/**/*.ts\" \"packages/**/tests/*.ts\" \"examples/**/*.ts\"",
+    "format-check": "prettier --check \"packages/**/src/*.ts\" \"packages/**/tests/*.ts\" \"examples/**/*.ts\"",
     "release": "pnpm build && pnpm changeset publish --no-git-tag",
     "changeset-version": "pnpm changeset version && pnpm style:fix",
     "examples:run": "tsx --env-file examples/.env"

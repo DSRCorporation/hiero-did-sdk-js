@@ -32,9 +32,7 @@ describe('Internal Verifier class', () => {
 
     it('should throw an error if the public key is not ED25519', async () => {
       const privateKey = await PrivateKey.generateECDSAAsync();
-      expect(() => new Verifier(privateKey.publicKey)).toThrow(
-        'Invalid public key type. Expected ED25519.',
-      );
+      expect(() => new Verifier(privateKey.publicKey)).toThrow('Invalid public key type. Expected ED25519.');
     });
   });
 

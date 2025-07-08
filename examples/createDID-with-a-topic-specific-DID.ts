@@ -4,7 +4,7 @@
   associated with a specific Hedera topic ID, which can
   be useful for managing permissions and access control.
 */
-import { Client } from "@hashgraph/sdk";
+import { Client } from '@hashgraph/sdk';
 import { createDID } from '@hiero-did-sdk/registrar';
 
 const accountId = process.env.HEDERA_TESTNET_ACCOUNT_ID;
@@ -15,16 +15,19 @@ client.setOperator(accountId, operatorPrivateKey);
 
 async function main() {
   try {
-    const { did, didDocument } = await createDID({
-      topicId: "0.0.5217514",
-    },{
-      client
-    });
+    const { did, didDocument } = await createDID(
+      {
+        topicId: '0.0.5217514',
+      },
+      {
+        client,
+      }
+    );
 
     console.log(`DID: ${did}`);
     console.log(`DID Document: ${JSON.stringify(didDocument, null, 2)}`);
   } catch (error) {
-    console.error("Error creating DID:", error);
+    console.error('Error creating DID:', error);
   }
 }
 

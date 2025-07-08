@@ -44,7 +44,7 @@ describe('Vault Verifier', () => {
     expect(clientApi.verifyMock).toHaveBeenCalledWith(
       'test-key',
       message.toString('base64'),
-      signature.toString('base64'),
+      signature.toString('base64')
     );
   });
 });

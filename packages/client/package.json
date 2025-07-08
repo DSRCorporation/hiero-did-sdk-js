@@ -40,8 +40,8 @@
     "compile": "tsup",
     "test": "jest",
     "build": "pnpm run clean && pnpm run compile",
-    "format": "prettier --write \"src/**/*.ts\" \"tests/*.ts\"",
-    "format-check": "prettier --check \"src/*.ts\" \"tests/*.ts\""
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format-check": "prettier --check \"src/*.ts\""
   },
   "dependencies": {
     "@hashgraph/sdk": "^2.66.0"

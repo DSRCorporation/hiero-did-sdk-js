@@ -1,13 +1,6 @@
-import {
-  DIDDocument,
-  VerificationMethodProperties,
-} from '@hiero-did-sdk/core';
+import { DIDDocument, VerificationMethodProperties } from '@hiero-did-sdk/core';
 import { PrivateKey } from '@hashgraph/sdk';
-import {
-  OperationState,
-  SigningRequest,
-  CommonRegistrarOptions,
-} from '../interfaces';
+import { OperationState, SigningRequest, CommonRegistrarOptions } from '../interfaces';
 import { TopicReader } from '@hiero-did-sdk/resolver';
 
 export interface AddServiceOperation {
