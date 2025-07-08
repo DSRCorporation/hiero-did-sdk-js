@@ -1,2 +1,2 @@
-export * from './utils'
 export * from './console-logger'
+export * from './fake-cache'

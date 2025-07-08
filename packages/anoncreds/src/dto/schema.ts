@@ -14,26 +14,32 @@ export interface GetSchemaReturn {
   resolutionMetadata: AnonCredsResolutionMetadata;
   schemaMetadata: Extensible;
 }
+
 export interface RegisterSchemaOptions {
   schema: AnonCredsSchema;
   options: Extensible;
 }
+
 export interface RegisterSchemaReturnStateFailed extends AnonCredsOperationStateFailed {
   schema?: AnonCredsSchema;
   schemaId?: string;
 }
+
 export interface RegisterSchemaReturnStateFinished extends AnonCredsOperationStateFinished {
   schema: AnonCredsSchema;
   schemaId: string;
 }
+
 export interface RegisterSchemaReturnStateAction extends AnonCredsOperationStateAction {
   schema: AnonCredsSchema;
   schemaId: string;
 }
+
 export interface RegisterSchemaReturnStateWait extends AnonCredsOperationStateWait {
   schema?: AnonCredsSchema;
   schemaId?: string;
 }
+
 export interface RegisterSchemaReturn {
   jobId?: string;
   schemaState:

@@ -44,7 +44,7 @@ export class HederaAnoncredsRegistry {
       const schemaTopicId = await this.hcsService.submitFile({
         payload,
         networkName,
-        waitChangesVisibility: true,
+        waitForChangesVisibility: true,
       });
       return {
         schemaState: {
@@ -100,7 +100,7 @@ export class HederaAnoncredsRegistry {
       const credentialDefinitionTopicId = await this.hcsService.submitFile({
         payload,
         networkName,
-        waitChangesVisibility: true,
+        waitForChangesVisibility: true,
       });
       return {
         credentialDefinitionState: {
@@ -156,7 +156,7 @@ export class HederaAnoncredsRegistry {
     const { networkName, revocationRegistryDefinition } = options;
     try {
       const entriesTopicId = await this.hcsService.createTopic({
-        waitChangesVisibility: true,
+        waitForChangesVisibility: true,
       });
       const hcsMetadata = { entriesTopicId };
 
@@ -169,7 +169,7 @@ export class HederaAnoncredsRegistry {
       const revocationRegistryDefinitionTopic = await this.hcsService.submitFile({
         payload,
         networkName,
-        waitChangesVisibility: true,
+        waitForChangesVisibility: true,
       });
 
       return {
@@ -259,7 +259,7 @@ export class HederaAnoncredsRegistry {
         topicId: entriesTopicId,
         message,
         networkName,
-        waitChangesVisibility: true,
+        waitForChangesVisibility: true,
       });
 
       return {

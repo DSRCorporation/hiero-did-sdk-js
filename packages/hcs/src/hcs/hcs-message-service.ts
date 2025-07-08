@@ -10,7 +10,7 @@ import {
 import { HcsCacheService } from '../cache';
 import { CacheConfig } from '../hedera-hcs-service.configuration';
 import { Cache } from '@hiero-did-sdk/core';
-import { waitChangesVisibility } from '../shared';
+import { waitForChangesVisibility } from '../shared';
 
 const DEFAULT_TIMEOUT_SECONDS = 2;
 
@@ -18,8 +18,8 @@ export interface SubmitMessageProps {
   topicId: string;
   message: string;
   submitKey?: PrivateKey;
-  waitChangesVisibility?: boolean;
-  waitChangesVisibilityTimeout?: number;
+  waitForChangesVisibility?: boolean;
+  waitForChangesVisibilityTimeoutMs?: number;
 }
 
 export interface SubmitMessageResult {
@@ -76,11 +76,11 @@ export class HcsMessageService {
 
     await this.cacheService?.removeTopicMessages(this.client, props.topicId);
 
-    if (props?.waitChangesVisibility) {
-      await waitChangesVisibility<string[]>({
-        fetchFn: () => this.getNewMessages({ topicId: props.topicId, startFrom }),
+    if (props?.waitForChangesVisibility) {
+      await waitForChangesVisibility<string[]>({
+        fetchFn: () => this.getNewMessagesContent({ topicId: props.topicId, startFrom }),
         checkFn: (messages) => messages.indexOf(props.message) >= 0,
-        waitTimeout: props?.waitChangesVisibilityTimeout,
+        waitTimeout: props?.waitForChangesVisibilityTimeoutMs,
       });
     }
 
@@ -216,7 +216,7 @@ export class HcsMessageService {
    * @param options
    * @private
    */
-  private async getNewMessages(options: { topicId: string; startFrom: Date }): Promise<string[]> {
+  private async getNewMessagesContent(options: { topicId: string; startFrom: Date }): Promise<string[]> {
     const { topicId, startFrom } = options;
     const messages = await this.readTopicMessages({
       topicId,

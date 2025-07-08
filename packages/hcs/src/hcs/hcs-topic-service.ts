@@ -13,7 +13,7 @@ import AccountId from '@hashgraph/sdk/lib/account/AccountId';
 import { HcsCacheService } from '../cache';
 import { CacheConfig } from '../hedera-hcs-service.configuration';
 import { Cache } from '@hiero-did-sdk/core';
-import { waitChangesVisibility } from '../shared';
+import { waitForChangesVisibility } from '../shared';
 
 const DEFAULT_AUTO_RENEW_PERIOD = 90 * 24 * 60 * 60; // 90 days
 
@@ -28,8 +28,8 @@ export interface CreateTopicProps {
   autoRenewPeriod?: Duration | Long | number;
   autoRenewAccountId?: AccountId | string;
   autoRenewAccountKey?: PrivateKey;
-  waitChangesVisibility?: boolean;
-  waitChangesVisibilityTimeout?: number;
+  waitForChangesVisibility?: boolean;
+  waitForChangesVisibilityTimeoutMs?: number;
 }
 
 export type UpdateTopicProps = {
@@ -111,16 +111,16 @@ export class HcsTopicService {
     }
 
     if (!receipt.topicId) {
-      throw new Error('Topic create transaction failed: No topicId received');
+      throw new Error('Topic Create transaction failed: Transaction receipt do not contain topicId');
     }
 
     const topicId = receipt.topicId.toString();
 
-    if (props?.waitChangesVisibility) {
-      await waitChangesVisibility<TopicInfo>({
+    if (props?.waitForChangesVisibility) {
+      await waitForChangesVisibility<TopicInfo>({
         fetchFn: () => this.getTopicInfoWithoutCache({ topicId }),
         checkFn: (topicInfo: TopicInfo) => topicInfo.topicId === topicId,
-        waitTimeout: props?.waitChangesVisibilityTimeout,
+        waitTimeout: props?.waitForChangesVisibilityTimeoutMs,
       });
     }
 
@@ -177,8 +177,8 @@ export class HcsTopicService {
 
     await this.cacheService?.removeTopicInfo(this.client, props.topicId);
 
-    if (props?.waitChangesVisibility) {
-      await waitChangesVisibility({
+    if (props?.waitForChangesVisibility) {
+      await waitForChangesVisibility({
         fetchFn: () => this.getTopicInfoWithoutCache({ topicId: props.topicId }),
         checkFn: (topicInfo: TopicInfo) =>
           props.topicId === topicInfo.topicId &&
@@ -189,7 +189,7 @@ export class HcsTopicService {
           (props.autoRenewAccountId === undefined || props.autoRenewAccountId === topicInfo.autoRenewAccountId) &&
           (props.expirationTime === undefined ||
             this.convertExpirationTimeToSeconds(props.expirationTime) === topicInfo.expirationTime),
-        waitTimeout: props?.waitChangesVisibilityTimeout,
+        waitTimeout: props?.waitForChangesVisibilityTimeoutMs,
       });
     }
   }
@@ -199,13 +199,13 @@ export class HcsTopicService {
    * @param props
    */
   public async deleteTopic(props: DeleteTopicProps): Promise<void> {
-    const topicDeleteTx = new TopicDeleteTransaction().setTopicId(props.topicId);
+    const topicTransaction = new TopicDeleteTransaction().setTopicId(props.topicId);
 
-    const topicDeleteSubmit = await topicDeleteTx.freezeWith(this.client).sign(props.currentAdminKey);
+    const topicFreezedAndSignedTransaction = await topicTransaction.freezeWith(this.client).sign(props.currentAdminKey);
 
-    const topicDeleteSubmitResult = await topicDeleteSubmit.execute(this.client);
+    const topicDeleteResult = await topicFreezedAndSignedTransaction.execute(this.client);
 
-    const receipt = await topicDeleteSubmitResult.getReceipt(this.client);
+    const receipt = await topicDeleteResult.getReceipt(this.client);
     if (receipt.status !== Status.Success) {
       throw new Error(`Topic delete transaction failed: ${receipt.status.toString()}`);
     }

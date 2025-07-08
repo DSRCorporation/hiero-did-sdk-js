@@ -4,7 +4,6 @@ import { HederaHcsService, HederaHcsServiceConfiguration } from '@hiero-did-sdk/
 
 /**
  * Implements a topic reader that uses the HCS Service to read messages from a topic.
- * HCS Service Clients is using gRPC to connect to the Hedera network, which may not be available in some environments.
  */
 export class TopicReaderHederaHcs extends TopicReader {
   private readonly hcsService: HederaHcsService;

@@ -6,7 +6,7 @@ const operatorId = process.env.HEDERA_TESTNET_OPERATOR_ID ?? '';
 const operatorKey = process.env.HEDERA_TESTNET_OPERATOR_KEY ?? '';
 
 describe('Hedera HCS Service', () => {
-  jest.setTimeout(1200000);
+  jest.setTimeout(120000);
 
   const ledgerService = new HederaHcsService({
     networks: [
@@ -28,7 +28,7 @@ describe('Hedera HCS Service', () => {
       autoRenewPeriod,
       autoRenewAccountId: operatorId,
       autoRenewAccountKey: PrivateKey.fromStringDer(operatorKey),
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
     expect(topicId).toBeDefined();
     const topicInfo = await ledgerService.getTopicInfo({
@@ -47,7 +47,7 @@ describe('Hedera HCS Service', () => {
     const topicId = await ledgerService.createTopic({
       topicMemo,
       adminKey: PrivateKey.fromStringDer(operatorKey),
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
     expect(topicId).toBeDefined();
 
@@ -74,7 +74,7 @@ describe('Hedera HCS Service', () => {
     const topicId = await ledgerService.createTopic({
       topicMemo,
       adminKey: admin1Key,
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
     expect(topicId).toBeDefined();
 
@@ -93,7 +93,7 @@ describe('Hedera HCS Service', () => {
       autoRenewAccountId: renewAccountId,
       autoRenewAccountKey: PrivateKey.fromStringDer(renewAccountKey),
       expirationTime: newExpirationTime,
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
 
     topicInfo = await ledgerService.getTopicInfo({ topicId });
@@ -114,7 +114,7 @@ describe('Hedera HCS Service', () => {
       adminKey: admin1Key,
       topicMemo: nextNewTopicMemo,
       autoRenewPeriod: nextNewAutoRenewPeriod,
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
 
     topicInfo = await ledgerService.getTopicInfo({ topicId });
@@ -131,7 +131,7 @@ describe('Hedera HCS Service', () => {
       currentAdminKey: admin1Key,
       autoRenewAccountId: operatorId,
       autoRenewAccountKey: PrivateKey.fromStringDer(operatorKey),
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
 
     topicInfo = await ledgerService.getTopicInfo({ topicId });
@@ -148,7 +148,7 @@ describe('Hedera HCS Service', () => {
       currentAdminKey: admin1Key,
       adminKey: admin2Key,
       submitKey: admin2Key,
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
 
     topicInfo = await ledgerService.getTopicInfo({ topicId });
@@ -165,7 +165,7 @@ describe('Hedera HCS Service', () => {
     const topicId = await ledgerService.createTopic({
       topicMemo,
       adminKey: PrivateKey.fromStringDer(operatorKey),
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
     expect(topicId).toBeDefined();
 
@@ -190,7 +190,7 @@ describe('Hedera HCS Service', () => {
     const content = `___${getRandomStr(1200)}___`;
     const fileTopicId = await ledgerService.submitFile({
       payload: Buffer.from(content),
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
     expect(fileTopicId).toBeDefined();
   });
@@ -200,7 +200,7 @@ describe('Hedera HCS Service', () => {
     const content = `___${getRandomStr(1200)}___`;
     const topicId = await ledgerService.submitFile({
       payload: Buffer.from(content),
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
     expect(topicId).toBeDefined();
 
@@ -213,7 +213,7 @@ describe('Hedera HCS Service', () => {
     // Create topic
     const topicId = await ledgerService.createTopic({
       topicMemo: 'test',
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
     expect(topicId).toBeDefined();
 
@@ -222,7 +222,7 @@ describe('Hedera HCS Service', () => {
     const messageTransactionId = await ledgerService.submitMessage({
       topicId,
       message,
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
     expect(messageTransactionId).toBeDefined();
   });
@@ -234,7 +234,7 @@ describe('Hedera HCS Service', () => {
     const topicId = await ledgerService.createTopic({
       topicMemo: 'test',
       submitKey,
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
     expect(topicId).toBeDefined();
 
@@ -243,7 +243,7 @@ describe('Hedera HCS Service', () => {
       ledgerService.submitMessage({
         topicId,
         message: 'test message',
-        waitChangesVisibility: true,
+        waitForChangesVisibility: true,
       })
     ).rejects.toThrow();
 
@@ -252,7 +252,7 @@ describe('Hedera HCS Service', () => {
       topicId,
       message: 'test message',
       submitKey,
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
     expect(messageTransactionId).toBeDefined();
   });
@@ -261,7 +261,7 @@ describe('Hedera HCS Service', () => {
     // Create topic
     const topicId = await ledgerService.createTopic({
       topicMemo: '',
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
     expect(topicId).toBeDefined();
 
@@ -269,13 +269,13 @@ describe('Hedera HCS Service', () => {
     const messageTransactionId_1 = await ledgerService.submitMessage({
       topicId,
       message: 'test message 1',
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
     expect(messageTransactionId_1).toBeDefined();
     const messageTransactionId_2 = await ledgerService.submitMessage({
       topicId,
       message: 'test message 2',
-      waitChangesVisibility: true,
+      waitForChangesVisibility: true,
     });
     expect(messageTransactionId_2).toBeDefined();
 

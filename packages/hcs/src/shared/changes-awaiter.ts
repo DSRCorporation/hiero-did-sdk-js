@@ -3,7 +3,7 @@
  * @param options
  * @private
  */
-export async function waitChangesVisibility<T>(options: {
+export async function waitForChangesVisibility<T>(options: {
   fetchFn: () => Promise<T>;
   checkFn: (item: T) => boolean;
   waitTimeout?: number;

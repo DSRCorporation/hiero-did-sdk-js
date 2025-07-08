@@ -6,7 +6,7 @@ import { HcsMessageService } from './hcs-message-service';
 import { HcsTopicService } from './hcs-topic-service';
 import { CacheConfig } from '../hedera-hcs-service.configuration';
 import { Cache } from '@hiero-did-sdk/core';
-import { waitChangesVisibility } from '../shared';
+import { waitForChangesVisibility } from '../shared';
 
 const HCS_FILE_TOPIC_MEMO_REGEX = /^[A-Fa-f0-9]{64}:zstd:base64$/;
 
@@ -23,8 +23,8 @@ export interface HcsFileChunkMessage {
 export interface SubmitFileProps {
   payload: Buffer;
   submitKey?: PrivateKey;
-  waitChangesVisibility?: boolean;
-  waitChangesVisibilityTimeout?: number;
+  waitForChangesVisibility?: boolean;
+  waitForChangesVisibilityTimeoutMs?: number;
 }
 
 export interface ResolveFileProps {
@@ -43,7 +43,12 @@ export class HcsFileService {
     private readonly client: Client,
     cache?: CacheConfig | Cache | HcsCacheService
   ) {
-    this.cacheService = cache ? (cache instanceof HcsCacheService ? cache : new HcsCacheService(cache)) : undefined;
+    if (!cache)
+      this.cacheService = undefined
+    else if (cache instanceof HcsCacheService)
+      this.cacheService =  cache
+    else
+      this.cacheService = new HcsCacheService(cache)
   }
 
   /**
@@ -66,15 +71,15 @@ export class HcsFileService {
         topicId,
         message,
         submitKey: props.submitKey,
-        waitChangesVisibility: false,
+        waitForChangesVisibility: false,
       });
     }
 
-    if (props?.waitChangesVisibility) {
-      await waitChangesVisibility<Buffer>({
+    if (props?.waitForChangesVisibility) {
+      await waitForChangesVisibility<Buffer>({
         fetchFn: () => this.resolveFileWithoutCache({ topicId }),
         checkFn: (file: Buffer) => file.equals(props.payload),
-        waitTimeout: props?.waitChangesVisibilityTimeout,
+        waitTimeout: props?.waitForChangesVisibilityTimeoutMs,
       });
     }
 
@@ -105,7 +110,7 @@ export class HcsFileService {
 
     const topicInfo = await hcsTopicService.getTopicInfo(props);
 
-    if (!this.isHCS1MemoPresent(topicInfo.topicMemo)) {
+    if (!this.isValidHCS1Memo(topicInfo.topicMemo)) {
       throw new Error(`HCS file Topic ${props.topicId} is invalid - must contain memo compliant with HCS-1 standard`);
     }
 
@@ -119,7 +124,7 @@ export class HcsFileService {
     const chunkMessages = messages.map((message) => JSON.parse(message.contents.toString()) as ChunkMessage);
     const payload = this.buildFileFromChunkMessages(chunkMessages);
 
-    if (!this.isHCS1ChecksumValid(topicInfo.topicMemo, await Crypto.sha256(payload))) {
+    if (!this.isValidHCS1Checksum(topicInfo.topicMemo, await Crypto.sha256(payload))) {
       throw new Error('Resolved HCS file payload is invalid');
     }
 
@@ -138,7 +143,6 @@ export class HcsFileService {
         messageContent += chunkMessage.c;
       }
       const compressedPayload = Buffer.from(messageContent.replace(BASE64_JSON_CONTENT_PREFIX, ''), 'base64');
-      return Buffer.from(Zstd.decompress(compressedPayload));
       return Buffer.from(Zstd.decompress(compressedPayload));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -186,7 +190,7 @@ export class HcsFileService {
    * @param memo
    * @private
    */
-  private isHCS1MemoPresent(memo: string): boolean {
+  private isValidHCS1Memo(memo: string): boolean {
     return !!memo && HCS_FILE_TOPIC_MEMO_REGEX.test(memo);
   }
 
@@ -196,7 +200,7 @@ export class HcsFileService {
    * @param checksum
    * @private
    */
-  private isHCS1ChecksumValid(memo: string, checksum: string): boolean {
+  private isValidHCS1Checksum(memo: string, checksum: string): boolean {
     if (!memo) throw new Error('Memo is required');
 
     const [expectedPayloadHash, ,] = memo.split(':');
