@@ -11,7 +11,7 @@ import {
 import { ConsoleLogger, FakeCache, LogLevel } from './utils';
 import { v4 as uuidv4 } from 'uuid'
 
-const LOG_DEBUG_MASSAGES = true;
+const LOG_DEBUG_MASSAGES = false;
 const TEST_WITH_CACHE = true;
 
 const GET_DATA_TIMEOUT = 100;
