@@ -1,2 +1,2 @@
 export * from './changes-awaiter';
-export * from './client';
+export * from './mirror-node';

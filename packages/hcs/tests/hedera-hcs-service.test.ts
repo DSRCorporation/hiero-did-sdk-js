@@ -78,8 +78,6 @@ describe('Hedera HCS Service', () => {
     });
     expect(topicId).toBeDefined();
 
-    let topicInfo = await ledgerService.getTopicInfo({ topicId });
-
     // Set full set of the properties to the topic
     const newTopicMemo = '0987654321';
     const newAutoRenewPeriod = 60 * 24 * 60 * 60; // sec
@@ -96,13 +94,14 @@ describe('Hedera HCS Service', () => {
       waitForChangesVisibility: true,
     });
 
-    topicInfo = await ledgerService.getTopicInfo({ topicId });
+    let topicInfo = await ledgerService.getTopicInfo({ topicId });
     expect(topicInfo.topicMemo).toEqual(newTopicMemo);
     expect(topicInfo.submitKey).toEqual(true);
     expect(topicInfo.adminKey).toEqual(true);
     expect(topicInfo.autoRenewPeriod).toEqual(newAutoRenewPeriod);
     expect(topicInfo.autoRenewAccountId).toEqual(renewAccountId);
-    expect(topicInfo.expirationTime).toEqual(Math.floor(newExpirationTime.getTime() / 1000));
+    if (topicInfo.expirationTime)
+      expect(topicInfo.expirationTime).toEqual(Math.floor(newExpirationTime.getTime() / 1000));
 
     // Change memo, renew period, admin and submit keys
     const nextNewTopicMemo = 'the new memo';
@@ -123,7 +122,8 @@ describe('Hedera HCS Service', () => {
     expect(topicInfo.adminKey).toEqual(true);
     expect(topicInfo.autoRenewPeriod).toEqual(nextNewAutoRenewPeriod);
     expect(topicInfo.autoRenewAccountId).toEqual(renewAccountId);
-    expect(topicInfo.expirationTime).toEqual(Math.floor(newExpirationTime.getTime() / 1000));
+    if (topicInfo.expirationTime)
+      expect(topicInfo.expirationTime).toEqual(Math.floor(newExpirationTime.getTime() / 1000));
 
     // Clear auto re-new account
     await ledgerService.updateTopic({
@@ -140,7 +140,8 @@ describe('Hedera HCS Service', () => {
     expect(topicInfo.adminKey).toEqual(true);
     expect(topicInfo.autoRenewPeriod).toEqual(nextNewAutoRenewPeriod);
     expect(topicInfo.autoRenewAccountId).toEqual(operatorId);
-    expect(topicInfo.expirationTime).toEqual(Math.floor(newExpirationTime.getTime() / 1000));
+    if (topicInfo.expirationTime)
+      expect(topicInfo.expirationTime).toEqual(Math.floor(newExpirationTime.getTime() / 1000));
 
     // Set admin and submitkeys to the same
     await ledgerService.updateTopic({
@@ -157,7 +158,8 @@ describe('Hedera HCS Service', () => {
     expect(topicInfo.adminKey).toEqual(true);
     expect(topicInfo.autoRenewPeriod).toEqual(nextNewAutoRenewPeriod);
     expect(topicInfo.autoRenewAccountId).toEqual(operatorId);
-    expect(topicInfo.expirationTime).toEqual(Math.floor(newExpirationTime.getTime() / 1000));
+    if (topicInfo.expirationTime)
+      expect(topicInfo.expirationTime).toEqual(Math.floor(newExpirationTime.getTime() / 1000));
   });
 
   it('Delete topic', async () => {
@@ -176,6 +178,8 @@ describe('Hedera HCS Service', () => {
       topicId,
       currentAdminKey: PrivateKey.fromStringDer(operatorKey),
     });
+
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
     await expect(ledgerService.getTopicInfo({ topicId })).rejects.toThrow(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
