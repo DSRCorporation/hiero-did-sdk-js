@@ -13,7 +13,7 @@ import AccountId from '@hashgraph/sdk/lib/account/AccountId';
 import { HcsCacheService } from '../cache';
 import { CacheConfig } from '../hedera-hcs-service.configuration';
 import { Cache } from '@hiero-did-sdk/core';
-import { waitForChangesVisibility } from '../shared';
+import { isMirrorQuerySupported, normalizeMirrorUrl, waitForChangesVisibility } from '../shared';
 
 const DEFAULT_AUTO_RENEW_PERIOD = 90 * 24 * 60 * 60; // 90 days
 
@@ -55,6 +55,22 @@ export interface TopicInfo {
   autoRenewPeriod?: number;
   autoRenewAccountId?: string;
   expirationTime?: number;
+}
+
+interface MirrorNodeTopicResponse {
+  topic_id: string;
+  memo: string;
+  admin_key?: {
+    _type: string;
+    key: string;
+  };
+  submit_key?: {
+    _type: string;
+    key: string;
+  };
+  auto_renew_period?: number;
+  auto_renew_account?: string | null;
+  expiration_time?: string | null;
 }
 
 export class HcsTopicService {
@@ -221,7 +237,7 @@ export class HcsTopicService {
     const cachedInfo = await this.cacheService?.getTopicInfo(this.client, props.topicId);
     if (cachedInfo) return cachedInfo;
 
-    const result = await this.getTopicInfoWithoutCache(props);
+    const result = await this.getTopicInfoWithoutCache(props)
 
     await this.cacheService?.setTopicInfo(this.client, props.topicId, result);
 
@@ -229,10 +245,37 @@ export class HcsTopicService {
   }
 
   /**
-   * Get topic info
+   * Convert ExpirationTime to seconds
+   * @param expirationTime
+   */
+  private convertExpirationTimeToSeconds = (expirationTime?: Timestamp | Date): number | undefined => {
+    if (!expirationTime) return undefined;
+
+    if (expirationTime instanceof Timestamp) {
+      return Math.floor(expirationTime.toDate().getTime() / 1000);
+    }
+
+    if (expirationTime instanceof Date) {
+      return Math.floor(expirationTime.getTime() / 1000);
+    }
+
+    throw new Error('Invalid expirationTime type');
+  };
+
+  /**
+   * Get topic info without cache
    * @param props
    */
   private async getTopicInfoWithoutCache(props: GetTopicInfoProps): Promise<TopicInfo> {
+    return isMirrorQuerySupported(this.client) ? await this.readTopicInfoByClient(props) : await this.readTopicInfoByRest(props)
+  }
+
+  /**
+   * Read topic info by GprsClient
+   * @param props
+   * @private
+   */
+  private async readTopicInfoByClient(props: GetTopicInfoProps): Promise<TopicInfo> {
     const topicInfoQuery = new TopicInfoQuery().setTopicId(props.topicId);
     const info = await topicInfoQuery.execute(this.client);
     return {
@@ -248,17 +291,45 @@ export class HcsTopicService {
     };
   }
 
-  private convertExpirationTimeToSeconds = (expirationTime?: Timestamp | Date): number | undefined => {
-    if (!expirationTime) return undefined;
+  /**
+   * Read topic info by REST API
+   * @param props
+   * @private
+   */
+  private async readTopicInfoByRest(props: GetTopicInfoProps): Promise<TopicInfo> {
+    const mirrorNetwork = this.client.mirrorNetwork;
+    const restApiUrl = Array.isArray(mirrorNetwork) && mirrorNetwork.length > 0
+      ? mirrorNetwork[0]
+      : undefined;
 
-    if (expirationTime instanceof Timestamp) {
-      return Math.floor(expirationTime.toDate().getTime() / 1000);
+    if (!restApiUrl)
+    {
+      throw new Error(`Mirror node doesn't defined for the used network`);
     }
 
-    if (expirationTime instanceof Date) {
-      return Math.floor(expirationTime.getTime() / 1000);
+    const response = await fetch(`${normalizeMirrorUrl(restApiUrl)}/api/v1/topics/${props.topicId}`, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch topic info: ${response.statusText}`);
     }
 
-    throw new Error('Invalid expirationTime type');
-  };
+    const data: MirrorNodeTopicResponse = await response.json();
+    return {
+      topicId: data.topic_id,
+      topicMemo: data.memo,
+      adminKey: !!data.admin_key,
+      submitKey: !!data.submit_key,
+      autoRenewPeriod: data.auto_renew_period,
+      autoRenewAccountId: data.auto_renew_account ?? undefined,
+      expirationTime: data.expiration_time
+        ? new Date(data.expiration_time).getTime()
+        : undefined,
+    };
+  }
 }
