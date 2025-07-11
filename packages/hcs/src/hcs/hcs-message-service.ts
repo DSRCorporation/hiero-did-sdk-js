@@ -259,7 +259,7 @@ export class HcsMessageService {
    * @private
    */
   private async readTopicMessagesByRest(props: ReadTopicMessagesProps): Promise<TopicMessageData[]> {
-    const { topicId, fromDate, toDate, limit = 25 } = props;
+    const { topicId, fromDate, toDate, limit } = props;
 
     let messages: TopicMessageData[] = []
 
@@ -273,10 +273,9 @@ export class HcsMessageService {
       nextPath += `&timestamp=lte:${timestamp.toString()}`;
     }
 
-    while (nextPath) {
-      const url = this.getNextUrl(nextPath, limit)
+    while (nextPath && (!limit || messages.length < limit)) {
+      const url = this.getNextUrl(nextPath)
       const result = await this.fetchMessages(url)
-
       if (result.messages.length) {
         messages = messages.concat(result.messages.map((message) => ({
           consensusTime: new Date(Number(message.consensus_timestamp) * 1000),
@@ -286,7 +285,7 @@ export class HcsMessageService {
       nextPath = result.links?.next
     }
 
-    return messages
+    return limit ? messages.slice(0, limit) : messages
   }
 
   /**

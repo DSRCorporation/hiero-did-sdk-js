@@ -5,8 +5,7 @@ import { type Client } from '@hashgraph/sdk';
  */
 export function isMirrorQuerySupported (client: Client): boolean
 {
-  const supported = !!client._mirrorNetwork.getNextMirrorNode()
-  return !supported
+  return !!client._mirrorNetwork.getNextMirrorNode()
 }
 
 /**
