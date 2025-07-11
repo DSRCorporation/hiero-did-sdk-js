@@ -14,7 +14,7 @@ import { v4 as uuidv4 } from 'uuid'
 const LOG_DEBUG_MASSAGES = false;
 const TEST_WITH_CACHE = true;
 
-const GET_DATA_TIMEOUT = 100;
+const GET_DATA_TIMEOUT = 50;
 const GET_CACHED_DATA_TIMEOUT = 10;
 
 const operatorId = process.env.HEDERA_TESTNET_OPERATOR_ID ?? '';

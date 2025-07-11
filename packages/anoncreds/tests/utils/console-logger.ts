@@ -30,7 +30,6 @@ export class ConsoleLogger {
 
   public write<T>(logLevel: LogLevel, message: string, data?: Record<string, T>): void {
     if (!this.isEnabled(logLevel)) return
-    //console.log(message, JSON.stringify(data, null, 2))
     console.log(message, JSON.stringify(data))
   }
 }

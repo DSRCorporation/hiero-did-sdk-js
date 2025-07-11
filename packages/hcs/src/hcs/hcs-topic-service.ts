@@ -1,7 +1,7 @@
 import {
   type Client,
   PrivateKey,
-  Status,
+  Status, StatusError,
   Timestamp,
   TopicCreateTransaction,
   TopicDeleteTransaction,
@@ -13,7 +13,11 @@ import AccountId from '@hashgraph/sdk/lib/account/AccountId';
 import { HcsCacheService } from '../cache';
 import { CacheConfig } from '../hedera-hcs-service.configuration';
 import { Cache } from '@hiero-did-sdk/core';
-import { waitForChangesVisibility } from '../shared';
+import {
+  getMirrorNetworkNodeUrl,
+  isMirrorQuerySupported,
+  waitForChangesVisibility,
+} from '../shared';
 
 const DEFAULT_AUTO_RENEW_PERIOD = 90 * 24 * 60 * 60; // 90 days
 
@@ -50,11 +54,28 @@ export interface GetTopicInfoProps {
 export interface TopicInfo {
   topicId: string;
   topicMemo: string;
-  adminKey: boolean;
-  submitKey: boolean;
+  adminKey?: boolean;
+  submitKey?: boolean;
   autoRenewPeriod?: number;
   autoRenewAccountId?: string;
   expirationTime?: number;
+}
+
+interface MirrorNodeTopicResponse {
+  deleted: boolean
+  topic_id: string;
+  memo: string;
+  admin_key?: {
+    _type: string;
+    key: string;
+  };
+  submit_key?: {
+    _type: string;
+    key: string;
+  };
+  auto_renew_period?: number;
+  auto_renew_account?: string | null;
+  expiration_time?: string | null;
 }
 
 export class HcsTopicService {
@@ -118,7 +139,7 @@ export class HcsTopicService {
 
     if (props?.waitForChangesVisibility) {
       await waitForChangesVisibility<TopicInfo>({
-        fetchFn: () => this.getTopicInfoWithoutCache({ topicId }),
+        fetchFn: () => this.readTopicInfo({ topicId }),
         checkFn: (topicInfo: TopicInfo) => topicInfo.topicId === topicId,
         waitTimeout: props?.waitForChangesVisibilityTimeoutMs,
       });
@@ -179,16 +200,14 @@ export class HcsTopicService {
 
     if (props?.waitForChangesVisibility) {
       await waitForChangesVisibility({
-        fetchFn: () => this.getTopicInfoWithoutCache({ topicId: props.topicId }),
+        fetchFn: () => this.readTopicInfo({ topicId: props.topicId }),
         checkFn: (topicInfo: TopicInfo) =>
-          props.topicId === topicInfo.topicId &&
           (props.topicMemo === undefined || props.topicMemo === topicInfo.topicMemo) &&
           (props.submitKey === undefined || !!props.submitKey === topicInfo.submitKey) &&
           (props.adminKey === undefined || !!props.adminKey === topicInfo.adminKey) &&
           (props.autoRenewPeriod === undefined || props.autoRenewPeriod === topicInfo.autoRenewPeriod) &&
           (props.autoRenewAccountId === undefined || props.autoRenewAccountId === topicInfo.autoRenewAccountId) &&
-          (props.expirationTime === undefined ||
-            this.convertExpirationTimeToSeconds(props.expirationTime) === topicInfo.expirationTime),
+          (props.expirationTime === undefined || this.convertExpirationTimeToSeconds(props.expirationTime) === topicInfo.expirationTime),
         waitTimeout: props?.waitForChangesVisibilityTimeoutMs,
       });
     }
@@ -221,7 +240,7 @@ export class HcsTopicService {
     const cachedInfo = await this.cacheService?.getTopicInfo(this.client, props.topicId);
     if (cachedInfo) return cachedInfo;
 
-    const result = await this.getTopicInfoWithoutCache(props);
+    const result = await this.readTopicInfo(props)
 
     await this.cacheService?.setTopicInfo(this.client, props.topicId, result);
 
@@ -229,25 +248,9 @@ export class HcsTopicService {
   }
 
   /**
-   * Get topic info
-   * @param props
+   * Convert ExpirationTime to seconds
+   * @param expirationTime
    */
-  private async getTopicInfoWithoutCache(props: GetTopicInfoProps): Promise<TopicInfo> {
-    const topicInfoQuery = new TopicInfoQuery().setTopicId(props.topicId);
-    const info = await topicInfoQuery.execute(this.client);
-    return {
-      topicId: info.topicId.toString(),
-      topicMemo: info.topicMemo,
-      adminKey: !!info.adminKey,
-      submitKey: !!info.submitKey,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      autoRenewPeriod: info.autoRenewPeriod?.seconds.low,
-      autoRenewAccountId: info.autoRenewAccountId?.toString(),
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      expirationTime: info.expirationTime?.seconds.low,
-    };
-  }
-
   private convertExpirationTimeToSeconds = (expirationTime?: Timestamp | Date): number | undefined => {
     if (!expirationTime) return undefined;
 
@@ -261,4 +264,71 @@ export class HcsTopicService {
 
     throw new Error('Invalid expirationTime type');
   };
+
+  /**
+   * Read topic info
+   * @param props
+   */
+  private readTopicInfo(props: GetTopicInfoProps): Promise<TopicInfo> {
+    return isMirrorQuerySupported(this.client) ? this.readTopicInfoByClient(props) : this.readTopicInfoByRest(props)
+  }
+
+  /**
+   * Read topic info by GprsClient
+   * @param props
+   * @private
+   */
+  private async readTopicInfoByClient(props: GetTopicInfoProps): Promise<TopicInfo> {
+    const topicInfoQuery = new TopicInfoQuery().setTopicId(props.topicId);
+    const info = await topicInfoQuery.execute(this.client);
+
+    return {
+      topicId: info.topicId.toString(),
+      topicMemo: info.topicMemo,
+      adminKey: !!info.adminKey,
+      submitKey: !!info.submitKey,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      autoRenewPeriod: info.autoRenewPeriod?.seconds.low,
+      autoRenewAccountId: info.autoRenewAccountId?.toString(),
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      expirationTime: info.expirationTime?.seconds.low,
+    };
+  }
+
+  /**
+   * Read topic info by REST API
+   * @param props
+   * @private
+   */
+  private async readTopicInfoByRest(props: GetTopicInfoProps): Promise<TopicInfo> {
+    const restApiUrl = getMirrorNetworkNodeUrl(this.client)
+
+    const response = await fetch(`${restApiUrl}/api/v1/topics/${props.topicId}?_=${Date.now()}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json'
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch topic info: ${response.statusText}`);
+    }
+
+    const data: MirrorNodeTopicResponse = await response.json();
+    if (data.deleted)
+    {
+      throw new StatusError({ status: Status.InvalidTopicId, transactionId: undefined}, Status.InvalidTopicId.toString())
+    }
+
+    return {
+      topicId: data.topic_id,
+      topicMemo: data.memo,
+      adminKey: !!data.admin_key,
+      submitKey: !!data.submit_key,
+      autoRenewPeriod: data.auto_renew_period,
+      autoRenewAccountId: data.auto_renew_account ?? undefined,
+      expirationTime: data.expiration_time ? new Date(data.expiration_time).getTime() : undefined,
+    };
+  }
 }
