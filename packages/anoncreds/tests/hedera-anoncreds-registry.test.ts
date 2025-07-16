@@ -20,12 +20,12 @@ const GET_CACHED_DATA_TIMEOUT = 10;
 const operatorId = process.env.HEDERA_TESTNET_OPERATOR_ID ?? '';
 const operatorKey = process.env.HEDERA_TESTNET_OPERATOR_KEY ?? '';
 
-const schemaPayload = {
+const schemaPayload: AnonCredsSchema  = {
   issuerId: '',
   name: uuidv4(),
   version: '1',
   attrNames: ['field1', 'field2'],
-} satisfies AnonCredsSchema;
+};
 
 const testnetNetwork: NetworkConfig[] = [
   {
@@ -35,7 +35,7 @@ const testnetNetwork: NetworkConfig[] = [
   },
 ];
 
-const credentialDefinitionPayload = {
+const credentialDefinitionPayload: AnonCredsCredentialDefinition = {
   issuerId: '',
   schemaId: '',
   tag: 'TAG',
@@ -55,9 +55,9 @@ const credentialDefinitionPayload = {
     },
     revocation: true,
   },
-} satisfies AnonCredsCredentialDefinition;
+};
 
-const revocationRegistryDefinition = {
+const revocationRegistryDefinition: AnonCredsRevocationRegistryDefinition = {
   issuerId: '',
   credDefId: '',
   tag: 'TAG',
@@ -72,15 +72,15 @@ const revocationRegistryDefinition = {
     tailsHash: '91zvq2cFmBZmHCcLqFyzv7bfehHH5rMhdAG5wTjqy2PE',
   },
   revocDefType: 'CL_ACCUM',
-} satisfies AnonCredsRevocationRegistryDefinition;
+};
 
-const revocationStatusListPayload = {
+const revocationStatusListPayload: AnonCredsRevocationStatusListWithoutTimestamp = {
   issuerId: '',
   revRegDefId: '',
   revocationList: [0, 1, 1, 1, 1, 1, 1, 0, 0, 0],
   currentAccumulator:
     '21 124C594B6B20E41B681E92B2C43FD165EA9E68BC3C9D63A82C8893124983CAE94 21 124C5341937827427B0A3A32113BD5E64FB7AB39BD3E5ABDD7970874501CA4897 6 5438CB6F442E2F807812FD9DC0C39AFF4A86B1E6766DBB5359E86A4D70401B0F 4 39D1CA5C4716FFC4FE0853C4FF7F081DFD8DF8D2C2CA79705211680AC77BF3A1 6 70504A5493F89C97C225B68310811A41AD9CD889301F238E93C95AD085E84191 4 39582252194D756D5D86D0EED02BF1B95CE12AED2FA5CD3C53260747D891993C',
-} satisfies AnonCredsRevocationStatusListWithoutTimestamp;
+};
 
 describe('Hedera AnonCreds Registry', () => {
   jest.setTimeout(60000);

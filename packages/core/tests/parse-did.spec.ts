@@ -1,4 +1,4 @@
-import { parseDID } from '../src/helpers';
+import { parseDID } from "../src/parsers";
 
 const METHOD = 'hedera';
 const NETWORK = 'mainnet';

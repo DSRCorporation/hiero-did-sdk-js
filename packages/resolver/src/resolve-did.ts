@@ -1,6 +1,5 @@
-import { DIDDocument, DIDError, DIDResolution, isHederaDID, JsonLdDIDDocument } from '@hiero-did-sdk/core';
+import { DIDDocument, DIDError, DIDResolution, isHederaDID, JsonLdDIDDocument, parseDID } from '@hiero-did-sdk/core';
 import { ResolveDIDOptions, Accept } from './interfaces';
-import { parseDID } from './helpers';
 import { TopicReaderHederaClient } from './topic-readers';
 import { DidDocumentBuilder } from './did-document-builder';
 

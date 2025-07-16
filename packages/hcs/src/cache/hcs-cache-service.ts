@@ -5,11 +5,15 @@ import { TopicInfo, TopicMessageData } from '../hcs';
 import { CacheConfig } from '../hedera-hcs-service.configuration';
 
 export class HcsCacheService {
-  private readonly cache?: Cache;
+  private readonly cache: Cache;
 
-  constructor(cacheConfig?: CacheConfig | Cache) {
-    if (cacheConfig) {
-      this.cache = this.isCache(cacheConfig) ? cacheConfig : new LRUMemoryCache(cacheConfig.maxSize);
+  constructor(cache: Cache);
+  constructor(config: CacheConfig);
+  constructor(configOrCache: CacheConfig | Cache) {
+    if (this.isCache(configOrCache)) {
+      this.cache = configOrCache;
+    } else {
+      this.cache = new LRUMemoryCache(configOrCache.maxSize);
     }
   }
 
@@ -80,7 +84,6 @@ export class HcsCacheService {
    * @return The saved value
    */
   private async getFromCache<T>(key: string): Promise<T | null> {
-    if (!this.cache) return null;
     return await this.cache.get<T>(key);
   }
 
@@ -91,7 +94,6 @@ export class HcsCacheService {
    * @param expiresInSeconds - The cached value lifetime
    */
   private async putToCache<T>(key: string, value: T, expiresInSeconds?: number): Promise<void> {
-    if (!this.cache) return;
     await this.cache.set<T>(key, value, expiresInSeconds);
   }
 

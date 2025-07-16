@@ -115,6 +115,9 @@ importers:
       '@hiero-did-sdk/client':
         specifier: workspace:*
         version: link:../client
+      '@hiero-did-sdk/core':
+        specifier: workspace:*
+        version: link:../core
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
