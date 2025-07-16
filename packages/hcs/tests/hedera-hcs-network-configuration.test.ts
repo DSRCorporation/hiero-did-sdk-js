@@ -1,8 +1,18 @@
 import { PrivateKey, Timestamp } from '@hashgraph/sdk';
 import { HederaHcsService } from '../src/hedera-hcs-service';
+import { HederaNetwork, NetworkConfig } from '@hiero-did-sdk/client';
 
-const operatorId = process.env.HEDERA_TESTNET_OPERATOR_ID ?? '';
-const operatorKey = process.env.HEDERA_TESTNET_OPERATOR_KEY ?? '';
+const network = (process.env.NETWORK as HederaNetwork) ?? 'testnet';
+const operatorId = process.env.HEDERA_OPERATOR_ID ?? '';
+const operatorKey = process.env.HEDERA_OPERATOR_KEY ?? '';
+
+const networkConfigs: NetworkConfig[] = [
+  {
+    network,
+    operatorId,
+    operatorKey,
+  },
+];
 
 jest.mock('./../src/hcs/hcs-topic-service', () => ({
   HcsTopicService: jest.fn().mockImplementation(() => ({
@@ -45,8 +55,8 @@ jest.mock('./../src/hcs/hcs-file-service', () => ({
   })),
 }));
 
-describe('Hedera HCS networks', () => {
-  it('Init library with empty networks', () => {
+describe('Hedera HCS networks configuration', () => {
+  it('Init with empty networks', () => {
     expect(() => {
       new HederaHcsService({
         networks: [],
@@ -54,7 +64,7 @@ describe('Hedera HCS networks', () => {
     }).toThrow('Networks should be defined.');
   });
 
-  it('Init library with not unique network names', () => {
+  it('Init with duplicated network names', () => {
     expect(() => {
       new HederaHcsService({
         networks: [
@@ -80,7 +90,7 @@ describe('Hedera HCS networks', () => {
   });
 
   it('Using one network without required network name', async () => {
-    const ledgerService = new HederaHcsService({ networks: [{ network: 'testnet', operatorId, operatorKey }] });
+    const ledgerService = new HederaHcsService({ networks: networkConfigs });
 
     // Topic service
     const createTopicResult = await ledgerService.createTopic();
@@ -113,9 +123,9 @@ describe('Hedera HCS networks', () => {
   });
 
   it('Using one network with correct required network name', async () => {
-    const networkName = 'testnet';
+    const networkName = network;
 
-    const ledgerService = new HederaHcsService({ networks: [{ network: networkName, operatorId, operatorKey }] });
+    const ledgerService = new HederaHcsService({ networks: networkConfigs });
 
     // Topic service
     const createTopicResult = await ledgerService.createTopic({ networkName });
@@ -146,7 +156,7 @@ describe('Hedera HCS networks', () => {
   it('Using one network with incorrect required network name', async () => {
     const networkName = 'custom-net';
 
-    const ledgerService = new HederaHcsService({ networks: [{ network: 'testnet', operatorId, operatorKey }] });
+    const ledgerService = new HederaHcsService({ networks: networkConfigs });
 
     // Topic service
     await expect(ledgerService.createTopic({ networkName })).rejects.toThrow('Unknown Hedera network');

@@ -1,13 +1,15 @@
 import { Client, PrivateKey } from '@hashgraph/sdk';
 import { HederaHcsService } from '../src/hedera-hcs-service';
 import { getRandomStr } from './utils/utils';
+import { HederaNetwork } from '@hiero-did-sdk/client';
 
-const operatorId = process.env.HEDERA_TESTNET_OPERATOR_ID ?? '';
-const operatorKey = process.env.HEDERA_TESTNET_OPERATOR_KEY ?? '';
+const network = (process.env.HEDERA_NETWORK as HederaNetwork) ?? 'testnet';
+const operatorId = process.env.HEDERA_OPERATOR_ID ?? '';
+const operatorKey = process.env.HEDERA_OPERATOR_KEY ?? '';
 
 const TEST_VARIANTS = [
   { useRestAPI: false, name: 'Client' },
-  { useRestAPI: true, name: 'REST API' }
+  { useRestAPI: true, name: 'REST API' },
 ];
 
 describe('Hedera HCS Service', () => {
@@ -17,7 +19,7 @@ describe('Hedera HCS Service', () => {
     const ledgerService = new HederaHcsService({
       networks: [
         {
-          network: 'testnet',
+          network,
           operatorId,
           operatorKey,
         },
@@ -27,10 +29,11 @@ describe('Hedera HCS Service', () => {
     beforeAll(() => {
       global.UseRestAPI = useRestAPI;
 
-      // eslint-disable-next-line @typescript-eslint/no-require-imports,@typescript-eslint/no-unused-vars
-      jest.spyOn(require('../src/shared/mirror-node'), 'isMirrorQuerySupported').mockImplementation((client: Client) => {
-        return !global.UseRestAPI;
-      });
+      jest
+        .spyOn(require('../src/shared/mirror-node'), 'isMirrorQuerySupported')
+        .mockImplementation((client: Client) => {
+          return !global.UseRestAPI;
+        });
     });
 
     afterEach(() => {
@@ -312,5 +315,4 @@ describe('Hedera HCS Service', () => {
       expect(messages).toHaveLength(2);
     });
   });
-})
-
+});

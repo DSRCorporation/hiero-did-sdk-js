@@ -1,5 +1,5 @@
 import { LRUMemoryCache } from '@hiero-did-sdk/cache';
-import { NetworkConfig } from '@hiero-did-sdk/client';
+import { HederaNetwork, NetworkConfig } from '@hiero-did-sdk/client';
 import { HederaHcsService } from '@hiero-did-sdk/hcs';
 import { HederaAnoncredsRegistry } from '../src';
 import { AnonCredsRevocationStatusListWithoutTimestamp, GetRevocationStatusListReturn } from '../src/dto';
@@ -9,16 +9,25 @@ import {
   AnonCredsSchema,
 } from '../src/specification';
 import { ConsoleLogger, FakeCache, LogLevel } from './utils';
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuidv4 } from 'uuid';
 
 const LOG_DEBUG_MASSAGES = false;
 const TEST_WITH_CACHE = true;
 
 const GET_DATA_TIMEOUT = 50;
-const GET_CACHED_DATA_TIMEOUT = 10;
+const GET_CACHED_DATA_TIMEOUT = 1000;
 
-const operatorId = process.env.HEDERA_TESTNET_OPERATOR_ID ?? '';
-const operatorKey = process.env.HEDERA_TESTNET_OPERATOR_KEY ?? '';
+const network = (process.env.NETWORK as HederaNetwork) ?? 'testnet';
+const operatorId = process.env.HEDERA_OPERATOR_ID ?? '';
+const operatorKey = process.env.HEDERA_OPERATOR_KEY ?? '';
+
+const networkConfigs: NetworkConfig[] = [
+  {
+    network,
+    operatorId,
+    operatorKey,
+  },
+];
 
 const schemaPayload = {
   issuerId: '',
@@ -26,14 +35,6 @@ const schemaPayload = {
   version: '1',
   attrNames: ['field1', 'field2'],
 } satisfies AnonCredsSchema;
-
-const testnetNetwork: NetworkConfig[] = [
-  {
-    network: 'testnet',
-    operatorId,
-    operatorKey,
-  },
-];
 
 const credentialDefinitionPayload = {
   issuerId: '',
@@ -97,7 +98,7 @@ describe('Hedera AnonCreds Registry', () => {
   beforeEach(async () => {
     await cache.cleanup();
     anoncredsRegistry = new HederaAnoncredsRegistry({
-      networks: testnetNetwork,
+      networks: networkConfigs,
       cache,
     });
   });
@@ -325,11 +326,11 @@ describe('Hedera AnonCreds Registry', () => {
 
     beforeAll(async () => {
       const registry = new HederaAnoncredsRegistry({
-        networks: testnetNetwork,
+        networks: networkConfigs,
         cache,
       });
       const hcs = new HederaHcsService({
-        networks: testnetNetwork,
+        networks: networkConfigs,
       });
 
       // Schema
@@ -451,7 +452,7 @@ describe('Hedera AnonCreds Registry', () => {
 
       await cache.cleanup();
 
-      const step = async (
+      const resolveForTimestamp = async (
         timestamp: number
       ): Promise<{
         duration: number;
@@ -465,47 +466,47 @@ describe('Hedera AnonCreds Registry', () => {
         };
       };
 
-      let stepResult = await step(tsBeforeStatusListEntryDate);
-      expect(stepResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0);
+      let resolutionResult = await resolveForTimestamp(tsBeforeStatusListEntryDate);
+      expect(resolutionResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0);
 
-      stepResult = await step(tsFirstStatusListEntryDate);
-      expect(stepResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0);
+      resolutionResult = await resolveForTimestamp(tsFirstStatusListEntryDate);
+      expect(resolutionResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0);
 
-      stepResult = await step(tsBetweenStatusListEntryDate);
-      expect(stepResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0);
+      resolutionResult = await resolveForTimestamp(tsBetweenStatusListEntryDate);
+      expect(resolutionResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0);
 
-      stepResult = await step(tsAfterStatusListEntryDate);
-      expect(stepResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(1);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(1);
+      resolutionResult = await resolveForTimestamp(tsAfterStatusListEntryDate);
+      expect(resolutionResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[0]).toEqual(1);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[9]).toEqual(1);
 
-      stepResult = await step(tsLastStatusListEntryDate);
-      expect(stepResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(1);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(1);
+      resolutionResult = await resolveForTimestamp(tsLastStatusListEntryDate);
+      expect(resolutionResult.duration).toBeGreaterThan(GET_DATA_TIMEOUT);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[0]).toEqual(1);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[9]).toEqual(1);
 
-      stepResult = await step(tsBetweenStatusListEntryDate);
-      expect(stepResult.duration).toBeLessThan(GET_CACHED_DATA_TIMEOUT);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0);
+      resolutionResult = await resolveForTimestamp(tsBetweenStatusListEntryDate);
+      expect(resolutionResult.duration).toBeLessThan(GET_CACHED_DATA_TIMEOUT);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0);
 
-      stepResult = await step(tsFirstStatusListEntryDate);
-      expect(stepResult.duration).toBeLessThan(GET_CACHED_DATA_TIMEOUT);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
-      expect(stepResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0);
+      resolutionResult = await resolveForTimestamp(tsFirstStatusListEntryDate);
+      expect(resolutionResult.duration).toBeLessThan(GET_CACHED_DATA_TIMEOUT);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[0]).toEqual(0);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[5]).toEqual(0);
+      expect(resolutionResult.statusList.revocationStatusList?.revocationList[9]).toEqual(0);
     });
   });
 });

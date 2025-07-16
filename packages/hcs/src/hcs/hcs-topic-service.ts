@@ -220,9 +220,9 @@ export class HcsTopicService {
   public async deleteTopic(props: DeleteTopicProps): Promise<void> {
     const topicTransaction = new TopicDeleteTransaction().setTopicId(props.topicId);
 
-    const topicFreezedAndSignedTransaction = await topicTransaction.freezeWith(this.client).sign(props.currentAdminKey);
+    const topicFrozenAndSignedTransaction = await topicTransaction.freezeWith(this.client).sign(props.currentAdminKey);
 
-    const topicDeleteResult = await topicFreezedAndSignedTransaction.execute(this.client);
+    const topicDeleteResult = await topicFrozenAndSignedTransaction.execute(this.client);
 
     const receipt = await topicDeleteResult.getReceipt(this.client);
     if (receipt.status !== Status.Success) {
