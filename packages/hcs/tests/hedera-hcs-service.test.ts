@@ -1,7 +1,7 @@
 import { Client, PrivateKey } from '@hashgraph/sdk';
-import { HederaHcsService } from '../src/hedera-hcs-service';
 import { getRandomStr } from './utils/utils';
 import { HederaNetwork } from '@hiero-did-sdk/client';
+import { HederaHcsService } from '../src/hedera-hcs-service';
 
 const network = (process.env.HEDERA_NETWORK as HederaNetwork) ?? 'testnet';
 const operatorId = process.env.HEDERA_OPERATOR_ID ?? '';
@@ -14,8 +14,6 @@ const TEST_VARIANTS = [
 
 describe('Hedera HCS Service', () => {
   describe.each(TEST_VARIANTS)('Using $name', ({ useRestAPI }) => {
-    jest.setTimeout(60000);
-
     const ledgerService = new HederaHcsService({
       networks: [
         {
@@ -30,7 +28,9 @@ describe('Hedera HCS Service', () => {
       global.UseRestAPI = useRestAPI;
 
       jest
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
         .spyOn(require('../src/shared/mirror-node'), 'isMirrorQuerySupported')
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .mockImplementation((client: Client) => {
           return !global.UseRestAPI;
         });
@@ -61,8 +61,8 @@ describe('Hedera HCS Service', () => {
         topicId: topicId.toString(),
       });
       expect(topicInfo.topicMemo).toEqual(topicMemo);
-      expect(topicInfo.submitKey).toEqual(true);
-      expect(topicInfo.adminKey).toEqual(true);
+      expect(topicInfo.submitKey).toEqual(PrivateKey.fromStringDer(operatorKey).publicKey.toStringRaw());
+      expect(topicInfo.adminKey).toEqual(PrivateKey.fromStringDer(operatorKey).publicKey.toStringRaw());
       expect(topicInfo.autoRenewPeriod).toEqual(autoRenewPeriod);
       expect(topicInfo.autoRenewAccountId).toEqual(operatorId);
     });
@@ -81,8 +81,8 @@ describe('Hedera HCS Service', () => {
       const topicInfo = await ledgerService.getTopicInfo({ topicId });
       expect(topicInfo).toBeDefined();
       expect(topicInfo.topicMemo).toEqual(topicMemo);
-      expect(topicInfo.submitKey).toEqual(false);
-      expect(topicInfo.adminKey).toEqual(true);
+      expect(topicInfo.adminKey).toEqual(PrivateKey.fromStringDer(operatorKey).publicKey.toStringRaw());
+      expect(topicInfo.submitKey).toBeUndefined();
     });
 
     it('Update topic', async () => {
@@ -122,8 +122,8 @@ describe('Hedera HCS Service', () => {
 
       let topicInfo = await ledgerService.getTopicInfo({ topicId });
       expect(topicInfo.topicMemo).toEqual(newTopicMemo);
-      expect(topicInfo.submitKey).toEqual(true);
-      expect(topicInfo.adminKey).toEqual(true);
+      expect(topicInfo.submitKey).toEqual(submit1Key.publicKey.toStringRaw());
+      expect(topicInfo.adminKey).toEqual(admin1Key.publicKey.toStringRaw());
       expect(topicInfo.autoRenewPeriod).toEqual(newAutoRenewPeriod);
       expect(topicInfo.autoRenewAccountId).toEqual(renewAccountId);
       if (topicInfo.expirationTime)
@@ -144,8 +144,8 @@ describe('Hedera HCS Service', () => {
 
       topicInfo = await ledgerService.getTopicInfo({ topicId });
       expect(topicInfo.topicMemo).toEqual(nextNewTopicMemo);
-      expect(topicInfo.submitKey).toEqual(true);
-      expect(topicInfo.adminKey).toEqual(true);
+      expect(topicInfo.submitKey).toEqual(submit2Key.publicKey.toStringRaw());
+      expect(topicInfo.adminKey).toEqual(admin1Key.publicKey.toStringRaw());
       expect(topicInfo.autoRenewPeriod).toEqual(nextNewAutoRenewPeriod);
       expect(topicInfo.autoRenewAccountId).toEqual(renewAccountId);
       if (topicInfo.expirationTime)
@@ -162,8 +162,8 @@ describe('Hedera HCS Service', () => {
 
       topicInfo = await ledgerService.getTopicInfo({ topicId });
       expect(topicInfo.topicMemo).toEqual(nextNewTopicMemo);
-      expect(topicInfo.submitKey).toEqual(true);
-      expect(topicInfo.adminKey).toEqual(true);
+      expect(topicInfo.submitKey).toEqual(submit2Key.publicKey.toStringRaw());
+      expect(topicInfo.adminKey).toEqual(admin1Key.publicKey.toStringRaw());
       expect(topicInfo.autoRenewPeriod).toEqual(nextNewAutoRenewPeriod);
       expect(topicInfo.autoRenewAccountId).toEqual(operatorId);
       if (topicInfo.expirationTime)
@@ -180,8 +180,8 @@ describe('Hedera HCS Service', () => {
 
       topicInfo = await ledgerService.getTopicInfo({ topicId });
       expect(topicInfo.topicMemo).toEqual(nextNewTopicMemo);
-      expect(topicInfo.submitKey).toEqual(true);
-      expect(topicInfo.adminKey).toEqual(true);
+      expect(topicInfo.submitKey).toEqual(admin2Key.publicKey.toStringRaw());
+      expect(topicInfo.adminKey).toEqual(admin2Key.publicKey.toStringRaw());
       expect(topicInfo.autoRenewPeriod).toEqual(nextNewAutoRenewPeriod);
       expect(topicInfo.autoRenewAccountId).toEqual(operatorId);
       if (topicInfo.expirationTime)
@@ -200,12 +200,13 @@ describe('Hedera HCS Service', () => {
       const topicInfo = await ledgerService.getTopicInfo({ topicId });
       expect(topicInfo).toBeDefined();
 
+      console.log(JSON.stringify(topicInfo, null, 2));
+
       await ledgerService.deleteTopic({
         topicId,
         currentAdminKey: PrivateKey.fromStringDer(operatorKey),
+        waitForChangesVisibility: true,
       });
-
-      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       await expect(ledgerService.getTopicInfo({ topicId })).rejects.toThrow(
         // eslint-disable-next-line @typescript-eslint/no-unsafe-argument

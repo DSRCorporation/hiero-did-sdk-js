@@ -1,6 +1,6 @@
 import {
   type Client,
-  PrivateKey,
+  PrivateKey, PublicKey,
   Status, StatusError,
   Timestamp,
   TopicCreateTransaction,
@@ -45,6 +45,8 @@ export type UpdateTopicProps = {
 export type DeleteTopicProps = {
   topicId: string;
   currentAdminKey: PrivateKey;
+  waitForChangesVisibility?: boolean;
+  waitForChangesVisibilityTimeoutMs?: number;
 };
 
 export interface GetTopicInfoProps {
@@ -54,8 +56,8 @@ export interface GetTopicInfoProps {
 export interface TopicInfo {
   topicId: string;
   topicMemo: string;
-  adminKey?: boolean;
-  submitKey?: boolean;
+  adminKey?: string;
+  submitKey?: string;
   autoRenewPeriod?: number;
   autoRenewAccountId?: string;
   expirationTime?: number;
@@ -85,7 +87,9 @@ export class HcsTopicService {
     private readonly client: Client,
     cache?: CacheConfig | Cache | HcsCacheService
   ) {
-    this.cacheService = cache ? (cache instanceof HcsCacheService ? cache : new HcsCacheService(cache)) : undefined;
+    if (cache) {
+      this.cacheService = cache instanceof HcsCacheService ? cache : new HcsCacheService(cache);
+    }
   }
 
   /**
@@ -203,8 +207,8 @@ export class HcsTopicService {
         fetchFn: () => this.readTopicInfo({ topicId: props.topicId }),
         checkFn: (topicInfo: TopicInfo) =>
           (props.topicMemo === undefined || props.topicMemo === topicInfo.topicMemo) &&
-          (props.submitKey === undefined || !!props.submitKey === topicInfo.submitKey) &&
-          (props.adminKey === undefined || !!props.adminKey === topicInfo.adminKey) &&
+          (props.submitKey === undefined || props.submitKey.publicKey.toStringDer() === topicInfo.submitKey) &&
+          (props.adminKey === undefined || props.adminKey.publicKey.toStringDer() === topicInfo.adminKey) &&
           (props.autoRenewPeriod === undefined || props.autoRenewPeriod === topicInfo.autoRenewPeriod) &&
           (props.autoRenewAccountId === undefined || props.autoRenewAccountId === topicInfo.autoRenewAccountId) &&
           (props.expirationTime === undefined || this.convertExpirationTimeToSeconds(props.expirationTime) === topicInfo.expirationTime),
@@ -230,6 +234,22 @@ export class HcsTopicService {
     }
 
     await this.cacheService?.removeTopicInfo(this.client, props.topicId);
+
+    if (props?.waitForChangesVisibility) {
+      await waitForChangesVisibility<boolean>({
+        fetchFn: async () => {
+          try {
+            await this.readTopicInfo({ topicId: props.topicId })
+            return false
+          } catch (error)
+          {
+            return error instanceof StatusError && error.status === Status.InvalidTopicId
+          }
+        },
+        checkFn: (value: boolean) => value === true,
+        waitTimeout: props?.waitForChangesVisibilityTimeoutMs,
+      });
+    }
   }
 
   /**
@@ -285,8 +305,8 @@ export class HcsTopicService {
     return {
       topicId: info.topicId.toString(),
       topicMemo: info.topicMemo,
-      adminKey: !!info.adminKey,
-      submitKey: !!info.submitKey,
+      adminKey: (info.adminKey as PublicKey)?.toStringRaw(),
+      submitKey: (info.submitKey as PublicKey)?.toStringRaw(),
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       autoRenewPeriod: info.autoRenewPeriod?.seconds.low,
       autoRenewAccountId: info.autoRenewAccountId?.toString(),
@@ -324,8 +344,8 @@ export class HcsTopicService {
     return {
       topicId: data.topic_id,
       topicMemo: data.memo,
-      adminKey: !!data.admin_key,
-      submitKey: !!data.submit_key,
+      adminKey: data.admin_key?.key,
+      submitKey: data.submit_key?.key,
       autoRenewPeriod: data.auto_renew_period,
       autoRenewAccountId: data.auto_renew_account ?? undefined,
       expirationTime: data.expiration_time ? new Date(data.expiration_time).getTime() : undefined,

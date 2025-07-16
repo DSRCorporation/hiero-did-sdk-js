@@ -43,12 +43,9 @@ export class HcsFileService {
     private readonly client: Client,
     cache?: CacheConfig | Cache | HcsCacheService
   ) {
-    if (!cache)
-      this.cacheService = undefined
-    else if (cache instanceof HcsCacheService)
-      this.cacheService =  cache
-    else
-      this.cacheService = new HcsCacheService(cache)
+    if (cache) {
+      this.cacheService = cache instanceof HcsCacheService ? cache : new HcsCacheService(cache);
+    }
   }
 
   /**

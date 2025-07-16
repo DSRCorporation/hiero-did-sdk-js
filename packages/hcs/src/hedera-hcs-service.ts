@@ -23,7 +23,9 @@ export class HederaHcsService {
 
   constructor(config: HederaHcsServiceConfiguration) {
     this.clientService = new HederaClientService(config);
-    this.cacheService = new HcsCacheService(config.cache);
+    if (config.cache) {
+      this.cacheService = new HcsCacheService(config.cache);
+    }
   }
 
   public async createTopic(props?: CreateTopicProps & NetworkName) {

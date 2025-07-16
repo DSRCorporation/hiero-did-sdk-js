@@ -7,6 +7,7 @@ const config: Config = {
   displayName: '@hiero-did-sdk/anoncreds',
   rootDir: '../..',
   testMatch: [`<rootDir>/packages/anoncreds/**/*.test.ts`],
+  testTimeout: 60000
 }
 
 export default config

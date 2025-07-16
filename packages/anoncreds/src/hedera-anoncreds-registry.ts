@@ -19,7 +19,8 @@ import {
 } from './dto';
 import { HederaAnoncredsRegistryConfiguration } from './hedera-anoncreds-registry.configuration';
 import { AnonCredsRevocationStatusList } from './specification';
-import { AnonCredsObjectType, buildAnoncredsIdentifier, parseAnoncredsIdentifier } from './utils';
+import { AnonCredsObjectType, buildAnoncredsIdentifier } from './utils';
+import { parseDID } from '@hiero-did-sdk/core';
 
 type NetworkName = {
   networkName?: string;
@@ -74,7 +75,7 @@ export class HederaAnoncredsRegistry {
    * @returns Schema definition resolution result
    */
   async getSchema(schemaId: string): Promise<GetSchemaReturn> {
-    const { topicId, networkName } = parseAnoncredsIdentifier(schemaId);
+    const { topicId, network: networkName } = parseDID(schemaId);
     const payload = await this.hcsService.resolveFile({ topicId, networkName });
     const schema = JSON.parse(payload.toString());
     return {
@@ -134,7 +135,7 @@ export class HederaAnoncredsRegistry {
    * @returns Credential definition resolution result
    */
   async getCredentialDefinition(credentialDefinitionId: string): Promise<GetCredentialDefinitionReturn> {
-    const { topicId, networkName } = parseAnoncredsIdentifier(credentialDefinitionId);
+    const { topicId, network: networkName } = parseDID(credentialDefinitionId);
     const payload = await this.hcsService.resolveFile({ topicId, networkName });
     const credentialDefinition = JSON.parse(payload.toString());
     return {
@@ -331,7 +332,7 @@ export class HederaAnoncredsRegistry {
   private resolveRevocationRegistryDefinition = async (
     revocationRegistryDefinitionId: string
   ): Promise<GetRevocationRegistryDefinitionReturn> => {
-    const { topicId, networkName } = parseAnoncredsIdentifier(revocationRegistryDefinitionId);
+    const { topicId, network: networkName } = parseDID(revocationRegistryDefinitionId);
 
     const payloadBuffer = await this.hcsService.resolveFile({
       topicId,
@@ -395,7 +396,7 @@ export class HederaAnoncredsRegistry {
       );
     }
 
-    const { networkName } = parseAnoncredsIdentifier(revocationRegistryDefinitionId);
+    const { network: networkName } = parseDID(revocationRegistryDefinitionId);
 
     let messages = await this.hcsService.getTopicMessages({
       networkName,

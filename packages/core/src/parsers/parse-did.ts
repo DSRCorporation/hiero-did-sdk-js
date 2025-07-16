@@ -1,4 +1,4 @@
-import { DIDError, Network } from '@hiero-did-sdk/core';
+import { DIDError, Network } from '../interfaces';
 
 interface Output {
   /**

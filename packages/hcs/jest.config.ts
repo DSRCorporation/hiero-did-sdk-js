@@ -6,7 +6,8 @@ const config: Config = {
   ...baseConfig,
   displayName: '@hiero-did-sdk/hcs',
   rootDir: '../..',
-  testMatch: [`<rootDir>/packages/hcs/**/*.test.ts`]
+  testMatch: [`<rootDir>/packages/hcs/**/*.test.ts`],
+  testTimeout: 60000
 }
 
 export default config

@@ -71,7 +71,9 @@ export class HcsMessageService {
     private readonly client: Client,
     cache?: CacheConfig | Cache | HcsCacheService
   ) {
-    this.cacheService = cache ? (cache instanceof HcsCacheService ? cache : new HcsCacheService(cache)) : undefined;
+    if (cache) {
+      this.cacheService = cache instanceof HcsCacheService ? cache : new HcsCacheService(cache);
+    }
   }
 
   /**
