@@ -1,0 +1,52 @@
+{
+  "name": "@hiero-did-sdk/crypto",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "browser": "./dist/browser/index.esm.js",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "browser": "./dist/browser/index.esm.js",
+    "require": "./dist/index.cjs.js",
+    "import": "./dist/index.esm.js",
+    "default": "./dist/index.esm.js"
+  },
+  "version": "0.0.4",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/DSRCorporation/hiero-did-sdk-js.git",
+  "bugs": {
+    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js.git",
+    "directory": "packages/crypto"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "main": "dist/index",
+    "types": "dist/index",
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com",
+    "scope": "@hiero-did-sdk"
+  },
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "compile": "tsup",
+    "test": "jest",
+    "build": "pnpm run clean && pnpm run compile",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/*.ts\"",
+    "format-check": "prettier --check \"src/*.ts\" \"tests/*.ts\""
+  },
+  "dependencies": {
+    "crypto": "^1.0.1",
+    "crypto-js": "^4.2.0",
+    "buffer": "^6.0.3",
+    "react-native-quick-crypto": "^0.7.14"
+  }
+}

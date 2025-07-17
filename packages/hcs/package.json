@@ -1,0 +1,55 @@
+{
+  "name": "@hiero-did-sdk/hcs",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "browser": "./dist/browser/index.esm.js",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "browser": "./dist/browser/index.esm.js",
+    "require": "./dist/index.cjs.js",
+    "import": "./dist/index.esm.js",
+    "default": "./dist/index.esm.js"
+  },
+  "version": "0.0.16",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/DSRCorporation/hiero-did-sdk-js.git",
+  "bugs": {
+    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js.git",
+    "directory": "packages/hcs"
+  },
+  "files": [
+    "dist",
+    "package.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "main": "dist/index",
+    "types": "dist/index",
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com",
+    "scope": "@hiero-did-sdk"
+  },
+  "scripts": {
+    "clean": "rimraf ./dist",
+    "compile": "tsup",
+    "test": "jest",
+    "build": "pnpm run clean && pnpm run compile",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/*.ts\"",
+    "format-check": "prettier --check \"src/*.ts\" \"tests/*.ts\""
+  },
+  "dependencies": {
+    "@hashgraph/sdk": "^2.66.0",
+    "@hiero-did-sdk/cache": "workspace:*",
+    "@hiero-did-sdk/client": "workspace:*",
+    "@hiero-did-sdk/core": "workspace:*",
+    "@hiero-did-sdk/crypto": "workspace:*",
+    "@hiero-did-sdk/zstd": "workspace:*",
+    "buffer": "^6.0.3"
+  }
+}

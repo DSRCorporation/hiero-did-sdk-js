@@ -52,7 +52,7 @@ The transition to v2.0 focuses on aligning the *authorization and control logic*
 
 == Specification
 
-The detailed specification for Hedera DID Method v2.0, including precise message formats, proof requirements, and state transition rules, is currently under development and review. The draft specification and ongoing discussions can be found in the dedicated repository: link:https://github.com/Swiss-Digital-Assets-Institute/did-method[https://github.com/Swiss-Digital-Assets-Institute/did-method].
+The detailed specification for Hedera DID Method v2.0, including precise message formats, proof requirements, and state transition rules, is currently under development and review. The draft specification and ongoing discussions can be found in the dedicated repository: link:https://github.com/DSRCorporation/did-method[https://github.com/DSRCorporation/did-method].
 
 Key aspects defined by the v2.0 specification include:
 
@@ -159,7 +159,7 @@ Effective education for Hedera DID Method v2.0 should focus on its W3C controlle
 
 == Reference Implementation and Testing
 
-A reference implementation for the Hedera DID Method v2.0, demonstrating how to create, resolve, update, and deactivate DIDs according to this specification using JavaScript, is being developed. The work-in-progress SDK is available at: link:https://github.com/Swiss-Digital-Assets-Institute/hashgraph-did-sdk-js[https://github.com/Swiss-Digital-Assets-Institute/hashgraph-did-sdk-js].
+A reference implementation for the Hedera DID Method v2.0, demonstrating how to create, resolve, update, and deactivate DIDs according to this specification using JavaScript, is being developed. The work-in-progress SDK is available at: link:https://github.com/DSRCorporation/hiero-did-sdk-js[https://github.com/DSRCorporation/hiero-did-sdk-js].
 
 To ensure interoperability and compliance with this specification, implementers (of SDKs, resolvers, or applications) *SHOULD* validate their implementations against standardized test vectors. These test vectors should cover various scenarios, including:
 
@@ -176,8 +176,8 @@ To ensure interoperability and compliance with this specification, implementers 
 * link:https://www.w3.org/TR/did-core/[Decentralized Identifiers (DIDs) v1.0 - W3C Recommendation]
 * link:https://www.w3.org/TR/vc-data-integrity/[Verifiable Credential Data Integrity v1.0 - W3C Recommendation] [VC-DI-1.0]
 * link:https://github.com/hashgraph/did-method/[Hedera DID Method v1.0 Specification (For historical context)]
-* link:https://github.com/Swiss-Digital-Assets-Institute/did-method/[Hedera DID Method v2.0 Specification]
-* link:https://github.com/Swiss-Digital-Assets-Institute/hashgraph-did-sdk-js[Hedera DID Method v2.0 Reference Implementation].
+* link:https://github.com/DSRCorporation/did-method/[Hedera DID Method v2.0 Specification]
+* link:https://github.com/DSRCorporation/hiero-did-sdk-js[Hedera DID Method v2.0 Reference Implementation].
 
 == Copyright/license
 

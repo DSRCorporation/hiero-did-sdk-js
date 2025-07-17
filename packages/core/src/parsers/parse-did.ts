@@ -1,4 +1,4 @@
-import { DIDError, Network } from '@swiss-digital-assets-institute/core';
+import { DIDError, Network } from '../interfaces';
 
 interface Output {
   /**
@@ -32,8 +32,7 @@ interface Output {
  * @returns DID components.
  */
 export function parseDID(did: string): Output {
-  const didPattern =
-    /^did:([a-zA-Z0-9]+):([a-zA-Z0-9-]+):([a-zA-Z0-9]+)_([0-9]+\.[0-9]+\.[0-9]+)$/;
+  const didPattern = /^did:([a-zA-Z0-9]+):([a-zA-Z0-9-]+):([a-zA-Z0-9]+)_([0-9]+\.[0-9]+\.[0-9]+)$/;
 
   const match = did.match(didPattern);
   if (!match) {
@@ -48,4 +47,22 @@ export function parseDID(did: string): Output {
     publicKey,
     topicId,
   };
+}
+
+/**
+ * Extract Did from a Hedera id
+ * @returns DID
+ * @param id
+ */
+export function extractDID(id: string): string {
+  const didIdPattern = /^(did:[^/]+)/;
+
+  const match = id.match(didIdPattern);
+  if (!match) {
+    throw new DIDError('invalidDid', 'Invalid DID format');
+  }
+
+  const [did] = match;
+
+  return did;
 }

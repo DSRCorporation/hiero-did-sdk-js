@@ -37,10 +37,7 @@ describe('Vault Signer Factory', () => {
 
     expect(mockApiInstance.setToken).toHaveBeenCalledWith('test');
     expect(mockApiInstance.ensureAuthentication).toHaveBeenCalledTimes(1);
-    expect(VaultApiMock).toHaveBeenCalledWith(
-      'http://example.com',
-      'custom-path',
-    );
+    expect(VaultApiMock).toHaveBeenCalledWith('http://example.com', 'custom-path');
   });
 
   it('should authenticated vault signer factory with username and password', async () => {
@@ -52,10 +49,7 @@ describe('Vault Signer Factory', () => {
 
     const mockApiInstance = VaultApiMock.mock.instances[0];
 
-    expect(mockApiInstance.loginWithUsernameAndPassword).toHaveBeenCalledWith(
-      'test',
-      'test',
-    );
+    expect(mockApiInstance.loginWithUsernameAndPassword).toHaveBeenCalledWith('test', 'test');
     expect(VaultApiMock).toHaveBeenCalledWith('http://example.com', undefined);
     expect(factory).toBeDefined();
     expect(factory).toBeInstanceOf(VaultSignerFactory);
@@ -71,14 +65,8 @@ describe('Vault Signer Factory', () => {
 
     const mockApiInstance = VaultApiMock.mock.instances[0];
 
-    expect(mockApiInstance.loginWithUsernameAndPassword).toHaveBeenCalledWith(
-      'test',
-      'test',
-    );
-    expect(VaultApiMock).toHaveBeenCalledWith(
-      'http://example.com',
-      'custom-path',
-    );
+    expect(mockApiInstance.loginWithUsernameAndPassword).toHaveBeenCalledWith('test', 'test');
+    expect(VaultApiMock).toHaveBeenCalledWith('http://example.com', 'custom-path');
   });
 
   it('should authenticated vault signer factory using app role', async () => {
@@ -90,10 +78,7 @@ describe('Vault Signer Factory', () => {
 
     const mockApiInstance = VaultApiMock.mock.instances[0];
 
-    expect(mockApiInstance.loginWithAppRole).toHaveBeenCalledWith(
-      'test',
-      'test',
-    );
+    expect(mockApiInstance.loginWithAppRole).toHaveBeenCalledWith('test', 'test');
     expect(VaultApiMock).toHaveBeenCalledWith('http://example.com', undefined);
     expect(factory).toBeDefined();
     expect(factory).toBeInstanceOf(VaultSignerFactory);
@@ -109,14 +94,8 @@ describe('Vault Signer Factory', () => {
 
     const mockApiInstance = VaultApiMock.mock.instances[0];
 
-    expect(mockApiInstance.loginWithAppRole).toHaveBeenCalledWith(
-      'test',
-      'test',
-    );
-    expect(VaultApiMock).toHaveBeenCalledWith(
-      'http://example.com',
-      'custom-path',
-    );
+    expect(mockApiInstance.loginWithAppRole).toHaveBeenCalledWith('test', 'test');
+    expect(VaultApiMock).toHaveBeenCalledWith('http://example.com', 'custom-path');
   });
 
   describe('Authenticated Vault Signer Factory', () => {

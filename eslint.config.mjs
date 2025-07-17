@@ -18,6 +18,7 @@ export default tseslint.config(
     ignores: [
       'node_modules',
       '**/dist/*',
+      '**/build/*',
       '**/jest.config.ts',
       '**/tsup.config.ts',
       '**/eslint.config.mjs',
