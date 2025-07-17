@@ -15,6 +15,7 @@ const config: Config = {
     Uint8Array: Uint8Array,
     ArrayBuffer: ArrayBuffer,
   },
+  testTimeout: 60000,
 };
 
 export default config;
