@@ -1,6 +1,7 @@
 import { Client, Timestamp, TopicMessage, TopicMessageQuery } from '@hashgraph/sdk';
 import { Network } from '@hiero-did-sdk/core';
 import { TopicReader, TopicReaderMessage, TopicReaderOptions } from '../interfaces';
+import { Buffer } from 'buffer';
 
 /**
  * Implements a topic reader that uses a Hedera Client to read messages from a topic.

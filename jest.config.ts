@@ -24,6 +24,7 @@ const config: JestConfigWithTsJest = {
   verbose: true,
   testLocationInResults: true,
   maxWorkers: '50%',
+  testTimeout: 60000,
   ...createDefaultEsmPreset(),
 };
 

@@ -1,6 +1,7 @@
 import { PrivateKey } from '@hashgraph/sdk';
 import { KeysUtility } from '@hiero-did-sdk/core';
 import { Verifier } from '../src';
+import { Buffer } from 'buffer'
 
 describe('Internal Verifier class', () => {
   let privateKey: PrivateKey;

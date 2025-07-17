@@ -1,6 +1,7 @@
 import { PrivateKey, Timestamp } from '@hashgraph/sdk';
 import { HederaHcsService } from '../src/hedera-hcs-service';
 import { HederaNetwork, NetworkConfig } from '@hiero-did-sdk/client';
+import { Buffer } from 'buffer';
 
 const network = (process.env.NETWORK as HederaNetwork) ?? 'testnet';
 const operatorId = process.env.HEDERA_OPERATOR_ID ?? '';

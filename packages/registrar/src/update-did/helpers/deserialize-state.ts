@@ -8,6 +8,7 @@ import {
   DIDRemoveVerificationMethodMessage,
 } from '@hiero-did-sdk/messages';
 import { RunnerState } from '@hiero-did-sdk/lifecycle';
+import { Buffer } from 'buffer';
 
 interface DeserializedState extends RunnerState<DIDMessage> {
   operation: DIDUpdateOperationsKeys;

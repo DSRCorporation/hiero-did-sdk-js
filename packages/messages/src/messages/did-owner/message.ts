@@ -2,6 +2,7 @@ import { PublicKey } from '@hashgraph/sdk';
 import { DIDMessage, Network, isHederaDID, KeysUtility, DIDError } from '@hiero-did-sdk/core';
 import { isTopicId } from '../../validators/is-topic-id';
 import { DIDOwnerMessageConstructor, MessageSerialized } from './interfaces';
+import { Buffer } from 'buffer';
 
 /**
  * DIDOwnerMessage is a message that represents the creation of a DID Document.

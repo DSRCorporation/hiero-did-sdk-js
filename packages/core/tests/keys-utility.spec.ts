@@ -1,5 +1,6 @@
 import { PrivateKey } from '@hashgraph/sdk';
 import { KeysUtility } from '../src';
+import { Buffer } from 'buffer';
 
 describe('Keys utility', () => {
   it.each(['toMultibase', 'toPublicKey', 'toBytes', 'toBase58', 'toDerString'] as const)(

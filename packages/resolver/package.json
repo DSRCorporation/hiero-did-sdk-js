@@ -52,6 +52,7 @@
     "@hashgraph/sdk": "^2.66.0",
     "@hiero-did-sdk/core": "workspace:*",
     "@hiero-did-sdk/hcs": "workspace:*",
-    "@hiero-did-sdk/verifier-internal": "workspace:*"
+    "@hiero-did-sdk/verifier-internal": "workspace:*",
+    "buffer": "^6.0.3"
   }
 }

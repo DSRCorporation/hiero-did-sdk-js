@@ -51,6 +51,7 @@
     "uuid": "^11.1.0",
     "@hiero-did-sdk/cache": "workspace:*",
     "@hiero-did-sdk/client": "workspace:*",
-    "@hiero-did-sdk/core": "workspace:*"
+    "@hiero-did-sdk/core": "workspace:*",
+    "buffer": "^6.0.3"
   }
 }

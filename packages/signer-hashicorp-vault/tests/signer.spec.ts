@@ -1,5 +1,6 @@
 import { Signer } from '../src';
 import { TestVaultApi } from './helpers';
+import { Buffer } from 'buffer'
 
 describe('Vault Signer', () => {
   it('should create a Signer with key name', () => {

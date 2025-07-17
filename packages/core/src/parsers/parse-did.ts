@@ -48,3 +48,21 @@ export function parseDID(did: string): Output {
     topicId,
   };
 }
+
+/**
+ * Extract Did from a Hedera id
+ * @returns DID
+ * @param id
+ */
+export function extractDID(id: string): string {
+  const didIdPattern = /^(did:[^/]+)/;
+
+  const match = id.match(didIdPattern);
+  if (!match) {
+    throw new DIDError('invalidDid', 'Invalid DID format');
+  }
+
+  const [did, ] = match;
+
+  return did;
+}

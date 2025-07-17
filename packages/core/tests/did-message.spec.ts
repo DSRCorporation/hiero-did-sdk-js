@@ -1,4 +1,5 @@
 import { TestDIDMessage, TestVerifier } from './helpers';
+import { Buffer } from 'buffer';
 
 describe('DID Message', () => {
   let message: TestDIDMessage;

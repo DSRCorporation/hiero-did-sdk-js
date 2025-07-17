@@ -1,5 +1,6 @@
 import { Verifier } from '../src';
 import { TestVaultApi } from './helpers';
+import { Buffer } from 'buffer'
 
 describe('Vault Verifier', () => {
   it('should create a Verifier with key name', () => {

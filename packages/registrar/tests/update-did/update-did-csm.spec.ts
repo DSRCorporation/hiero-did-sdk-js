@@ -7,7 +7,7 @@ import {
   MessageAwaiterWaitMock,
   MessageAwaiterWithTimeoutMock,
 } from '../mocks';
-
+import { Buffer } from 'buffer';
 import { Client, PrivateKey } from '@hashgraph/sdk';
 import {
   DID_ROOT_KEY_ID,

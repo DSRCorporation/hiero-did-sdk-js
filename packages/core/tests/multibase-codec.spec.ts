@@ -1,5 +1,6 @@
 import { webcrypto } from 'crypto';
 import { MultibaseCodec } from '../src/utils/multibase-codec';
+import { Buffer } from 'buffer';
 
 describe('Multibase format utilities', () => {
   const rawText = 'Multibase is awesome! \\o/';

@@ -49,6 +49,7 @@
     "scope": "@hiero-did-sdk"
   },
   "dependencies": {
-    "@hiero-did-sdk/core": "workspace:*"
+    "@hiero-did-sdk/core": "workspace:*",
+    "buffer": "^6.0.3"
   }
 }

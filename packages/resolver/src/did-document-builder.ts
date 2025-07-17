@@ -31,6 +31,7 @@ import {
 import { isDIDMessageEvent } from './validators/is-did-message-event';
 import { isJsonString } from './validators/is-json';
 import { isDIDMessage } from './validators/is-did-message';
+import { Buffer } from 'buffer';
 
 /**
  * A class to build a DID Document from a list of messages

@@ -2,6 +2,7 @@ import { DIDError, DIDMessage, isHederaDID } from '@hiero-did-sdk/core';
 import { DIDAddServiceMessageConstructor, MessageSerialized } from './interfaces';
 import { isPropertyID } from '../../validators/id-property-id';
 import { isURI } from '../../validators/is-uri';
+import { Buffer } from 'buffer';
 
 /**
  * A message to add a service to a DID Document.

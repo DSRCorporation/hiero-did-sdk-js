@@ -49,6 +49,7 @@
     "@hiero-did-sdk/client": "workspace:*",
     "@hiero-did-sdk/core": "workspace:*",
     "@hiero-did-sdk/crypto": "workspace:*",
-    "@hiero-did-sdk/zstd": "workspace:*"
+    "@hiero-did-sdk/zstd": "workspace:*",
+    "buffer": "^6.0.3"
   }
 }

@@ -14,9 +14,6 @@ importers:
       '@scure/base':
         specifier: ^1.2.4
         version: 1.2.6
-      cbor-x:
-        specifier: ^1.6.0
-        version: 1.6.0
     devDependencies:
       '@antora/cli':
         specifier: ^3.1.10
@@ -118,6 +115,9 @@ importers:
       '@hiero-did-sdk/core':
         specifier: workspace:*
         version: link:../core
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
@@ -142,12 +142,18 @@ importers:
       '@scure/base':
         specifier: ^1.2.4
         version: 1.2.6
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
       cbor-x:
         specifier: ^1.6.0
         version: 1.6.0
 
   packages/crypto:
     dependencies:
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
       crypto:
         specifier: ^1.0.1
         version: 1.0.1
@@ -178,12 +184,18 @@ importers:
       '@hiero-did-sdk/zstd':
         specifier: workspace:*
         version: link:../zstd
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
 
   packages/lifecycle:
     dependencies:
       '@hiero-did-sdk/core':
         specifier: workspace:*
         version: link:../core
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
 
   packages/messages:
     dependencies:
@@ -199,6 +211,9 @@ importers:
       '@hiero-did-sdk/resolver':
         specifier: workspace:*
         version: link:../resolver
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
 
   packages/publisher-internal:
     dependencies:
@@ -208,6 +223,9 @@ importers:
       '@hiero-did-sdk/core':
         specifier: workspace:*
         version: link:../core
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
 
   packages/registrar:
     dependencies:
@@ -235,6 +253,9 @@ importers:
       '@hiero-did-sdk/verifier-internal':
         specifier: workspace:*
         version: link:../verifier-internal
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
 
   packages/resolver:
     dependencies:
@@ -250,12 +271,18 @@ importers:
       '@hiero-did-sdk/verifier-internal':
         specifier: workspace:*
         version: link:../verifier-internal
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
 
   packages/signer-hashicorp-vault:
     dependencies:
       '@hiero-did-sdk/core':
         specifier: workspace:*
         version: link:../core
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
 
   packages/signer-internal:
     dependencies:
@@ -265,12 +292,18 @@ importers:
       '@hiero-did-sdk/core':
         specifier: workspace:*
         version: link:../core
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
 
   packages/verifier-hashicorp-vault:
     dependencies:
       '@hiero-did-sdk/core':
         specifier: workspace:*
         version: link:../core
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
 
   packages/verifier-internal:
     dependencies:
@@ -280,6 +313,9 @@ importers:
       '@hiero-did-sdk/core':
         specifier: workspace:*
         version: link:../core
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
 
   packages/zstd:
     dependencies:

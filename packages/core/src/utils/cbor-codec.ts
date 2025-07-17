@@ -1,4 +1,5 @@
 import { Encoder, Decoder } from 'cbor-x';
+import { Buffer } from 'buffer';
 
 /**
  * `CborCodec` is a simple utility class for encoding and decoding CBOR data.

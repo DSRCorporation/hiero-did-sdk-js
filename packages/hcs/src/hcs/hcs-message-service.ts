@@ -11,6 +11,7 @@ import { HcsCacheService } from '../cache';
 import { CacheConfig } from '../hedera-hcs-service.configuration';
 import { Cache } from '@hiero-did-sdk/core';
 import { getMirrorNetworkNodeUrl, isMirrorQuerySupported, waitForChangesVisibility } from '../shared';
+import { Buffer } from 'buffer';
 
 const DEFAULT_TIMEOUT_SECONDS = 2;
 

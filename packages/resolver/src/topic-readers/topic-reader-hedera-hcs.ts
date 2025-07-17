@@ -1,6 +1,7 @@
 import { TopicReader, TopicReaderMessage, TopicReaderOptions } from '../interfaces';
 import { Network } from '@hiero-did-sdk/core';
 import { HederaHcsService, HederaHcsServiceConfiguration } from '@hiero-did-sdk/hcs';
+import { Buffer } from 'buffer';
 
 /**
  * Implements a topic reader that uses the HCS Service to read messages from a topic.

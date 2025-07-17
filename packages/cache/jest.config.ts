@@ -1,9 +1,9 @@
 import type { Config } from 'jest';
 
-import baseConfig from '../../jest.config';
+import base from '../../jest.config.base'
 
 const config: Config = {
-  ...baseConfig,
+  ...base,
   displayName: '@hiero-did-sdk/cache',
   rootDir: '../..',
   testMatch: [`<rootDir>/packages/cache/**/*.test.ts`],

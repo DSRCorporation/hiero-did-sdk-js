@@ -1,6 +1,7 @@
 import { DIDError, DIDMessage, isHederaDID } from '@hiero-did-sdk/core';
 import { DIDRemoveServiceMessageConstructor, MessageSerialized } from './interfaces';
 import { isPropertyID } from '../../validators/id-property-id';
+import { Buffer } from 'buffer';
 
 /**
  * A message to remove a service from a DID Document.

@@ -1,5 +1,6 @@
 import { Signer as BaseSigner } from '@hiero-did-sdk/core';
 import { SignerOptions } from './interfaces';
+import { Buffer } from 'buffer'
 
 /**
  * An implementation of the Signer interface that signs messages using Hashicorp Vault.

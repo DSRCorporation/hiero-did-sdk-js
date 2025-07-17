@@ -1,6 +1,7 @@
 import { VerificationMethodProperties, DIDMessage, isHederaDID, DIDError } from '@hiero-did-sdk/core';
 import { DIDRemoveVerificationMethodMessageConstructor, MessageSerialized } from './interfaces';
 import { isPropertyID } from '../../validators/id-property-id';
+import { Buffer } from 'buffer';
 
 /**
  * A message to remove a verification method or relationship from a DID Document.

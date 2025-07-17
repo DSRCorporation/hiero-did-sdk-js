@@ -7,6 +7,7 @@ import { HcsTopicService } from './hcs-topic-service';
 import { CacheConfig } from '../hedera-hcs-service.configuration';
 import { Cache } from '@hiero-did-sdk/core';
 import { waitForChangesVisibility } from '../shared';
+import { Buffer } from 'buffer';
 
 const HCS_FILE_TOPIC_MEMO_REGEX = /^[A-Fa-f0-9]{64}:zstd:base64$/;
 

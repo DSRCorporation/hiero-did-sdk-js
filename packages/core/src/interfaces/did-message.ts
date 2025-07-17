@@ -1,6 +1,7 @@
 import { DIDError } from './did-error';
 import { Signer } from './signer';
 import { Verifier } from './verifier';
+import { Buffer } from 'buffer';
 
 export type DIDMessageOperation = 'create' | 'update' | 'revoke' | 'delete';
 

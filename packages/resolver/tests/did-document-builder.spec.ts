@@ -13,6 +13,7 @@ import {
   VALID_DID,
 } from './helpers';
 import { TopicDIDMessage } from '../src/interfaces/topic-did-message';
+import { Buffer } from 'buffer';
 
 describe('DID Document Builder', () => {
   it('should load messages', () => {

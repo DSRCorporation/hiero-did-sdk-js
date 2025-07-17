@@ -1,3 +1,5 @@
+import { Buffer } from 'buffer';
+
 type HashInput = string | Buffer | Uint8Array | ArrayBuffer;
 
 interface CryptoModule {

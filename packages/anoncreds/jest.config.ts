@@ -1,13 +1,13 @@
 import type { Config } from 'jest'
 
-import baseConfig from '../../jest.config'
+import base from '../../jest.config.base'
 
 const config: Config = {
-  ...baseConfig,
+  ...base,
   displayName: '@hiero-did-sdk/anoncreds',
   rootDir: '../..',
-  testMatch: [`<rootDir>/packages/anoncreds/**/*.test.ts`],
-  testTimeout: 60000
+  testTimeout: 60000,
+  testMatch: [`<rootDir>/packages/anoncreds/**/*.test.ts`]
 }
 
 export default config

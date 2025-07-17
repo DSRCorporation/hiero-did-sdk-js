@@ -52,6 +52,7 @@
     "@hashgraph/sdk": "^2.66.0",
     "@hiero-did-sdk/core": "workspace:*",
     "@hiero-did-sdk/lifecycle": "workspace:*",
-    "@hiero-did-sdk/resolver": "workspace:*"
+    "@hiero-did-sdk/resolver": "workspace:*",
+    "buffer": "^6.0.3"
   }
 }

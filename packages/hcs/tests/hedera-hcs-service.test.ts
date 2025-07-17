@@ -2,6 +2,7 @@ import { Client, PrivateKey } from '@hashgraph/sdk';
 import { getRandomStr } from './utils/utils';
 import { HederaNetwork } from '@hiero-did-sdk/client';
 import { HederaHcsService } from '../src/hedera-hcs-service';
+import { Buffer } from 'buffer';
 
 const network = (process.env.HEDERA_NETWORK as HederaNetwork) ?? 'testnet';
 const operatorId = process.env.HEDERA_OPERATOR_ID ?? '';
@@ -199,8 +200,6 @@ describe('Hedera HCS Service', () => {
 
       const topicInfo = await ledgerService.getTopicInfo({ topicId });
       expect(topicInfo).toBeDefined();
-
-      console.log(JSON.stringify(topicInfo, null, 2));
 
       await ledgerService.deleteTopic({
         topicId,

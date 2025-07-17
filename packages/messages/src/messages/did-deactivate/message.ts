@@ -1,5 +1,6 @@
 import { DIDError, DIDMessage, isHederaDID } from '@hiero-did-sdk/core';
 import { DIDDeactivateMessageConstructor, MessageSerialized } from './interfaces';
+import { Buffer } from 'buffer';
 
 /**
  * A message to deactivate a DID.

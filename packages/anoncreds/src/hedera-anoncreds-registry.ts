@@ -19,8 +19,8 @@ import {
 } from './dto';
 import { HederaAnoncredsRegistryConfiguration } from './hedera-anoncreds-registry.configuration';
 import { AnonCredsRevocationStatusList } from './specification';
-import { AnonCredsObjectType, buildAnoncredsIdentifier } from './utils';
-import { parseDID } from '@hiero-did-sdk/core';
+import { AnonCredsObjectType, buildAnoncredsIdentifier, parseAnoncredsIdentifier } from './utils';
+import { Buffer } from 'buffer';
 
 type NetworkName = {
   networkName?: string;
@@ -41,7 +41,7 @@ export class HederaAnoncredsRegistry {
   async registerSchema(options: RegisterSchemaOptions & NetworkName): Promise<RegisterSchemaReturn> {
     const { networkName, schema } = options;
     try {
-      const payload = new Buffer(JSON.stringify(schema));
+      const payload = Buffer.from(JSON.stringify(schema));
       const schemaTopicId = await this.hcsService.submitFile({
         payload,
         networkName,
@@ -75,7 +75,7 @@ export class HederaAnoncredsRegistry {
    * @returns Schema definition resolution result
    */
   async getSchema(schemaId: string): Promise<GetSchemaReturn> {
-    const { topicId, network: networkName } = parseDID(schemaId);
+    const { topicId, networkName } = parseAnoncredsIdentifier(schemaId);
     const payload = await this.hcsService.resolveFile({ topicId, networkName });
     const schema = JSON.parse(payload.toString());
     return {
@@ -96,7 +96,7 @@ export class HederaAnoncredsRegistry {
   ): Promise<RegisterCredentialDefinitionReturn> {
     const { networkName, credentialDefinition } = options;
     try {
-      const payload = new Buffer(JSON.stringify(credentialDefinition));
+      const payload = Buffer.from(JSON.stringify(credentialDefinition));
       const metadata = { ...options.options };
       const credentialDefinitionTopicId = await this.hcsService.submitFile({
         payload,
@@ -135,7 +135,7 @@ export class HederaAnoncredsRegistry {
    * @returns Credential definition resolution result
    */
   async getCredentialDefinition(credentialDefinitionId: string): Promise<GetCredentialDefinitionReturn> {
-    const { topicId, network: networkName } = parseDID(credentialDefinitionId);
+    const { topicId, networkName } = parseAnoncredsIdentifier(credentialDefinitionId);
     const payload = await this.hcsService.resolveFile({ topicId, networkName });
     const credentialDefinition = JSON.parse(payload.toString());
     return {
@@ -165,7 +165,7 @@ export class HederaAnoncredsRegistry {
         revRegDef: options.revocationRegistryDefinition,
         hcsMetadata,
       };
-      const payload = new Buffer(JSON.stringify(revocationRegistryDefinitionWithMetadata));
+      const payload = Buffer.from(JSON.stringify(revocationRegistryDefinitionWithMetadata));
 
       const revocationRegistryDefinitionTopic = await this.hcsService.submitFile({
         payload,
@@ -332,7 +332,7 @@ export class HederaAnoncredsRegistry {
   private resolveRevocationRegistryDefinition = async (
     revocationRegistryDefinitionId: string
   ): Promise<GetRevocationRegistryDefinitionReturn> => {
-    const { topicId, network: networkName } = parseDID(revocationRegistryDefinitionId);
+    const { topicId, networkName } = parseAnoncredsIdentifier(revocationRegistryDefinitionId);
 
     const payloadBuffer = await this.hcsService.resolveFile({
       topicId,
@@ -396,7 +396,7 @@ export class HederaAnoncredsRegistry {
       );
     }
 
-    const { network: networkName } = parseDID(revocationRegistryDefinitionId);
+    const { networkName } = parseAnoncredsIdentifier(revocationRegistryDefinitionId);
 
     let messages = await this.hcsService.getTopicMessages({
       networkName,

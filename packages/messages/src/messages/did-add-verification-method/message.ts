@@ -7,6 +7,7 @@ import {
 } from '@hiero-did-sdk/core';
 import { DIDAddVerificationMethodMessageConstructor, MessageSerialized } from './interfaces';
 import { isPropertyID } from '../../validators/id-property-id';
+import { Buffer } from 'buffer';
 
 /**
  * A message to add a verification method or relationship to a DID Document.
