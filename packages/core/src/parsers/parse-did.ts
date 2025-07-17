@@ -62,7 +62,7 @@ export function extractDID(id: string): string {
     throw new DIDError('invalidDid', 'Invalid DID format');
   }
 
-  const [did, ] = match;
+  const [did] = match;
 
   return did;
 }

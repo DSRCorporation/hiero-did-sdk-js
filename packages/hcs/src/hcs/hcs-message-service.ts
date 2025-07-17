@@ -2,7 +2,8 @@ import {
   type Client,
   PrivateKey,
   Status,
-  type SubscriptionHandle, Timestamp,
+  type SubscriptionHandle,
+  Timestamp,
   TopicId,
   TopicMessageQuery,
   TopicMessageSubmitTransaction,
@@ -187,7 +188,9 @@ export class HcsMessageService {
    * @param props
    */
   private async readTopicMessages(props: ReadTopicMessagesProps): Promise<TopicMessageData[]> {
-    return isMirrorQuerySupported(this.client) ? await this.readTopicMessagesByClient(props) : await this.readTopicMessagesByRest(props)
+    return isMirrorQuerySupported(this.client)
+      ? await this.readTopicMessagesByClient(props)
+      : await this.readTopicMessagesByRest(props);
   }
 
   /**
@@ -264,31 +267,33 @@ export class HcsMessageService {
   private async readTopicMessagesByRest(props: ReadTopicMessagesProps): Promise<TopicMessageData[]> {
     const { topicId, fromDate, toDate, limit } = props;
 
-    let messages: TopicMessageData[] = []
+    let messages: TopicMessageData[] = [];
 
     let nextPath = `/api/v1/topics/${topicId}/messages?`;
     if (fromDate) {
-      const timestamp = Timestamp.fromDate(fromDate)
+      const timestamp = Timestamp.fromDate(fromDate);
       nextPath += `&timestamp=gte:${timestamp.toString()}`;
     }
     if (toDate) {
-      const timestamp = Timestamp.fromDate(toDate)
+      const timestamp = Timestamp.fromDate(toDate);
       nextPath += `&timestamp=lte:${timestamp.toString()}`;
     }
 
     while (nextPath && (!limit || messages.length < limit)) {
-      const url = this.getNextUrl(nextPath)
-      const result = await this.fetchMessages(url)
+      const url = this.getNextUrl(nextPath);
+      const result = await this.fetchMessages(url);
       if (result.messages.length) {
-        messages = messages.concat(result.messages.map((message) => ({
-          consensusTime: new Date(Number(message.consensus_timestamp) * 1000),
-          contents: this.decodeMessageContents(message.message),
-        })));
+        messages = messages.concat(
+          result.messages.map((message) => ({
+            consensusTime: new Date(Number(message.consensus_timestamp) * 1000),
+            contents: this.decodeMessageContents(message.message),
+          }))
+        );
       }
-      nextPath = result.links?.next
+      nextPath = result.links?.next;
     }
 
-    return limit ? messages.slice(0, limit) : messages
+    return limit ? messages.slice(0, limit) : messages;
   }
 
   /**
@@ -302,7 +307,7 @@ export class HcsMessageService {
     }
 
     const binaryString = atob(base64String);
-    return new Uint8Array([...binaryString].map(char => char.charCodeAt(0)));
+    return new Uint8Array([...binaryString].map((char) => char.charCodeAt(0)));
   }
 
   /**
@@ -316,14 +321,14 @@ export class HcsMessageService {
       headers: {
         Accept: 'application/json',
       },
-    })
+    });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch topic messages: ${response.statusText}`)
+      throw new Error(`Failed to fetch topic messages: ${response.statusText}`);
     }
 
-    const data: ApiGetTopicMessageResponse = await response.json()
-    return data
+    const data: ApiGetTopicMessageResponse = await response.json();
+    return data;
   }
 
   /**
@@ -334,7 +339,7 @@ export class HcsMessageService {
    * @private
    */
   private getNextUrl(nextPath: string, limit = 25, encoding = 'base64') {
-    const apiUrl = getMirrorNetworkNodeUrl(this.client)
+    const apiUrl = getMirrorNetworkNodeUrl(this.client);
 
     const url = new URL(`${apiUrl}${nextPath}`);
     url.searchParams.set('limit', limit.toString());

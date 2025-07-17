@@ -39,6 +39,7 @@
     "clean": "rimraf ./dist",
     "compile": "tsup",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "build": "pnpm run clean && pnpm run compile",
     "format": "prettier --write \"src/**/*.ts\" \"tests/*.ts\"",
     "format-check": "prettier --check \"src/*.ts\" \"tests/*.ts\""

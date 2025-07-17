@@ -9,13 +9,12 @@ describe('HederaClientService', () => {
   const operatorKey = PrivateKey.generateED25519().toStringDer();
 
   beforeEach(() => {
-
     config = {
       networks: [
         {
           network: 'testnet',
           operatorId,
-          operatorKey
+          operatorKey,
         },
       ],
     };
@@ -49,23 +48,23 @@ describe('HederaClientService', () => {
         {
           network: 'mainnet',
           operatorId: mainnetOperatorId,
-          operatorKey
+          operatorKey,
         },
         {
           network: 'testnet',
           operatorId,
-          operatorKey
+          operatorKey,
         },
         {
           network: {
             name: 'custom-network',
             nodes: {
-              node1: "0.0.4"
+              node1: '0.0.4',
             },
           },
           operatorId: customNetOperatorId,
-          operatorKey
-        }
+          operatorKey,
+        },
       ],
     };
     const serviceWithMultipleNetworks = new HederaClientService(configWithMultipleNetworks);
@@ -73,7 +72,6 @@ describe('HederaClientService', () => {
     expect(testnetClient).toBeInstanceOf(Client);
     expect(testnetClient.operatorAccountId.toString()).toBe(operatorId);
   });
-
 
   test('should throw an error if unknown network is requested', () => {
     expect(() => service.getClient('unknownNetwork')).toThrowError('Unknown Hedera network');

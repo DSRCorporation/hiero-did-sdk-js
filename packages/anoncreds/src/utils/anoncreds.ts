@@ -22,11 +22,11 @@ export function buildAnoncredsIdentifier(
 }
 
 export type AnoncredsIdentifierFields = {
-  did: string;
+  issuerDid: string;
   method: string;
   networkName: string;
-  publicKey: string;
-  operatorId: string;
+  issuerPublicKey: string;
+  didDocumentTopicId: string;
   objectFamilyName: string;
   version: string;
   objectTypeName: string;
@@ -36,17 +36,16 @@ export type AnoncredsIdentifierFields = {
 export function parseAnoncredsIdentifier(id: string): AnoncredsIdentifierFields {
   // Identifier example "did:hedera:testnet:zFAeKMsqnNc2bwEsC8oqENBvGqjpGu9tpUi3VWaFEBXBo_0.0.5896419/anoncreds/v0/SCHEMA/0.0.5896422"
   const [did, objectFamilyName, version, objectTypeName, topicId] = id.split(ANONCREDS_IDENTIFIER_SEPARATOR);
-  const { method, network: networkName, publicKey, topicId: operatorId } = parseDID(did);
+  const { method, network: networkName, publicKey: issuerPublicKey, topicId: didDocumentTopicId } = parseDID(did);
   return {
-    did,
+    issuerDid: did,
     method,
     networkName,
-    publicKey,
-    operatorId,
+    issuerPublicKey,
+    didDocumentTopicId,
     objectFamilyName,
     version,
     objectTypeName,
     topicId,
   };
 }
-

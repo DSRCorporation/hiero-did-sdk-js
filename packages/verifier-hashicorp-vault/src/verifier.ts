@@ -1,6 +1,6 @@
 import { Verifier as BaseVerifier } from '@hiero-did-sdk/core';
 import { VerifierOptions } from './interfaces';
-import { Buffer } from 'buffer'
+import { Buffer } from 'buffer';
 
 /**
  * An implementation of the Verifier interface that verifies signatures using Hashicorp Vault.

@@ -1,7 +1,9 @@
 import {
   type Client,
-  PrivateKey, PublicKey,
-  Status, StatusError,
+  PrivateKey,
+  PublicKey,
+  Status,
+  StatusError,
   Timestamp,
   TopicCreateTransaction,
   TopicDeleteTransaction,
@@ -13,11 +15,7 @@ import AccountId from '@hashgraph/sdk/lib/account/AccountId';
 import { HcsCacheService } from '../cache';
 import { CacheConfig } from '../hedera-hcs-service.configuration';
 import { Cache } from '@hiero-did-sdk/core';
-import {
-  getMirrorNetworkNodeUrl,
-  isMirrorQuerySupported,
-  waitForChangesVisibility,
-} from '../shared';
+import { getMirrorNetworkNodeUrl, isMirrorQuerySupported, waitForChangesVisibility } from '../shared';
 
 const DEFAULT_AUTO_RENEW_PERIOD = 90 * 24 * 60 * 60; // 90 days
 
@@ -64,7 +62,7 @@ export interface TopicInfo {
 }
 
 interface MirrorNodeTopicResponse {
-  deleted: boolean
+  deleted: boolean;
   topic_id: string;
   memo: string;
   admin_key?: {
@@ -211,7 +209,8 @@ export class HcsTopicService {
           (props.adminKey === undefined || props.adminKey.publicKey.toStringDer() === topicInfo.adminKey) &&
           (props.autoRenewPeriod === undefined || props.autoRenewPeriod === topicInfo.autoRenewPeriod) &&
           (props.autoRenewAccountId === undefined || props.autoRenewAccountId === topicInfo.autoRenewAccountId) &&
-          (props.expirationTime === undefined || this.convertExpirationTimeToSeconds(props.expirationTime) === topicInfo.expirationTime),
+          (props.expirationTime === undefined ||
+            this.convertExpirationTimeToSeconds(props.expirationTime) === topicInfo.expirationTime),
         waitTimeout: props?.waitForChangesVisibilityTimeoutMs,
       });
     }
@@ -239,11 +238,10 @@ export class HcsTopicService {
       await waitForChangesVisibility<boolean>({
         fetchFn: async () => {
           try {
-            await this.readTopicInfo({ topicId: props.topicId })
-            return false
-          } catch (error)
-          {
-            return error instanceof StatusError && error.status === Status.InvalidTopicId
+            await this.readTopicInfo({ topicId: props.topicId });
+            return false;
+          } catch (error) {
+            return error instanceof StatusError && error.status === Status.InvalidTopicId;
           }
         },
         checkFn: (value: boolean) => value === true,
@@ -260,7 +258,7 @@ export class HcsTopicService {
     const cachedInfo = await this.cacheService?.getTopicInfo(this.client, props.topicId);
     if (cachedInfo) return cachedInfo;
 
-    const result = await this.readTopicInfo(props)
+    const result = await this.readTopicInfo(props);
 
     await this.cacheService?.setTopicInfo(this.client, props.topicId, result);
 
@@ -290,7 +288,7 @@ export class HcsTopicService {
    * @param props
    */
   private readTopicInfo(props: GetTopicInfoProps): Promise<TopicInfo> {
-    return isMirrorQuerySupported(this.client) ? this.readTopicInfoByClient(props) : this.readTopicInfoByRest(props)
+    return isMirrorQuerySupported(this.client) ? this.readTopicInfoByClient(props) : this.readTopicInfoByRest(props);
   }
 
   /**
@@ -321,24 +319,25 @@ export class HcsTopicService {
    * @private
    */
   private async readTopicInfoByRest(props: GetTopicInfoProps): Promise<TopicInfo> {
-    const restApiUrl = getMirrorNetworkNodeUrl(this.client)
+    const restApiUrl = getMirrorNetworkNodeUrl(this.client);
 
     const response = await fetch(`${restApiUrl}/api/v1/topics/${props.topicId}?_=${Date.now()}`, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json'
-        },
-      }
-    );
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`Failed to fetch topic info: ${response.statusText}`);
     }
 
     const data: MirrorNodeTopicResponse = await response.json();
-    if (data.deleted)
-    {
-      throw new StatusError({ status: Status.InvalidTopicId, transactionId: undefined}, Status.InvalidTopicId.toString())
+    if (data.deleted) {
+      throw new StatusError(
+        { status: Status.InvalidTopicId, transactionId: undefined },
+        Status.InvalidTopicId.toString()
+      );
     }
 
     return {

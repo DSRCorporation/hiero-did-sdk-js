@@ -3,9 +3,8 @@ import { type Client } from '@hashgraph/sdk';
 /**
  * Check the mirror query supported and can be used
  */
-export function isMirrorQuerySupported (client: Client): boolean
-{
-  return !!client._mirrorNetwork.getNextMirrorNode()
+export function isMirrorQuerySupported(client: Client): boolean {
+  return !!client._mirrorNetwork.getNextMirrorNode();
 }
 
 /**
@@ -14,14 +13,14 @@ export function isMirrorQuerySupported (client: Client): boolean
  */
 export function normalizeMirrorUrl(url: string): string {
   if (url.startsWith('http://') || url.startsWith('https://')) {
-    return url
+    return url;
   }
 
   if (url.endsWith('/')) {
-    url = url.slice(0, -1)
+    url = url.slice(0, -1);
   }
 
-  return `https://${url.replace(':443', '')}`
+  return `https://${url.replace(':443', '')}`;
 }
 
 /**
@@ -30,14 +29,11 @@ export function normalizeMirrorUrl(url: string): string {
  */
 export function getMirrorNetworkNodeUrl(client: Client): string {
   const mirrorNetwork = client.mirrorNetwork;
-  const restApiUrl = Array.isArray(mirrorNetwork) && mirrorNetwork.length > 0
-    ? mirrorNetwork[0]
-    : undefined;
+  const restApiUrl = Array.isArray(mirrorNetwork) && mirrorNetwork.length > 0 ? mirrorNetwork[0] : undefined;
 
-  if (!restApiUrl)
-  {
+  if (!restApiUrl) {
     throw new Error(`Mirror node doesn't defined for the used network`);
   }
 
-  return normalizeMirrorUrl(restApiUrl)
+  return normalizeMirrorUrl(restApiUrl);
 }

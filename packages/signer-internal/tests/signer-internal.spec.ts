@@ -1,6 +1,6 @@
 import { PrivateKey } from '@hashgraph/sdk';
 import { Signer } from '../src';
-import { Buffer } from 'buffer'
+import { Buffer } from 'buffer';
 
 describe('Internal signer class', () => {
   describe('initializing a signer', () => {

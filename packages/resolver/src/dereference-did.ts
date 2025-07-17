@@ -6,7 +6,8 @@ import {
   JsonLdVerificationMethod,
   DIDDereferenceResolution,
   ServiceEndpoint,
-  DIDError, parseDIDUrl,
+  DIDError,
+  parseDIDUrl,
 } from '@hiero-did-sdk/core';
 import { DereferenceDIDOptions, ResolveDIDOptions, Accept } from './interfaces';
 import { DIDDereferenceBuilder } from './did-dereference-builder';

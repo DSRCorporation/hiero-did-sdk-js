@@ -3,7 +3,7 @@ import { PublicKey } from '@hashgraph/sdk';
 import { DIDError } from '@hiero-did-sdk/core';
 import { VaultApi } from '../src/vault-api';
 import { VaultTestContainer } from './helpers';
-import { Buffer } from 'buffer'
+import { Buffer } from 'buffer';
 
 describe('Vault API Client', () => {
   let vaultContainer: VaultTestContainer;

@@ -1,7 +1,6 @@
-import { Zstd } from '../src'
+import { Zstd } from '../src';
 
 describe('Zstd - React Native Environment', () => {
-
   // Mock 'react-native-zstd' module for React Native environment
   jest.mock('react-native-zstd', () => ({
     compress: (data: Uint8Array) => data,
@@ -42,7 +41,7 @@ describe('Zstd - React Native Environment', () => {
   });
 
   it('should return appropriate error for decompression failure', () => {
-    const input = new Uint8Array([0xFF, 0xFF, 0xFF]);
+    const input = new Uint8Array([0xff, 0xff, 0xff]);
 
     try {
       Zstd.decompress(input);
@@ -53,7 +52,6 @@ describe('Zstd - React Native Environment', () => {
 });
 
 describe('Zstd - Node.js Environment', () => {
-
   // Mock 'zstd-napi' module for Node.js environment
   jest.mock('zstd-napi', () => ({
     compress: (data: Uint8Array) => data,
@@ -94,7 +92,7 @@ describe('Zstd - Node.js Environment', () => {
   });
 
   it('should return appropriate error for decompression failure', () => {
-    const input = new Uint8Array([0xFF, 0xFF, 0xFF]);
+    const input = new Uint8Array([0xff, 0xff, 0xff]);
 
     try {
       Zstd.decompress(input);
