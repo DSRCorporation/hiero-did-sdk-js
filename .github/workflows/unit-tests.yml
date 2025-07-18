@@ -26,6 +26,11 @@ jobs:
         with:
           installMirrorNode: true
 
+      - name: Set environment variables
+        run: |
+          echo "Pretty-printed with jq:"
+          echo '${{ toJSON(steps.solo) }}' | jq .
+
       - name: Install pnpm
         run: npm install -g pnpm@latest
 
