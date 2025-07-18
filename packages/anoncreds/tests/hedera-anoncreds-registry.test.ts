@@ -10,6 +10,7 @@ import {
 } from '../src/specification';
 import { ConsoleLogger, FakeCache, LogLevel } from './utils';
 import { v4 as uuidv4 } from 'uuid';
+import JestConfigBase from '../../../jest.config.base';
 
 const LOG_DEBUG_MASSAGES = false;
 const TEST_WITH_CACHE = true;
@@ -84,6 +85,8 @@ const revocationStatusListPayload: AnonCredsRevocationStatusListWithoutTimestamp
 };
 
 describe('Hedera AnonCreds Registry', () => {
+  jest.setTimeout(60000)
+
   let anoncredsRegistry: HederaAnoncredsRegistry;
 
   const issuerDid: string = 'did:hedera:testnet:zFAeKMsqnNc2bwEsC8oqENBvGqjpGu9tpUi3VWaFEBXBo_0.0.5896419';

@@ -5,7 +5,6 @@ const network = (process.env.HEDERA_NETWORK as HederaNetwork) ?? 'testnet';
 const operatorId = process.env.HEDERA_OPERATOR_ID ?? '';
 const operatorKey = process.env.HEDERA_OPERATOR_KEY ?? '';
 
-
 describe('HederaClientService', () => {
   let config: HederaClientConfiguration;
   let service: HederaClientService;

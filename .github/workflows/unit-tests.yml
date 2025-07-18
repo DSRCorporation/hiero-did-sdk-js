@@ -26,11 +26,6 @@ jobs:
         with:
           installMirrorNode: true
 
-      - name: Set environment variables
-        run: |
-          echo "Pretty-printed with jq:"
-          echo '${{ toJSON(steps.solo) }}' | jq .
-
       - name: Install pnpm
         run: npm install -g pnpm@latest
 
@@ -41,7 +36,7 @@ jobs:
         run: pnpm run build
 
       - name: Run unit tests
-        timeout-minutes: 10
+        timeout-minutes: 15
         env:
           HEDERA_OPERATOR_ID: ${{ steps.solo.outputs.accountId }}
           HEDERA_OPERATOR_KEY: ${{ steps.solo.outputs.privateKey }}

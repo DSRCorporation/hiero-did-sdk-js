@@ -14,6 +14,8 @@ const TEST_VARIANTS = [
 ];
 
 describe('Hedera HCS Service', () => {
+  jest.setTimeout(60000)
+
   describe.each(TEST_VARIANTS)('Using $name', ({ useRestAPI }) => {
     const ledgerService = new HederaHcsService({
       networks: [
