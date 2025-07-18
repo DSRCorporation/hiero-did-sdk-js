@@ -41,7 +41,7 @@ export class HederaClientService {
       {
         client = Client.fromConfig({
           network: {
-            [SOLO_NODE_URL]: AccountId.fromString(networkConfig.operatorId),
+            [SOLO_NODE_URL]: AccountId.fromString('0.0.2'),
           },
           mirrorNetwork: SOLO_MIRROR_NODE_URL,
           operator: {
