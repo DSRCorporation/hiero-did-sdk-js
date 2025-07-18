@@ -32,7 +32,9 @@ jobs:
           echo "OPERATOR_KEY=${{ steps.solo.outputs.privateKey }}"
           echo "ADMIN_KEY=${{ steps.solo.outputs.privateKey }}"
           echo "PUBLIC_KEY=${{ steps.solo.outputs.publicKey }}"
-          echo ${{ steps.solo }}
+          echo "steps.solo (raw JSON): ${{ toJSON(steps.solo) }}"
+          echo "Pretty-printed with jq:"
+          echo '${{ toJSON(steps.solo) }}' | jq .
 
       - name: Install pnpm
         run: npm install -g pnpm@latest
