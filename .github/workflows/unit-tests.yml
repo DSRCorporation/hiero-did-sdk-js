@@ -27,13 +27,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build packages
-        run: pnpm run packages:build
+        run: pnpm run build
 
       - name: Run unit tests
         timeout-minutes: 8
         env:
           NODE_OPTIONS: '--max_old_space_size=8192'
-        run: pnpm run packages:test:ci
+        run: pnpm run test:coverage
 
       - name: Report coverage
         if: always()
