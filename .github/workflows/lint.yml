@@ -16,13 +16,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+
+      - name: Install pnpm
+        run: npm install -g pnpm@latest
 
       - name: Install dependencies
-        run: npm ci --workspaces --include-workspace-root
+        run: pnpm install --frozen-lockfile
 
       - name: Build packages
-        run: npm run packages:build
+        run: pnpm run build
 
       - name: Run linter
-        run: npm run packages:lint
+        run: pnpm run lint

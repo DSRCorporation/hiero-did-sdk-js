@@ -11,13 +11,13 @@ import {
 import { ConsoleLogger, FakeCache, LogLevel } from './utils';
 import { v4 as uuidv4 } from 'uuid';
 
-const LOG_DEBUG_MASSAGES = false;
+const LOG_DEBUG_MASSAGES = true;
 const TEST_WITH_CACHE = true;
 
 const GET_DATA_TIMEOUT = 50;
 const GET_CACHED_DATA_TIMEOUT = 1000;
 
-const network = (process.env.NETWORK as HederaNetwork) ?? 'testnet';
+const network = (process.env.HEDERA_NETWORK as HederaNetwork) ?? 'testnet';
 const operatorId = process.env.HEDERA_OPERATOR_ID ?? '';
 const operatorKey = process.env.HEDERA_OPERATOR_KEY ?? '';
 
@@ -84,6 +84,8 @@ const revocationStatusListPayload: AnonCredsRevocationStatusListWithoutTimestamp
 };
 
 describe('Hedera AnonCreds Registry', () => {
+  jest.setTimeout(60000)
+
   let anoncredsRegistry: HederaAnoncredsRegistry;
 
   const issuerDid: string = 'did:hedera:testnet:zFAeKMsqnNc2bwEsC8oqENBvGqjpGu9tpUi3VWaFEBXBo_0.0.5896419';

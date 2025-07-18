@@ -1,4 +1,4 @@
-import { Client, Hbar } from '@hashgraph/sdk';
+import { AccountId, Client, Hbar } from '@hashgraph/sdk';
 import NodeClient from '@hashgraph/sdk/lib/client/NodeClient';
 import { HederaClientConfiguration } from './hedera-client.configuration';
 
@@ -34,8 +34,21 @@ export class HederaClientService {
 
     let client: NodeClient;
     if (typeof networkConfig.network === 'string') {
-      client = Client.forName(networkConfig.network, { scheduleNetworkUpdate: false });
-      client.setOperator(networkConfig.operatorId, networkConfig.operatorKey);
+      if (networkConfig.network === 'solo')
+      {
+        const network = {};
+        network['127.0.0.1:50211'] = AccountId.fromString('0.0.3');
+        const mirrorNetwork = '127.0.0.1:5600';
+        client = Client.fromConfig({
+          network,
+          mirrorNetwork: mirrorNetwork,
+          scheduleNetworkUpdate: false,
+        });
+        client.setOperator(networkConfig.operatorId, networkConfig.operatorKey)
+      } else {
+        client = Client.forName(networkConfig.network, { scheduleNetworkUpdate: false });
+        client.setOperator(networkConfig.operatorId, networkConfig.operatorKey);
+      }
     } else {
       client = Client.fromConfig({
         network: networkConfig.network.nodes,
