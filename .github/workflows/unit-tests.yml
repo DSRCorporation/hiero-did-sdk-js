@@ -31,7 +31,7 @@ jobs:
           echo "OPERATOR_KEY=${{ steps.solo.outputs.privateKey }}"
           echo "ADMIN_KEY=${{ steps.solo.outputs.privateKey }}"
           echo "PUBLIC_KEY=${{ steps.solo.outputs.publicKey }}"
-          echo { steps.solo.outputs.accountId }
+          echo ${{ steps.solo.outputs.publicKey }}
 
       - name: Install pnpm
         run: npm install -g pnpm@latest
