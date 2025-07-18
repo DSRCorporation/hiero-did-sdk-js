@@ -26,16 +26,6 @@ jobs:
         with:
           installMirrorNode: true
 
-      - name: Set environment variables
-        run: |
-          echo "OPERATOR_ID=${{ steps.solo.outputs.accountId }}"
-          echo "OPERATOR_KEY=${{ steps.solo.outputs.privateKey }}"
-          echo "ADMIN_KEY=${{ steps.solo.outputs.privateKey }}"
-          echo "PUBLIC_KEY=${{ steps.solo.outputs.publicKey }}"
-          echo "steps.solo (raw JSON): ${{ toJSON(steps.solo) }}"
-          echo "Pretty-printed with jq:"
-          echo '${{ toJSON(steps.solo) }}' | jq .
-
       - name: Install pnpm
         run: npm install -g pnpm@latest
 
@@ -48,8 +38,9 @@ jobs:
       - name: Run unit tests
         timeout-minutes: 10
         env:
-          HEDERA_OPERATOR_ID: ${{ secrets.HEDERA_OPERATOR_ID }}
-          HEDERA_OPERATOR_KEY: ${{ secrets.HEDERA_OPERATOR_KEY }}
+          HEDERA_OPERATOR_ID: ${{ steps.solo.outputs.accountId }}
+          HEDERA_OPERATOR_KEY: ${{ steps.solo.outputs.privateKey }}
+          HEDERA_NETWORK: 'solo'
           NODE_OPTIONS: '--max_old_space_size=8192'
         run: pnpm run test:coverage
 

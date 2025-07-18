@@ -1,18 +1,20 @@
-import { AccountId, Client, PrivateKey } from '@hashgraph/sdk';
-import { HederaClientService, HederaClientConfiguration } from '../src';
+import { AccountId, Client } from '@hashgraph/sdk';
+import { HederaClientService, HederaClientConfiguration, HederaNetwork } from '../src';
+
+const network = (process.env.HEDERA_NETWORK as HederaNetwork) ?? 'testnet';
+const operatorId = process.env.HEDERA_OPERATOR_ID ?? '';
+const operatorKey = process.env.HEDERA_OPERATOR_KEY ?? '';
+
 
 describe('HederaClientService', () => {
   let config: HederaClientConfiguration;
   let service: HederaClientService;
 
-  const operatorId = AccountId.fromString('0.0.3').toString();
-  const operatorKey = PrivateKey.generateED25519().toStringDer();
-
   beforeEach(() => {
     config = {
       networks: [
         {
-          network: 'testnet',
+          network,
           operatorId,
           operatorKey,
         },

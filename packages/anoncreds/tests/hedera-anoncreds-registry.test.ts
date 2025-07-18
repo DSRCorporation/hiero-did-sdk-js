@@ -17,7 +17,7 @@ const TEST_WITH_CACHE = true;
 const GET_DATA_TIMEOUT = 50;
 const GET_CACHED_DATA_TIMEOUT = 1000;
 
-const network = (process.env.NETWORK as HederaNetwork) ?? 'testnet';
+const network = (process.env.HEDERA_NETWORK as HederaNetwork) ?? 'testnet';
 const operatorId = process.env.HEDERA_OPERATOR_ID ?? '';
 const operatorKey = process.env.HEDERA_OPERATOR_KEY ?? '';
 
