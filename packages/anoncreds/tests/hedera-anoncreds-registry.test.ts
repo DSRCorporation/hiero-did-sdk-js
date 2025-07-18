@@ -10,9 +10,8 @@ import {
 } from '../src/specification';
 import { ConsoleLogger, FakeCache, LogLevel } from './utils';
 import { v4 as uuidv4 } from 'uuid';
-import JestConfigBase from '../../../jest.config.base';
 
-const LOG_DEBUG_MASSAGES = false;
+const LOG_DEBUG_MASSAGES = true;
 const TEST_WITH_CACHE = true;
 
 const GET_DATA_TIMEOUT = 50;
