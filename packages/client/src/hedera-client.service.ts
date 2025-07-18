@@ -4,9 +4,6 @@ import { HederaClientConfiguration } from './hedera-client.configuration';
 
 const MAX_TRANSACTION_FEE = 2;
 
-const SOLO_NODE_URL = '127.0.0.1:50211'
-const SOLO_MIRROR_NODE_URL = '127.0.0.1:5600'
-
 export type NetworkName = {
   networkName?: string;
 };
@@ -39,17 +36,15 @@ export class HederaClientService {
     if (typeof networkConfig.network === 'string') {
       if (networkConfig.network === 'solo')
       {
+        const network = {};
+        network['127.0.0.1:50211'] = AccountId.fromString('0.0.3');
+        const mirrorNetwork = '127.0.0.1:5600';
         client = Client.fromConfig({
-          network: {
-            [SOLO_NODE_URL]: AccountId.fromString('0.0.2'),
-          },
-          mirrorNetwork: SOLO_MIRROR_NODE_URL,
-          operator: {
-            accountId: networkConfig.operatorId,
-            privateKey: networkConfig.operatorKey,
-          },
+          network,
+          mirrorNetwork: mirrorNetwork,
           scheduleNetworkUpdate: false,
         });
+        client.setOperator(networkConfig.operatorId, networkConfig.operatorKey)
       } else {
         client = Client.forName(networkConfig.network, { scheduleNetworkUpdate: false });
         client.setOperator(networkConfig.operatorId, networkConfig.operatorKey);
