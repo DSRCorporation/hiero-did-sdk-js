@@ -42,13 +42,11 @@ describe('HederaClientService', () => {
   });
 
   test('should get client for multiply networks configuration by name', () => {
-    const mainnetOperatorId = AccountId.fromString('0.0.3').toString();
-    const customNetOperatorId = '3.2.1';
     const configWithMultipleNetworks: HederaClientConfiguration = {
       networks: [
         {
           network: 'mainnet',
-          operatorId: mainnetOperatorId,
+          operatorId,
           operatorKey,
         },
         {
@@ -63,7 +61,7 @@ describe('HederaClientService', () => {
               node1: '0.0.4',
             },
           },
-          operatorId: customNetOperatorId,
+          operatorId,
           operatorKey,
         },
       ],
