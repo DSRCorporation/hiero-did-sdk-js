@@ -1,4 +1,4 @@
-import { AccountId, Client, Hbar } from '@hashgraph/sdk';
+import { Client, Hbar } from '@hashgraph/sdk';
 import NodeClient from '@hashgraph/sdk/lib/client/NodeClient';
 import { HederaClientConfiguration } from './hedera-client.configuration';
 
