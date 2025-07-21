@@ -1,4 +1,4 @@
-import { AccountId, Client } from '@hashgraph/sdk';
+import { Client } from '@hashgraph/sdk';
 import { HederaClientService, HederaClientConfiguration, HederaNetwork } from '../src';
 
 const network = (process.env.HEDERA_NETWORK as HederaNetwork) ?? 'testnet';
