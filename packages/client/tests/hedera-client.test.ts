@@ -38,7 +38,7 @@ describe('HederaClientService', () => {
   test('should get client for a single network configuration', () => {
     const client = service.getClient();
     expect(client).toBeInstanceOf(Client);
-    expect(client.operatorAccountId.toString()).toBe('0.0.3');
+    expect(client.operatorAccountId.toString()).toBe(operatorId);
   });
 
   test('should get client for multiply networks configuration by name', () => {

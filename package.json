@@ -9,6 +9,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --testLocationInResults --json --outputFile=coverage/report.json",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "format": "prettier --write \"packages/**/src/**/*.ts\" \"packages/**/tests/*.ts\" \"examples/**/*.ts\"",
