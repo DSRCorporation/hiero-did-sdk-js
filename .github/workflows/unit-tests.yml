@@ -40,7 +40,7 @@ jobs:
         env:
           HEDERA_OPERATOR_ID: ${{ steps.solo.outputs.accountId }}
           HEDERA_OPERATOR_KEY: ${{ steps.solo.outputs.privateKey }}
-          HEDERA_NETWORK: 'solo'
+          HEDERA_NETWORK: 'local-node'
           NODE_OPTIONS: '--max_old_space_size=8192'
         run: pnpm run test:coverage
 
