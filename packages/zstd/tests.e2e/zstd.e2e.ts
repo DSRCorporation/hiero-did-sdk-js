@@ -1,4 +1,4 @@
-import { Zstd } from '../src';
+import { Zstd } from '@hiero-did-sdk/zstd';
 
 describe('ZSTD', () => {
   const testString = 'Test data for sha256 calculating';

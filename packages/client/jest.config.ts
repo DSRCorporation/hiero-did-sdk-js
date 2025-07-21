@@ -6,7 +6,7 @@ const config: Config = {
   ...base,
   displayName: '@hiero-did-sdk/client',
   rootDir: '../..',
-  testMatch: [`<rootDir>/packages/client/**/*.test.ts`],
+  testMatch: [`<rootDir>/packages/client/**/*.e2e.ts`],
 }
 
 export default config

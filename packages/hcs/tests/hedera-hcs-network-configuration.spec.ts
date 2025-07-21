@@ -240,7 +240,6 @@ describe('Hedera HCS networks configuration', () => {
       networkName,
       topicId: 'topicId',
       message: 'message',
-      //operatorKey: PrivateKey.fromStringDer(operatorKey),
     });
     expect(submitMessageResult).toBeDefined();
     const getMessagesResult = await ledgerService.getTopicMessages({ networkName, topicId: 'topicId' });

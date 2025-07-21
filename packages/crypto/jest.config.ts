@@ -6,7 +6,7 @@ const config: Config = {
   ...base,
   displayName: '@hiero-did-sdk/crypto',
   rootDir: '../..',
-  testMatch: [`<rootDir>/packages/crypto/**/*.test.ts`],
+  testMatch: [`<rootDir>/packages/crypto/**/*.spec.ts`],
 }
 
 export default config

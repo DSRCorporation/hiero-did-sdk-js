@@ -1,4 +1,5 @@
 import { Crypto } from '../src';
+import { Buffer } from 'buffer';
 
 const data = 'Test data for sha256 calculating';
 const digest = '952a959a1ac6cd9ce1d80fcd1dfd570401c0d40ab36ea9a7a2e22295fd630d3b';
@@ -31,6 +32,10 @@ describe('Crypto.sha256 (Mocks)', () => {
     jest.mock('crypto-js', () => undefined);
     jest.resetModules();
   });
+
+  // it('should handle no supported engine ', () => {
+  //   expect(() => Crypto.sha256(data)).toThrow('No compatible crypto module found');
+  // });
 
   it('should hash a string input correctly with react-native-quick-crypto', () => {
     jest.mock('react-native-quick-crypto', () => cryptoMock);
@@ -70,12 +75,14 @@ describe('Crypto.sha256 (Mocks)', () => {
     jest.resetModules();
 
     const stringInput = data;
-    const arrayBufferInput = new TextEncoder().encode(stringInput);
+    const arrayBufferInput = new TextEncoder().encode(data).buffer;
     const uint8ArrayInput = new Uint8Array(arrayBufferInput);
+    const bufferInput: Buffer = Buffer.from(data);
 
     expect(Crypto.sha256(stringInput)).toBe(digest);
     expect(Crypto.sha256(arrayBufferInput)).toBe(digest);
     expect(Crypto.sha256(uint8ArrayInput)).toBe(digest);
+    expect(Crypto.sha256(bufferInput)).toBe(digest);
 
     // Verify all inputs were properly converted to buffers
     expect(mockUpdate).toHaveBeenCalledWith(expect.any(Buffer));

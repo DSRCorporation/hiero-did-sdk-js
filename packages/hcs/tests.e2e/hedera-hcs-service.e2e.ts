@@ -1,8 +1,8 @@
 import { Client, PrivateKey } from '@hashgraph/sdk';
-import { getRandomStr } from './utils/utils';
 import { HederaNetwork } from '@hiero-did-sdk/client';
 import { HederaHcsService } from '../src/hedera-hcs-service';
 import { Buffer } from 'buffer';
+import { v4 as uuidv4 } from 'uuid';
 
 const network = (process.env.HEDERA_NETWORK as HederaNetwork) ?? 'testnet';
 const operatorId = process.env.HEDERA_OPERATOR_ID ?? '';
@@ -219,7 +219,7 @@ describe('Hedera HCS Service', () => {
     });
 
     it('Submit HCS-1 file', async () => {
-      const content = `___${getRandomStr(1200)}___`;
+      const content = `___${uuidv4()}___`;
       const fileTopicId = await ledgerService.submitFile({
         payload: Buffer.from(content),
         waitForChangesVisibility: true,
@@ -229,7 +229,7 @@ describe('Hedera HCS Service', () => {
 
     it('Resolve HCS-1 file', async () => {
       // Submit file
-      const content = `___${getRandomStr(1200)}___`;
+      const content = `___${uuidv4()}___`;
       const topicId = await ledgerService.submitFile({
         payload: Buffer.from(content),
         waitForChangesVisibility: true,

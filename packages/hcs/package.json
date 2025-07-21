@@ -39,6 +39,7 @@
     "clean": "rimraf ./dist",
     "compile": "tsup",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "build": "pnpm run clean && pnpm run compile",
     "format": "prettier --write \"src/**/*.ts\" \"tests/*.ts\"",
     "format-check": "prettier --check \"src/*.ts\" \"tests/*.ts\""
@@ -50,6 +51,7 @@
     "@hiero-did-sdk/core": "workspace:*",
     "@hiero-did-sdk/crypto": "workspace:*",
     "@hiero-did-sdk/zstd": "workspace:*",
-    "buffer": "^6.0.3"
+    "buffer": "^6.0.3",
+    "uuid": "^11.1.0"
   }
 }
