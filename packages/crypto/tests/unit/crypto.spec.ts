@@ -1,14 +1,10 @@
-import { Crypto } from '../src';
+import { Crypto } from '@hiero-did-sdk/crypto';
 import { Buffer } from 'buffer';
 
 const data = 'Test data for sha256 calculating';
 const digest = '952a959a1ac6cd9ce1d80fcd1dfd570401c0d40ab36ea9a7a2e22295fd630d3b';
 
-const engines = [
-  { name: 'react-native-quick-crypto' },
-  { name: 'crypto' },
-  { name: 'crypto-js' },
-];
+const engines = [{ name: 'react-native-quick-crypto' }, { name: 'crypto' }, { name: 'crypto-js' }];
 
 describe('Crypto.sha256', () => {
   const mockCreateHash = jest.fn().mockReturnThis();
@@ -64,16 +60,16 @@ describe('Crypto.sha256', () => {
     expect(mockUpdate).toHaveBeenCalledWith(expect.any(Buffer));
   });
 
-    it.each(engines)('should hash a string input correctly using $name', ({ name }) => {
-      jest.mock(name, () => name === 'crypto-js' ? cryptoJsMock : cryptoMock);
-      jest.resetModules();
+  it.each(engines)('should hash a string input correctly using $name', ({ name }) => {
+    jest.mock(name, () => (name === 'crypto-js' ? cryptoJsMock : cryptoMock));
+    jest.resetModules();
 
-      let result = Crypto.sha256(data);
-      expect(result).toBe(digest);
+    let result = Crypto.sha256(data);
+    expect(result).toBe(digest);
 
-      result = Crypto.sha256(Buffer.from(data));
-      expect(result).toBe(digest);
+    result = Crypto.sha256(Buffer.from(data));
+    expect(result).toBe(digest);
 
-      expect(mockCreateHash).toHaveBeenCalledWith('sha256');
-    });
+    expect(mockCreateHash).toHaveBeenCalledWith('sha256');
+  });
 });

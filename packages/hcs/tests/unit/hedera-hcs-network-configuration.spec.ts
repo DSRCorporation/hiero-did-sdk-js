@@ -1,5 +1,5 @@
 import { PrivateKey, Timestamp } from '@hashgraph/sdk';
-import { HederaHcsService } from '../src/hedera-hcs-service';
+import { HederaHcsService } from '../../src/hedera-hcs-service';
 import { HederaNetwork, NetworkConfig } from '@hiero-did-sdk/client';
 import { Buffer } from 'buffer';
 
@@ -15,7 +15,7 @@ const networkConfigs: NetworkConfig[] = [
   },
 ];
 
-jest.mock('./../src/hcs/hcs-topic-service', () => ({
+jest.mock('../../src/hcs/hcs-topic-service', () => ({
   HcsTopicService: jest.fn().mockImplementation(() => ({
     createTopic: jest.fn().mockReturnValue('MOCK_TOPIC_ID'),
     updateTopic: jest.fn(),
@@ -29,7 +29,7 @@ jest.mock('./../src/hcs/hcs-topic-service', () => ({
   })),
 }));
 
-jest.mock('./../src/hcs/hcs-message-service', () => ({
+jest.mock('../../src/hcs/hcs-message-service', () => ({
   HcsMessageService: jest.fn().mockImplementation(() => ({
     submitMessage: jest.fn().mockReturnValue({
       nodeId: 'MOCK_NODE_ID',
@@ -49,7 +49,7 @@ jest.mock('./../src/hcs/hcs-message-service', () => ({
   })),
 }));
 
-jest.mock('./../src/hcs/hcs-file-service', () => ({
+jest.mock('../../src/hcs/hcs-file-service', () => ({
   HcsFileService: jest.fn().mockImplementation(() => ({
     submitFile: jest.fn().mockReturnValue('MOCK_FILE_TOPIC_ID'),
     resolveFile: jest.fn().mockReturnValue(Buffer.from('MOCK_FILE_CONTENT')),

@@ -1,4 +1,4 @@
-import { TopicInfo, TopicMessageData, HcsCacheService } from '../src';
+import { TopicInfo, TopicMessageData, HcsCacheService } from '@hiero-did-sdk/hcs';
 import { Cache } from '@hiero-did-sdk/core';
 import { LRUMemoryCache } from '@hiero-did-sdk/cache';
 
@@ -83,9 +83,7 @@ describe('HcsCacheService', () => {
 
   describe('getTopicMessages', () => {
     it('should retrieve topic messages from the cache using a constructed key', async () => {
-      const mockMessages: TopicMessageData[] = [
-        { consensusTime: new Date(), contents: new Uint8Array([1, 2, 3]) },
-      ];
+      const mockMessages: TopicMessageData[] = [{ consensusTime: new Date(), contents: new Uint8Array([1, 2, 3]) }];
       (mockCache.get as jest.Mock).mockResolvedValueOnce(mockMessages);
 
       const result = await service.getTopicMessages(mockClient, 'topic123');
@@ -97,9 +95,7 @@ describe('HcsCacheService', () => {
 
   describe('setTopicMessages', () => {
     it('should store topic messages in the cache and remove the topic file', async () => {
-      const mockMessages: TopicMessageData[] = [
-        { consensusTime: new Date(), contents: new Uint8Array([1, 2, 3]) },
-      ];
+      const mockMessages: TopicMessageData[] = [{ consensusTime: new Date(), contents: new Uint8Array([1, 2, 3]) }];
 
       await service.setTopicMessages(mockClient, 'topic123', mockMessages);
 

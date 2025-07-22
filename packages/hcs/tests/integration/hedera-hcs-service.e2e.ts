@@ -1,6 +1,6 @@
 import { Client, PrivateKey } from '@hashgraph/sdk';
 import { HederaNetwork } from '@hiero-did-sdk/client';
-import { HederaHcsService } from '../src/hedera-hcs-service';
+import { HederaHcsService } from '../../src/hedera-hcs-service';
 import { Buffer } from 'buffer';
 import { v4 as uuidv4 } from 'uuid';
 import { Cache } from '@hiero-did-sdk/core';
@@ -15,7 +15,7 @@ const TEST_VARIANTS = [
 ];
 
 describe('Hedera HCS Service', () => {
-  jest.setTimeout(60000)
+  jest.setTimeout(60000);
 
   const mockCache: Cache = {
     get: jest.fn(),
@@ -34,7 +34,7 @@ describe('Hedera HCS Service', () => {
           operatorKey,
         },
       ],
-      cache: mockCache
+      cache: mockCache,
     });
 
     beforeAll(() => {
@@ -42,7 +42,7 @@ describe('Hedera HCS Service', () => {
 
       jest
         // eslint-disable-next-line @typescript-eslint/no-require-imports
-        .spyOn(require('../src/shared/mirror-node'), 'isMirrorQuerySupported')
+        .spyOn(require('../../src/shared/mirror-node'), 'isMirrorQuerySupported')
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .mockImplementation((client: Client) => {
           return !global.UseRestAPI;

@@ -1,9 +1,6 @@
-import { Zstd } from '../src';
+import { Zstd } from '@hiero-did-sdk/zstd';
 
-const engines = [
-  { name: 'react-native-zstd' },
-  { name: 'zstd-napi' },
-];
+const engines = [{ name: 'react-native-zstd' }, { name: 'zstd-napi' }];
 
 const zstdMock = {
   compress: (data: Uint8Array) => data,
@@ -11,7 +8,6 @@ const zstdMock = {
 };
 
 describe('Zstd', () => {
-
   beforeEach(() => {
     jest.mock('react-native-zstd', () => undefined);
     jest.mock('zstd-napi', () => undefined);
@@ -31,7 +27,6 @@ describe('Zstd', () => {
   });
 
   describe.each(engines)('with $name', ({ name }) => {
-
     beforeEach(() => {
       if (name === 'react-native-zstd') {
         jest.mock('react-native-zstd', () => zstdMock);
@@ -57,5 +52,5 @@ describe('Zstd', () => {
 
       expect(output).toEqual(input);
     });
-  })
-})
+  });
+});

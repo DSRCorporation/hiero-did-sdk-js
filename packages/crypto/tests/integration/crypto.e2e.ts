@@ -1,4 +1,4 @@
-import { Crypto } from '../src';
+import { Crypto } from '@hiero-did-sdk/crypto';
 
 const data = 'Test data for sha256 calculating';
 const digest = '952a959a1ac6cd9ce1d80fcd1dfd570401c0d40ab36ea9a7a2e22295fd630d3b';
