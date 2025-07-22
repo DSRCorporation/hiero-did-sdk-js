@@ -1,6 +1,5 @@
-import { HcsCacheService } from '../src/cache/hcs-cache-service';
+import { TopicInfo, TopicMessageData, HcsCacheService } from '../src';
 import { Cache } from '@hiero-did-sdk/core';
-import { TopicInfo, TopicMessageData } from '../src/hcs';
 import { LRUMemoryCache } from '@hiero-did-sdk/cache';
 
 // Mock LRUMemoryCache to avoid actual instantiation during tests

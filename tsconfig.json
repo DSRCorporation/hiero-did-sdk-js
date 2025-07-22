@@ -29,7 +29,7 @@
       "@hiero-did-sdk/zstd": ["packages/zstd/src/index.ts"]
     }
   },
-  "exclude": ["node_modules", "**/*.spec.ts", "tests/**/*.ts", "dist"],
+  "exclude": ["node_modules", "coverage", "**/*.spec.ts", "**/*.e2e.ts", "tests/**/*.ts", "dist"],
   "ts-node": {
     "moduleTypes": {
       "jest.config.ts": "cjs"
