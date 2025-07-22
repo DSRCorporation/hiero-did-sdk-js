@@ -1,8 +1,9 @@
 import { Client, PrivateKey } from '@hashgraph/sdk';
-import { getRandomStr } from './utils/utils';
 import { HederaNetwork } from '@hiero-did-sdk/client';
-import { HederaHcsService } from '../src/hedera-hcs-service';
+import { HederaHcsService } from '../../src/hedera-hcs-service';
 import { Buffer } from 'buffer';
+import { v4 as uuidv4 } from 'uuid';
+import { Cache } from '@hiero-did-sdk/core';
 
 const network = (process.env.HEDERA_NETWORK as HederaNetwork) ?? 'testnet';
 const operatorId = process.env.HEDERA_OPERATOR_ID ?? '';
@@ -14,6 +15,16 @@ const TEST_VARIANTS = [
 ];
 
 describe('Hedera HCS Service', () => {
+  jest.setTimeout(60000);
+
+  const mockCache: Cache = {
+    get: jest.fn(),
+    set: jest.fn(),
+    remove: jest.fn(),
+    cleanup: jest.fn(),
+    cleanupExpired: jest.fn(),
+  };
+
   describe.each(TEST_VARIANTS)('Using $name', ({ useRestAPI }) => {
     const ledgerService = new HederaHcsService({
       networks: [
@@ -23,6 +34,7 @@ describe('Hedera HCS Service', () => {
           operatorKey,
         },
       ],
+      cache: mockCache,
     });
 
     beforeAll(() => {
@@ -30,7 +42,7 @@ describe('Hedera HCS Service', () => {
 
       jest
         // eslint-disable-next-line @typescript-eslint/no-require-imports
-        .spyOn(require('../src/shared/mirror-node'), 'isMirrorQuerySupported')
+        .spyOn(require('../../src/shared/mirror-node'), 'isMirrorQuerySupported')
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .mockImplementation((client: Client) => {
           return !global.UseRestAPI;
@@ -217,7 +229,7 @@ describe('Hedera HCS Service', () => {
     });
 
     it('Submit HCS-1 file', async () => {
-      const content = `___${getRandomStr(1200)}___`;
+      const content = `___${uuidv4()}___`;
       const fileTopicId = await ledgerService.submitFile({
         payload: Buffer.from(content),
         waitForChangesVisibility: true,
@@ -227,7 +239,7 @@ describe('Hedera HCS Service', () => {
 
     it('Resolve HCS-1 file', async () => {
       // Submit file
-      const content = `___${getRandomStr(1200)}___`;
+      const content = `___${uuidv4()}___`;
       const topicId = await ledgerService.submitFile({
         payload: Buffer.from(content),
         waitForChangesVisibility: true,

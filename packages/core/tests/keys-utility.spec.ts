@@ -71,4 +71,11 @@ describe('Keys utility', () => {
 
     expect(keyUtil.toBytes()).toStrictEqual(privateKey.publicKey.toBytes());
   });
+
+  it('should convert key from multibase to the same key', () => {
+    const multibase = 'z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK';
+    const keyUtil = KeysUtility.fromMultibase(multibase);
+
+    expect(keyUtil.toMultibase()).toStrictEqual(multibase);
+  });
 });

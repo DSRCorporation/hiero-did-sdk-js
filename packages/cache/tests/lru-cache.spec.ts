@@ -3,6 +3,8 @@ import { LRUMemoryCache } from '../src';
 describe('LRUMemoryCache', () => {
   let cache: LRUMemoryCache;
 
+  cache = new LRUMemoryCache(); // Initialize with the default max size
+
   beforeEach(() => {
     cache = new LRUMemoryCache(3); // Initialize with a max size of 3
   });
@@ -20,9 +22,12 @@ describe('LRUMemoryCache', () => {
   // Test case: Setting and getting a value in the cache
   it('should set and get a value correctly', async () => {
     await cache.set('key1', 'value1');
-
-    const result = await cache.get<string>('key1');
+    let result = await cache.get<string>('key1');
     expect(result).toBe('value1');
+
+    await cache.set('key1', 'value2');
+    result = await cache.get<string>('key1');
+    expect(result).toBe('value2');
   });
 
   // Test case: Cache should respect max size and evict the oldest item
@@ -65,6 +70,26 @@ describe('LRUMemoryCache', () => {
 
     const result = await cache.get<string>('key1');
     expect(result).toBeNull(); // Key should have expired and been removed
+    jest.useRealTimers();
+  });
+
+  // Test case: Cleanup expired
+  it('should get all items except expired', async () => {
+    jest.useFakeTimers();
+
+    await cache.set('key1', 'value1', 1);
+    jest.advanceTimersByTime(1000);
+    await cache.set('key2', 'value2', 1);
+    jest.advanceTimersByTime(2000);
+    await cache.set('key3', 'value3', 10);
+
+    await cache.cleanupExpired();
+
+    const result = await cache.getAll<string>();
+
+    expect(result).toEqual([
+      { key: 'key3', value: 'value3' },
+    ]);
     jest.useRealTimers();
   });
 

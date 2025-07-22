@@ -1,18 +1,19 @@
-import { AccountId, Client, PrivateKey } from '@hashgraph/sdk';
-import { HederaClientService, HederaClientConfiguration } from '../src';
+import { AccountId, Client } from '@hashgraph/sdk';
+import { HederaClientService, HederaClientConfiguration, HederaNetwork } from '../src';
+
+const network = (process.env.HEDERA_NETWORK as HederaNetwork) ?? 'testnet';
+const operatorId = process.env.HEDERA_OPERATOR_ID ?? '';
+const operatorKey = process.env.HEDERA_OPERATOR_KEY ?? '';
 
 describe('HederaClientService', () => {
   let config: HederaClientConfiguration;
   let service: HederaClientService;
 
-  const operatorId = AccountId.fromString('0.0.3').toString();
-  const operatorKey = PrivateKey.generateED25519().toStringDer();
-
   beforeEach(() => {
     config = {
       networks: [
         {
-          network: 'testnet',
+          network,
           operatorId,
           operatorKey,
         },
@@ -37,17 +38,15 @@ describe('HederaClientService', () => {
   test('should get client for a single network configuration', () => {
     const client = service.getClient();
     expect(client).toBeInstanceOf(Client);
-    expect(client.operatorAccountId.toString()).toBe('0.0.3');
+    expect(client.operatorAccountId.toString()).toBe(operatorId);
   });
 
   test('should get client for multiply networks configuration by name', () => {
-    const mainnetOperatorId = AccountId.fromString('0.0.3').toString();
-    const customNetOperatorId = '3.2.1';
     const configWithMultipleNetworks: HederaClientConfiguration = {
       networks: [
         {
           network: 'mainnet',
-          operatorId: mainnetOperatorId,
+          operatorId,
           operatorKey,
         },
         {
@@ -59,10 +58,10 @@ describe('HederaClientService', () => {
           network: {
             name: 'custom-network',
             nodes: {
-              node1: '0.0.4',
+              "https://testnet-node00-00-grpc.hedera.com:443": new AccountId(3)
             },
           },
-          operatorId: customNetOperatorId,
+          operatorId,
           operatorKey,
         },
       ],
@@ -71,6 +70,10 @@ describe('HederaClientService', () => {
     const testnetClient = serviceWithMultipleNetworks.getClient('testnet');
     expect(testnetClient).toBeInstanceOf(Client);
     expect(testnetClient.operatorAccountId.toString()).toBe(operatorId);
+
+    const customClient = serviceWithMultipleNetworks.getClient('custom-network');
+    expect(customClient).toBeInstanceOf(Client);
+    expect(customClient.operatorAccountId.toString()).toBe(operatorId);
   });
 
   test('should throw an error if unknown network is requested', () => {

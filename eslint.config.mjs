@@ -17,6 +17,7 @@ export default tseslint.config(
   {
     ignores: [
       'node_modules',
+      'coverage',
       '**/dist/*',
       '**/build/*',
       '**/jest.config.ts',

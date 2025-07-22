@@ -24,7 +24,7 @@ export function normalizeMirrorUrl(url: string): string {
 }
 
 /**
- * Get mirror node URL or catch error if it missed
+ * Get mirror node URL or catch an error if it missed
  * @param client
  */
 export function getMirrorNetworkNodeUrl(client: Client): string {
