@@ -54,10 +54,10 @@ export class Crypto {
     if (data instanceof ArrayBuffer) {
       return Buffer.from(data);
     }
-    if (data instanceof Uint8Array) {
-      return Buffer.from(data);
+    if (Buffer.isBuffer(data)) {
+      return data;
     }
-    return data;
+    return Buffer.from(data);
   }
 
   static sha256(data: HashInput): string {
@@ -79,7 +79,5 @@ export class Crypto {
       }
       return cryptoModule.SHA256(inputString).toString();
     }
-
-    throw new Error('Unsupported crypto module');
   }
 }

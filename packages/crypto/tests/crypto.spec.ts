@@ -4,14 +4,13 @@ import { Buffer } from 'buffer';
 const data = 'Test data for sha256 calculating';
 const digest = '952a959a1ac6cd9ce1d80fcd1dfd570401c0d40ab36ea9a7a2e22295fd630d3b';
 
-describe('Crypto.sha256 (NodeJs)', () => {
-  it('should hash a string input correctly with Node.js crypto', () => {
-    const sha256 = Crypto.sha256(data);
-    expect(sha256).toEqual(digest);
-  });
-});
+const engines = [
+  { name: 'react-native-quick-crypto' },
+  { name: 'crypto' },
+  { name: 'crypto-js' },
+];
 
-describe('Crypto.sha256 (Mocks)', () => {
+describe('Crypto.sha256', () => {
   const mockCreateHash = jest.fn().mockReturnThis();
   const mockUpdate = jest.fn().mockReturnThis();
   const mockDigest = jest.fn().mockReturnValue(digest);
@@ -33,41 +32,19 @@ describe('Crypto.sha256 (Mocks)', () => {
     jest.resetModules();
   });
 
-  // it('should handle no supported engine ', () => {
-  //   expect(() => Crypto.sha256(data)).toThrow('No compatible crypto module found');
-  // });
+  it('should throw an error if no compatible crypto module is found', () => {
+    // Mock failure for all crypto modules
+    jest.doMock('react-native-quick-crypto', () => {
+      throw new Error();
+    });
+    jest.doMock('crypto', () => {
+      throw new Error();
+    });
+    jest.doMock('crypto-js', () => {
+      throw new Error();
+    });
 
-  it('should hash a string input correctly with react-native-quick-crypto', () => {
-    jest.mock('react-native-quick-crypto', () => cryptoMock);
-    jest.resetModules();
-
-    const result = Crypto.sha256(data);
-    expect(result).toBe(digest);
-
-    // Verify the hash was created with 'sha256'
-    expect(mockCreateHash).toHaveBeenCalledWith('sha256');
-  });
-
-  it('should hash a string input correctly with Node.js crypto', () => {
-    jest.mock('crypto', () => cryptoMock);
-    jest.resetModules();
-
-    const result = Crypto.sha256(data);
-    expect(result).toBe(digest);
-
-    // Verify the hash was created with 'sha256'
-    expect(mockCreateHash).toHaveBeenCalledWith('sha256');
-  });
-
-  it('should hash a string input correctly with crypto-js', () => {
-    jest.mock('crypto-js', () => cryptoJsMock);
-    jest.resetModules();
-
-    const result = Crypto.sha256(data);
-    expect(result).toBe(digest);
-
-    // Verify SHA256 was called with the input string
-    expect(mockSHA256).toHaveBeenCalledWith(data);
+    expect(() => Crypto.sha256(data)).toThrow('No compatible crypto module found');
   });
 
   it('should handle different types of HashInput', () => {
@@ -84,22 +61,19 @@ describe('Crypto.sha256 (Mocks)', () => {
     expect(Crypto.sha256(uint8ArrayInput)).toBe(digest);
     expect(Crypto.sha256(bufferInput)).toBe(digest);
 
-    // Verify all inputs were properly converted to buffers
     expect(mockUpdate).toHaveBeenCalledWith(expect.any(Buffer));
   });
 
-  it('should throw an error if no compatible crypto module is found', () => {
-    // Mock failure for all crypto modules
-    jest.doMock('react-native-quick-crypto', () => {
-      throw new Error();
-    });
-    jest.doMock('crypto', () => {
-      throw new Error();
-    });
-    jest.doMock('crypto-js', () => {
-      throw new Error();
-    });
+    it.each(engines)('should hash a string input correctly using $name', ({ name }) => {
+      jest.mock(name, () => name === 'crypto-js' ? cryptoJsMock : cryptoMock);
+      jest.resetModules();
 
-    expect(() => Crypto.sha256(data)).toThrow('No compatible crypto module found');
-  });
+      let result = Crypto.sha256(data);
+      expect(result).toBe(digest);
+
+      result = Crypto.sha256(Buffer.from(data));
+      expect(result).toBe(digest);
+
+      expect(mockCreateHash).toHaveBeenCalledWith('sha256');
+    });
 });
