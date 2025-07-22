@@ -91,7 +91,7 @@ export class HcsTopicService {
   }
 
   /**
-   * Create topic
+   * Create a topic
    * @param props
    */
   public async createTopic(props?: CreateTopicProps): Promise<string> {

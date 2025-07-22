@@ -70,6 +70,10 @@ describe('HederaClientService', () => {
     const testnetClient = serviceWithMultipleNetworks.getClient('testnet');
     expect(testnetClient).toBeInstanceOf(Client);
     expect(testnetClient.operatorAccountId.toString()).toBe(operatorId);
+
+    const customClient = serviceWithMultipleNetworks.getClient('custom-network');
+    expect(customClient).toBeInstanceOf(Client);
+    expect(customClient.operatorAccountId.toString()).toBe(operatorId);
   });
 
   test('should throw an error if unknown network is requested', () => {

@@ -3,6 +3,7 @@ import { HederaNetwork } from '@hiero-did-sdk/client';
 import { HederaHcsService } from '../src/hedera-hcs-service';
 import { Buffer } from 'buffer';
 import { v4 as uuidv4 } from 'uuid';
+import { Cache } from '@hiero-did-sdk/core';
 
 const network = (process.env.HEDERA_NETWORK as HederaNetwork) ?? 'testnet';
 const operatorId = process.env.HEDERA_OPERATOR_ID ?? '';
@@ -16,6 +17,14 @@ const TEST_VARIANTS = [
 describe('Hedera HCS Service', () => {
   jest.setTimeout(60000)
 
+  const mockCache: Cache = {
+    get: jest.fn(),
+    set: jest.fn(),
+    remove: jest.fn(),
+    cleanup: jest.fn(),
+    cleanupExpired: jest.fn(),
+  };
+
   describe.each(TEST_VARIANTS)('Using $name', ({ useRestAPI }) => {
     const ledgerService = new HederaHcsService({
       networks: [
@@ -25,6 +34,7 @@ describe('Hedera HCS Service', () => {
           operatorKey,
         },
       ],
+      cache: mockCache
     });
 
     beforeAll(() => {
