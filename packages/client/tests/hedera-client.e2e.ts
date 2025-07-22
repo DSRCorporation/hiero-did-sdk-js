@@ -1,4 +1,4 @@
-import { Client } from '@hashgraph/sdk';
+import { AccountId, Client } from '@hashgraph/sdk';
 import { HederaClientService, HederaClientConfiguration, HederaNetwork } from '../src';
 
 const network = (process.env.HEDERA_NETWORK as HederaNetwork) ?? 'testnet';
@@ -58,7 +58,7 @@ describe('HederaClientService', () => {
           network: {
             name: 'custom-network',
             nodes: {
-              node1: '0.0.4',
+              "https://testnet-node00-00-grpc.hedera.com:443": new AccountId(3)
             },
           },
           operatorId,
