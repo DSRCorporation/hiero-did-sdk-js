@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { VaultVerifierFactory } from '../src';
 import { VaultApi } from '../src/vault-api';
 

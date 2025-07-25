@@ -256,6 +256,9 @@ importers:
       '@hashgraph/sdk':
         specifier: ^2.66.0
         version: 2.66.0(bn.js@5.2.2)(react-native@0.80.0(@babel/core@7.27.4)(react@19.1.0))
+      '@hiero-did-sdk/client':
+        specifier: workspace:*
+        version: link:../client
       '@hiero-did-sdk/core':
         specifier: workspace:*
         version: link:../core

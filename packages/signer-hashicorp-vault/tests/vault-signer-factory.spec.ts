@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { VaultSignerFactory } from '../src';
 import { VaultApi } from '../src/vault-api';
 
