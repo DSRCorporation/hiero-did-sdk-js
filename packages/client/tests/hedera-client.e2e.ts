@@ -58,7 +58,7 @@ describe('HederaClientService', () => {
           network: {
             name: 'custom-network',
             nodes: {
-              "https://testnet-node00-00-grpc.hedera.com:443": new AccountId(3)
+              'https://testnet-node00-00-grpc.hedera.com:443': new AccountId(3),
             },
           },
           operatorId,

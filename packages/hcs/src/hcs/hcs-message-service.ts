@@ -37,7 +37,7 @@ export interface GetTopicMessagesProps {
   limit?: number;
 }
 
-type ReadTopicMessagesProps = GetTopicMessagesProps & {
+type FetchTopicMessagesProps = GetTopicMessagesProps & {
   fromDate?: Date;
 };
 
@@ -79,19 +79,26 @@ export class HcsMessageService {
   }
 
   /**
-   * Submit message to a topic
-   * @param props
+   * Submit message to HCS Topic
+   * @param props - The properties for submitting a message
+   * @param props.topicId - The ID of the topic to submit the message to
+   * @param props.message - The message content to submit
+   * @param props.submitKey - Optional private key to sign the transaction
+   * @param props.waitForChangesVisibility - Optional flag to wait until the message is visible in the topic
+   * @param props.waitForChangesVisibilityTimeoutMs - Optional timeout in milliseconds for waiting for visibility
+   * @returns A promise that resolves to the submission result containing nodeId, transactionId, and transactionHash
    */
   public async submitMessage(props: SubmitMessageProps): Promise<SubmitMessageResult> {
-    const startFrom = new Date(Date.now() - 1000);
+    const transaction = new TopicMessageSubmitTransaction()
+      .setTopicId(props.topicId)
+      .setMessage(props.message)
+      .freezeWith(this.client);
 
-    const transaction = new TopicMessageSubmitTransaction().setTopicId(props.topicId).setMessage(props.message);
+    if (props?.submitKey) {
+      await transaction.sign(props.submitKey);
+    }
 
-    const frozenTransaction = transaction.freezeWith(this.client);
-
-    if (props?.submitKey) await frozenTransaction.sign(props.submitKey);
-
-    const response = await frozenTransaction.execute(this.client);
+    const response = await transaction.execute(this.client);
 
     const receipt = await response.getReceipt(this.client);
     if (receipt.status !== Status.Success) {
@@ -102,8 +109,8 @@ export class HcsMessageService {
 
     if (props?.waitForChangesVisibility) {
       await waitForChangesVisibility<string[]>({
-        fetchFn: () => this.getNewMessagesContent({ topicId: props.topicId, startFrom }),
-        checkFn: (messages) => messages.indexOf(props.message) >= 0,
+        fetchFn: () => this.getNewMessagesContent({ topicId: props.topicId, startFrom: new Date(Date.now() - 1000) }),
+        checkFn: (messages) => messages.includes(props.message),
         waitTimeout: props?.waitForChangesVisibilityTimeoutMs,
       });
     }
@@ -116,8 +123,13 @@ export class HcsMessageService {
   }
 
   /**
-   * Get topic messages by query
-   * @param props
+   * Get HCS Topic messages
+   * @param props - The properties for retrieving topic messages
+   * @param props.topicId - The ID of the topic to get messages from
+   * @param props.maxWaitSeconds - Optional maximum wait time in seconds
+   * @param props.toDate - Optional end date for message retrieval
+   * @param props.limit - Optional maximum number of messages to retrieve
+   * @returns A promise that resolves to an array of topic message data
    */
   public async getTopicMessages(props: GetTopicMessagesProps): Promise<TopicMessageData[]> {
     let currentCachedMessages = (await this.cacheService?.getTopicMessages(this.client, props.topicId)) ?? [];
@@ -129,13 +141,13 @@ export class HcsMessageService {
     const borderlineDate = new Date((props.toDate ? props.toDate : new Date()).getTime() + 1); // +1ms to remove the influence of nanoseconds
 
     if (lastCachedMessageDate < borderlineDate) {
-      const messages = await this.readTopicMessages({
+      const messages = await this.fetchTopicMessages({
         ...props,
         fromDate: lastCachedMessageDate,
         toDate: borderlineDate,
       });
       if (messages.length) {
-        currentCachedMessages = this.joinMessages(currentCachedMessages, messages);
+        currentCachedMessages = this.deduplicateAndSortMessages(...currentCachedMessages, ...messages);
         await this.cacheService?.setTopicMessages(this.client, props.topicId, currentCachedMessages);
       }
     }
@@ -143,62 +155,70 @@ export class HcsMessageService {
     return currentCachedMessages.filter((m) => m.consensusTime <= borderlineDate);
   }
 
-  // todo: double-check and simplify approach
   /**
-   * Join two have been read topic messages arrays
-   * @param first - The first topic messages array
-   * @param second - The second topic messages array
-   * @returns The array with joined messages. Messages are unique and sorted by consensus date
+   * Deduplicate and sort HCS messages
+   * @param messages - The array of messages to deduplicate and sort
+   * @returns The array of messages that unique and sorted by consensus date
    */
-  private joinMessages(first: TopicMessageData[], second: TopicMessageData[]): TopicMessageData[] {
-    const messagesMap = new Map<string, TopicMessageData>();
-
-    const toKey = (msg: TopicMessageData) => `${msg.consensusTime.getTime()}`;
-
-    for (const msg of first) {
-      messagesMap.set(toKey(msg), msg);
-    }
-
-    for (const msg of second) {
-      messagesMap.set(toKey(msg), msg);
-    }
-
-    const mergedArray = Array.from(messagesMap.values());
-    mergedArray.sort((a, b) => a.consensusTime.getTime() - b.consensusTime.getTime());
-
-    return mergedArray;
+  private deduplicateAndSortMessages(...messages: TopicMessageData[]): TopicMessageData[] {
+    const seenTimestamps = new Set();
+    return messages
+      .filter(({ consensusTime }) => {
+        if (seenTimestamps.has(consensusTime.getTime())) {
+          return false;
+        }
+        seenTimestamps.add(consensusTime.getTime());
+        return true;
+      })
+      .sort((a, b) => a.consensusTime.getTime() - b.consensusTime.getTime());
   }
 
   /**
-   * Get messages from Date
-   * @param options
+   * Get messages content from a specific date
+   * @param options - The options for retrieving messages
+   * @param options.topicId - The ID of the topic to get messages from
+   * @param options.startFrom - The date from which to start retrieving messages
+   * @returns A promise that resolves to an array of message contents as strings
    * @private
    */
   private async getNewMessagesContent(options: { topicId: string; startFrom: Date }): Promise<string[]> {
     const { topicId, startFrom } = options;
-    const messages = await this.readTopicMessages({
+    const messages = await this.fetchTopicMessages({
       topicId,
       fromDate: startFrom,
     });
-    return messages.map((m) => Buffer.from(m.contents).toString('utf-8'));
+    return messages.map((message) => Buffer.from(message.contents).toString('utf-8'));
   }
 
   /**
-   * Read topic messages
-   * @param props
-   */
-  private async readTopicMessages(props: ReadTopicMessagesProps): Promise<TopicMessageData[]> {
-    return isMirrorQuerySupported(this.client)
-      ? await this.readTopicMessagesByClient(props)
-      : await this.readTopicMessagesByRest(props);
-  }
-
-  /**
-   * Read messages from Hedera ledger by GprsClient
-   * @param props
+   * Fetch topic messages using either client or REST approach based on client capabilities
+   * @param props - The properties for reading topic messages
+   * @param props.topicId - The ID of the topic to read messages from
+   * @param props.maxWaitSeconds - Optional maximum wait time in seconds
+   * @param props.toDate - Optional end date for message retrieval
+   * @param props.limit - Optional maximum number of messages to retrieve
+   * @param props.fromDate - Optional start date for message retrieval
+   * @returns A promise that resolves to an array of topic message data
    * @private
    */
-  private async readTopicMessagesByClient(props: ReadTopicMessagesProps): Promise<TopicMessageData[]> {
+  private async fetchTopicMessages(props: FetchTopicMessagesProps): Promise<TopicMessageData[]> {
+    return isMirrorQuerySupported(this.client)
+      ? await this.fetchTopicMessagesWithClient(props)
+      : await this.fetchTopicMessagesWithRest(props);
+  }
+
+  /**
+   * Fetch messages from HCS using Hedera SDK Client (via gRPC)
+   * @param props - The properties for reading topic messages
+   * @param props.topicId - The ID of the topic to read messages from
+   * @param props.maxWaitSeconds - Optional maximum wait time in seconds
+   * @param props.fromDate - Optional start date for message retrieval
+   * @param props.toDate - Optional end date for message retrieval
+   * @param props.limit - Optional maximum number of messages to retrieve
+   * @returns A promise that resolves to an array of topic message data
+   * @private
+   */
+  private async fetchTopicMessagesWithClient(props: FetchTopicMessagesProps): Promise<TopicMessageData[]> {
     const { maxWaitSeconds = DEFAULT_TIMEOUT_SECONDS, fromDate, toDate, limit } = props ?? {};
     let subscription: SubscriptionHandle;
     const results: TopicMessageData[] = [];
@@ -260,11 +280,16 @@ export class HcsMessageService {
   }
 
   /**
-   * Read messages from Hedera ledger by REST
-   * @param props
+   * Fetch messages from HCS using REST API
+   * @param props - The properties for reading topic messages
+   * @param props.topicId - The ID of the topic to read messages from
+   * @param props.fromDate - Optional start date for message retrieval
+   * @param props.toDate - Optional end date for message retrieval
+   * @param props.limit - Optional maximum number of messages to retrieve
+   * @returns A promise that resolves to an array of topic message data
    * @private
    */
-  private async readTopicMessagesByRest(props: ReadTopicMessagesProps): Promise<TopicMessageData[]> {
+  private async fetchTopicMessagesWithRest(props: FetchTopicMessagesProps): Promise<TopicMessageData[]> {
     const { topicId, fromDate, toDate, limit } = props;
 
     let messages: TopicMessageData[] = [];
@@ -281,12 +306,24 @@ export class HcsMessageService {
 
     while (nextPath && (!limit || messages.length < limit)) {
       const url = this.getNextUrl(nextPath);
-      const result = await this.fetchMessages(url);
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch topic messages: ${response.statusText}`);
+      }
+
+      const result: ApiGetTopicMessageResponse = await response.json();
       if (result.messages.length) {
         messages = messages.concat(
           result.messages.map((message) => ({
             consensusTime: new Date(Number(message.consensus_timestamp) * 1000),
-            contents: this.decodeMessageContents(message.message),
+            contents: Buffer.from(message.message, 'base64'),
           }))
         );
       }
@@ -297,54 +334,20 @@ export class HcsMessageService {
   }
 
   /**
-   * Convert Base string to Uint8Array
-   * @param base64String
-   * @private
-   */
-  private decodeMessageContents(base64String: string): Uint8Array {
-    if (typeof Buffer !== 'undefined') {
-      return Buffer.from(base64String, 'base64');
-    }
-
-    const binaryString = atob(base64String);
-    return new Uint8Array([...binaryString].map((char) => char.charCodeAt(0)));
-  }
-
-  /**
-   * Fetch messages by REST by URL
-   * @param url
-   * @private
-   */
-  private async fetchMessages(url: string): Promise<ApiGetTopicMessageResponse> {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to fetch topic messages: ${response.statusText}`);
-    }
-
-    const data: ApiGetTopicMessageResponse = await response.json();
-    return data;
-  }
-
-  /**
-   * Gte next Url for fetch messages by REST
-   * @param nextPath
-   * @param limit
-   * @param encoding
+   * Get next URL for fetching messages using REST API
+   * @param nextPath - The path component of the URL
+   * @param limit - The maximum number of messages to retrieve (default: 25)
+   * @param encoding - The encoding format for the messages (default: 'base64')
+   * @returns URL string for the next API request
    * @private
    */
   private getNextUrl(nextPath: string, limit = 25, encoding = 'base64') {
-    const apiUrl = getMirrorNetworkNodeUrl(this.client);
+    let apiUrl = getMirrorNetworkNodeUrl(this.client);
 
-    const url = new URL(`${apiUrl}${nextPath}`);
-    url.searchParams.set('limit', limit.toString());
-    url.searchParams.set('encoding', encoding);
+    if (apiUrl.endsWith('/')) {
+      apiUrl = apiUrl.slice(0, -1);
+    }
 
-    return url.toString();
+    return `${apiUrl}${nextPath}&limit=${limit.toString()}&encoding=${encoding}`;
   }
 }

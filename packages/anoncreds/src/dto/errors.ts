@@ -3,8 +3,7 @@
  */
 export class AnonCredsResolutionMetadataError extends Error {
   constructor(
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    public error: 'invalid' | 'notFound' | 'unsupportedAnonCredsMethod' | string,
+    public error: string,
     message: string
   ) {
     super(message);

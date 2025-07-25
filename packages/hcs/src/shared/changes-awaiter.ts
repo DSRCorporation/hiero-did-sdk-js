@@ -22,7 +22,7 @@ export async function waitForChangesVisibility<T>(options: {
         break;
       }
     } catch {
-      /* empty */
+      // Ignore
     }
 
     await new Promise((resolve) => setTimeout(resolve, interval));

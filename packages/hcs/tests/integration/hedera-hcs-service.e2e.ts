@@ -21,7 +21,7 @@ describe('Hedera HCS Service', () => {
     get: jest.fn(),
     set: jest.fn(),
     remove: jest.fn(),
-    cleanup: jest.fn(),
+    clear: jest.fn(),
     cleanupExpired: jest.fn(),
   };
 
@@ -43,8 +43,7 @@ describe('Hedera HCS Service', () => {
       jest
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         .spyOn(require('../../src/shared/mirror-node'), 'isMirrorQuerySupported')
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        .mockImplementation((client: Client) => {
+        .mockImplementation((_: Client) => {
           return !global.UseRestAPI;
         });
     });
@@ -182,7 +181,7 @@ describe('Hedera HCS Service', () => {
       if (topicInfo.expirationTime)
         expect(topicInfo.expirationTime).toEqual(Math.floor(newExpirationTime.getTime() / 1000));
 
-      // Set admin and submitkeys to the same
+      // Set admin and submit keys to be the same
       await ledgerService.updateTopic({
         topicId,
         currentAdminKey: admin1Key,

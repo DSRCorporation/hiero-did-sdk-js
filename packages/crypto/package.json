@@ -45,9 +45,6 @@
     "format-check": "prettier --check \"src/*.ts\" \"tests/*.ts\""
   },
   "dependencies": {
-    "crypto": "^1.0.1",
-    "crypto-js": "^4.2.0",
-    "buffer": "^6.0.3",
-    "react-native-quick-crypto": "^0.7.14"
+    "buffer": "^6.0.3"
   }
 }

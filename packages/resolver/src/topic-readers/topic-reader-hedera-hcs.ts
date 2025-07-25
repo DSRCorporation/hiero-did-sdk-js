@@ -2,6 +2,7 @@ import { TopicReader, TopicReaderMessage, TopicReaderOptions } from '../interfac
 import { Network } from '@hiero-did-sdk/core';
 import { HederaHcsService, HederaHcsServiceConfiguration } from '@hiero-did-sdk/hcs';
 import { Buffer } from 'buffer';
+import { HEDERA_NETWORKS } from '@hiero-did-sdk/client';
 
 /**
  * Implements a topic reader that uses the HCS Service to read messages from a topic.
@@ -12,13 +13,8 @@ export class TopicReaderHederaHcs extends TopicReader {
   constructor(config: HederaHcsServiceConfiguration) {
     super();
 
-    /* todo: Remove this guard when the resolver will provide custom networks */
-    if (
-      !config.networks.every(
-        (net) =>
-          typeof net.network === 'string' && ['mainnet', 'testnet', 'previewnet', 'local-node'].includes(net.network)
-      )
-    ) {
+    /* TODO: Remove this guard when the resolver will provide custom networks */
+    if (!config.networks.every((net) => typeof net.network === 'string' && HEDERA_NETWORKS.includes(net.network))) {
       throw new Error('Only standard Hedera networks are allowed');
     }
 

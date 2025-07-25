@@ -44,8 +44,7 @@
     "format": "prettier --write \"src/**/*.ts\" \"tests/*.ts\"",
     "format-check": "prettier --check \"src/*.ts\" \"tests/*.ts\""
   },
-  "dependencies": {
-    "react-native-zstd": "^1.1.0",
+  "devDependencies": {
     "zstd-napi": "^0.0.10"
   }
 }

@@ -19,9 +19,7 @@ import { getMirrorNetworkNodeUrl, isMirrorQuerySupported, waitForChangesVisibili
 
 const DEFAULT_AUTO_RENEW_PERIOD = 90 * 24 * 60 * 60; // 90 days
 
-// Todo: Currently is not possible to clear (set to defaults) the properties
-//       looks like, methods clearXXX are not working
-//       If will require it can be added NULL values to CreateTopicProps and UpdateTopicProps and clear the values
+// TODO: It's not possible to clear HCS Topic fields at the moment
 
 export interface CreateTopicProps {
   topicMemo?: string;
@@ -78,9 +76,19 @@ interface MirrorNodeTopicResponse {
   expiration_time?: string | null;
 }
 
+/**
+ * Service for managing Hedera Consensus Service (HCS) topics
+ * Provides functionality to create, update, delete HCS topics, and retrieve HCS topic info
+ */
 export class HcsTopicService {
   private readonly cacheService?: HcsCacheService;
 
+  /**
+   * Creates a new HcsTopicService instance.
+   *
+   * @param client - The Hedera client instance used for HCS operations
+   * @param cache - Optional cache configuration, cache instance, or HcsCacheService instance
+   */
   constructor(
     private readonly client: Client,
     cache?: CacheConfig | Cache | HcsCacheService
@@ -91,8 +99,20 @@ export class HcsTopicService {
   }
 
   /**
-   * Create a topic
-   * @param props
+   * Create a new HCS topic
+   *
+   * @param props - Optional configuration properties for the topic
+   * @param props.topicMemo - Optional memo or description for the topic
+   * @param props.submitKey - Optional private key that must sign any message submitted to the topic
+   * @param props.adminKey - Optional private key that must sign any transaction updating the topic
+   * @param props.autoRenewPeriod - Optional auto renewal period for the topic
+   * @param props.autoRenewAccountId - Optional account ID to be charged for auto-renewal fees
+   * @param props.autoRenewAccountKey - Optional private key for the auto-renew account (required if autoRenewAccountId is provided)
+   * @param props.waitForChangesVisibility - Optional flag to wait until the topic is visible in the mirror node
+   * @param props.waitForChangesVisibilityTimeoutMs - Optional timeout in milliseconds for waiting for changes visibility
+   * @returns Promise resolving to the created topic ID as a string
+   * @throws Error if autoRenewAccountId is provided without autoRenewAccountKey
+   * @throws Error if the topic creation transaction fails
    */
   public async createTopic(props?: CreateTopicProps): Promise<string> {
     if (props?.autoRenewAccountId && !props?.autoRenewAccountKey) {
@@ -141,7 +161,7 @@ export class HcsTopicService {
 
     if (props?.waitForChangesVisibility) {
       await waitForChangesVisibility<TopicInfo>({
-        fetchFn: () => this.readTopicInfo({ topicId }),
+        fetchFn: () => this.fetchTopicInfo({ topicId }),
         checkFn: (topicInfo: TopicInfo) => topicInfo.topicId === topicId,
         waitTimeout: props?.waitForChangesVisibilityTimeoutMs,
       });
@@ -151,8 +171,23 @@ export class HcsTopicService {
   }
 
   /**
-   * Update topic
-   * @param props
+   * Update HCS topic
+   *
+   * @param props - Configuration properties for updating the topic
+   * @param props.topicId - The ID of the topic to update
+   * @param props.currentAdminKey - The current admin private key required to sign the update transaction
+   * @param props.topicMemo - Optional new memo or description for the topic
+   * @param props.submitKey - Optional new private key that must sign any message submitted to the topic
+   * @param props.adminKey - Optional new private key that must sign any transaction updating the topic
+   * @param props.autoRenewPeriod - Optional new auto renewal period for the topic
+   * @param props.autoRenewAccountId - Optional new account ID to be charged for auto-renewal fees
+   * @param props.autoRenewAccountKey - Optional new private key for the auto-renew account (required if autoRenewAccountId is provided)
+   * @param props.expirationTime - Optional new expiration time for the topic
+   * @param props.waitForChangesVisibility - Optional flag to wait until the topic changes are visible in the mirror node
+   * @param props.waitForChangesVisibilityTimeoutMs - Optional timeout in milliseconds for waiting for changes visibility
+   * @returns Promise that resolves when the topic has been updated
+   * @throws Error if autoRenewAccountId is provided without autoRenewAccountKey
+   * @throws Error if the topic update transaction fails
    */
   public async updateTopic(props: UpdateTopicProps): Promise<void> {
     if (props?.autoRenewAccountId && !props?.autoRenewAccountKey) {
@@ -202,7 +237,7 @@ export class HcsTopicService {
 
     if (props?.waitForChangesVisibility) {
       await waitForChangesVisibility({
-        fetchFn: () => this.readTopicInfo({ topicId: props.topicId }),
+        fetchFn: () => this.fetchTopicInfo({ topicId: props.topicId }),
         checkFn: (topicInfo: TopicInfo) =>
           (props.topicMemo === undefined || props.topicMemo === topicInfo.topicMemo) &&
           (props.submitKey === undefined || props.submitKey.publicKey.toStringDer() === topicInfo.submitKey) &&
@@ -217,8 +252,15 @@ export class HcsTopicService {
   }
 
   /**
-   * Delete topic
-   * @param props
+   * Delete HCS topic
+   *
+   * @param props - Configuration properties for deleting the topic
+   * @param props.topicId - The ID of the topic to delete
+   * @param props.currentAdminKey - The current admin private key required to sign the delete transaction
+   * @param props.waitForChangesVisibility - Optional flag to wait until the topic deletion is visible in the mirror node
+   * @param props.waitForChangesVisibilityTimeoutMs - Optional timeout in milliseconds for waiting for changes visibility
+   * @returns Promise that resolves when the topic has been deleted
+   * @throws Error if the topic delete transaction fails
    */
   public async deleteTopic(props: DeleteTopicProps): Promise<void> {
     const topicTransaction = new TopicDeleteTransaction().setTopicId(props.topicId);
@@ -238,7 +280,7 @@ export class HcsTopicService {
       await waitForChangesVisibility<boolean>({
         fetchFn: async () => {
           try {
-            await this.readTopicInfo({ topicId: props.topicId });
+            await this.fetchTopicInfo({ topicId: props.topicId });
             return false;
           } catch (error) {
             return error instanceof StatusError && error.status === Status.InvalidTopicId;
@@ -251,14 +293,19 @@ export class HcsTopicService {
   }
 
   /**
-   * Get topic info
-   * @param props
+   * Get HCS topic info
+   * If a cache service is configured, it will first check the cache before fetching from the network
+   *
+   * @param props - Configuration properties for retrieving topic info
+   * @param props.topicId - The ID of the topic to retrieve info for
+   * @returns Promise resolving to the topic info
+   * @throws Error if the topic info cannot be retrieved
    */
   public async getTopicInfo(props: GetTopicInfoProps): Promise<TopicInfo> {
     const cachedInfo = await this.cacheService?.getTopicInfo(this.client, props.topicId);
     if (cachedInfo) return cachedInfo;
 
-    const result = await this.readTopicInfo(props);
+    const result = await this.fetchTopicInfo(props);
 
     await this.cacheService?.setTopicInfo(this.client, props.topicId, result);
 
@@ -266,37 +313,28 @@ export class HcsTopicService {
   }
 
   /**
-   * Convert ExpirationTime to seconds
-   * @param expirationTime
+   * Fetch HCS topic info using either the Hedera SDK Client or REST API based on client capabilities.
+   *
+   * @param props - Configuration properties for fetching topic info
+   * @param props.topicId - The ID of the topic to fetch info for
+   * @returns Promise resolving to the topic info
+   * @private
    */
-  private convertExpirationTimeToSeconds = (expirationTime?: Timestamp | Date): number | undefined => {
-    if (!expirationTime) return undefined;
-
-    if (expirationTime instanceof Timestamp) {
-      return Math.floor(expirationTime.toDate().getTime() / 1000);
-    }
-
-    if (expirationTime instanceof Date) {
-      return Math.floor(expirationTime.getTime() / 1000);
-    }
-
-    throw new Error('Invalid expirationTime type');
-  };
-
-  /**
-   * Read topic info
-   * @param props
-   */
-  private readTopicInfo(props: GetTopicInfoProps): Promise<TopicInfo> {
-    return isMirrorQuerySupported(this.client) ? this.readTopicInfoByClient(props) : this.readTopicInfoByRest(props);
+  private fetchTopicInfo(props: GetTopicInfoProps): Promise<TopicInfo> {
+    return isMirrorQuerySupported(this.client)
+      ? this.fetchTopicInfoWithClient(props)
+      : this.fetchTopicInfoWithRest(props);
   }
 
   /**
-   * Read topic info by GprsClient
-   * @param props
+   * Fetch HCS topic info using the Hedera SDK Client (via gRPC)
+   *
+   * @param props - Configuration properties for fetching topic info
+   * @param props.topicId - The ID of the topic to fetch info for
+   * @returns Promise resolving to the topic info
    * @private
    */
-  private async readTopicInfoByClient(props: GetTopicInfoProps): Promise<TopicInfo> {
+  private async fetchTopicInfoWithClient(props: GetTopicInfoProps): Promise<TopicInfo> {
     const topicInfoQuery = new TopicInfoQuery().setTopicId(props.topicId);
     const info = await topicInfoQuery.execute(this.client);
 
@@ -314,11 +352,16 @@ export class HcsTopicService {
   }
 
   /**
-   * Read topic info by REST API
-   * @param props
+   * Fetch HCS topic info using REST API
+   *
+   * @param props - Configuration properties for fetching topic info
+   * @param props.topicId - The ID of the topic to fetch info for
+   * @returns Promise resolving to the topic info
+   * @throws Error if the fetch request fails
+   * @throws StatusError with InvalidTopicId status if the topic has been deleted
    * @private
    */
-  private async readTopicInfoByRest(props: GetTopicInfoProps): Promise<TopicInfo> {
+  private async fetchTopicInfoWithRest(props: GetTopicInfoProps): Promise<TopicInfo> {
     const restApiUrl = getMirrorNetworkNodeUrl(this.client);
 
     const response = await fetch(`${restApiUrl}/api/v1/topics/${props.topicId}?_=${Date.now()}`, {
@@ -350,4 +393,24 @@ export class HcsTopicService {
       expirationTime: data.expiration_time ? new Date(data.expiration_time).getTime() : undefined,
     };
   }
+
+  /**
+   * Converts an expiration time to seconds since epoch.
+   *
+   * @param expirationTime - The expiration time to convert, can be a Timestamp, Date, or undefined
+   * @returns The expiration time in seconds since epoch, or undefined if the input is undefined
+   * @throws Error if the expirationTime is not a Timestamp or Date
+   * @private
+   */
+  private convertExpirationTimeToSeconds = (expirationTime: Timestamp | Date): number | undefined => {
+    if (expirationTime instanceof Timestamp) {
+      return Math.floor(expirationTime.toDate().getTime() / 1000);
+    }
+
+    if (expirationTime instanceof Date) {
+      return Math.floor(expirationTime.getTime() / 1000);
+    }
+
+    throw new Error('Unsupported expirationTime type');
+  };
 }

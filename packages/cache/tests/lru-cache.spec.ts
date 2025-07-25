@@ -10,7 +10,7 @@ describe('LRUMemoryCache', () => {
   });
 
   afterEach(async () => {
-    await cache.cleanup(); // Clean up the cache after each test
+    await cache.clear(); // Clean up the cache after each test
   });
 
   // Test case: Getting a value from an empty cache should return null
@@ -54,7 +54,7 @@ describe('LRUMemoryCache', () => {
   // Test case: Cleanup the entire cache
   it('should cleanup all items from the cache', async () => {
     await cache.set('key1', 'value1');
-    await cache.cleanup();
+    await cache.clear();
 
     const result = await cache.get<string>('key1');
     expect(result).toBeNull(); // Key should not exist in cache after cleanup
@@ -87,9 +87,7 @@ describe('LRUMemoryCache', () => {
 
     const result = await cache.getAll<string>();
 
-    expect(result).toEqual([
-      { key: 'key3', value: 'value3' },
-    ]);
+    expect(result).toEqual([{ key: 'key3', value: 'value3' }]);
     jest.useRealTimers();
   });
 

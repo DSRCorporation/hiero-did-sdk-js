@@ -1,40 +1,45 @@
+import { Buffer } from 'buffer';
+
 interface ZstdModule {
   compress(data: Uint8Array): Uint8Array;
   decompress(data: Uint8Array): Uint8Array;
 }
 
 export class Zstd {
-  private static detectZstdModule(): ZstdModule {
-    // 1. Try to use react-native-zstd (React Native ZSTD)
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const rnZstd = require('react-native-zstd');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
-      if (rnZstd.compress) return rnZstd;
-    } catch {
-      /* empty */
-    }
-
-    // 2. Try to use Node.js zstd-napi
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const nodeZstd = require('zstd-napi');
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-return
-      if (nodeZstd.compress) return nodeZstd;
-    } catch {
-      /* empty */
-    }
-
-    throw new Error('No compatible zstd module found');
-  }
-
-  static compress(data: Uint8Array): Uint8Array {
-    const zstdModule = Zstd.detectZstdModule();
+  public static compress(data: Uint8Array): Uint8Array {
+    const zstdModule = getAvailableZstdModule();
     return zstdModule.compress(data);
   }
 
-  static decompress(data: Uint8Array): Uint8Array {
-    const zstdModule = Zstd.detectZstdModule();
+  public static decompress(data: Uint8Array): Uint8Array {
+    const zstdModule = getAvailableZstdModule();
     return zstdModule.decompress(data);
   }
+}
+
+function getAvailableZstdModule(): ZstdModule {
+  // 1. Try to use Node.js 'zstd-napi' package
+  try {
+    const nodeZstd = require('zstd-napi');
+    if (nodeZstd) return nodeZstd;
+  } catch {
+    // Ignore
+  }
+
+  // 2. Try to use 'react-native-zstd' package (for React Native environments)
+  try {
+    const rnZstd = require('react-native-zstd');
+    if (rnZstd)
+      return {
+        // Additional data conversion is needed due to inconsistent API between Node and RN implementations
+        compress: (data: Uint8Array): Uint8Array => rnZstd.compress(Buffer.from(data).toString()),
+        decompress: (data: Uint8Array): Uint8Array => Uint8Array.from(Buffer.from(rnZstd.decompress([...data]))),
+      };
+  } catch {
+    // Ignore
+  }
+
+  throw new Error(
+    "No available zstd module found. Please install 'zstd-napi' or 'react-native-zstd' depending on a platform"
+  );
 }

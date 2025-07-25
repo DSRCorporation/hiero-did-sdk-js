@@ -12,7 +12,7 @@ export enum AnonCredsObjectType {
   REV_REG_ENTRY = 'REV_REG_ENTRY',
 }
 
-export function buildAnoncredsIdentifier(
+export function buildAnonCredsIdentifier(
   publisherDid: string,
   topicId: string,
   objectType: AnonCredsObjectType
@@ -33,7 +33,7 @@ export type AnoncredsIdentifierFields = {
   topicId: string;
 };
 
-export function parseAnoncredsIdentifier(id: string): AnoncredsIdentifierFields {
+export function parseAnonCredsIdentifier(id: string): AnoncredsIdentifierFields {
   // Identifier example "did:hedera:testnet:zFAeKMsqnNc2bwEsC8oqENBvGqjpGu9tpUi3VWaFEBXBo_0.0.5896419/anoncreds/v0/SCHEMA/0.0.5896422"
   const [did, objectFamilyName, version, objectTypeName, topicId] = id.split(ANONCREDS_IDENTIFIER_SEPARATOR);
   const { method, network: networkName, publicKey: issuerPublicKey, topicId: didDocumentTopicId } = parseDID(did);

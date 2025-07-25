@@ -1,6 +1,8 @@
 import { AccountId } from '@hashgraph/sdk';
 
-export type HederaNetwork = 'mainnet' | 'testnet' | 'previewnet' | 'local-node';
+export const HEDERA_NETWORKS = ['mainnet', 'testnet', 'previewnet', 'local-node'] as const;
+
+export type HederaNetwork = (typeof HEDERA_NETWORKS)[number];
 
 export type HederaCustomNetwork = {
   name: string;
