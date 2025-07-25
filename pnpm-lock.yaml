@@ -99,12 +99,18 @@ importers:
 
   packages/anoncreds:
     dependencies:
+      '@hiero-did-sdk/core':
+        specifier: workspace:*
+        version: link:../core
       '@hiero-did-sdk/hcs':
         specifier: workspace:*
         version: link:../hcs
       '@hiero-did-sdk/zstd':
         specifier: workspace:*
         version: link:../zstd
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
     devDependencies:
       '@hiero-did-sdk/cache':
         specifier: workspace:*
@@ -112,12 +118,6 @@ importers:
       '@hiero-did-sdk/client':
         specifier: workspace:*
         version: link:../client
-      '@hiero-did-sdk/core':
-        specifier: workspace:*
-        version: link:../core
-      buffer:
-        specifier: ^6.0.3
-        version: 6.0.3
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
@@ -178,6 +178,7 @@ importers:
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
+    devDependencies:
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
