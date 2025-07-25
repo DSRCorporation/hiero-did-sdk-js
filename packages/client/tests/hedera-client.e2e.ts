@@ -23,7 +23,7 @@ describe('HederaClientService', () => {
   });
 
   test('should throw an error if no networks are defined', () => {
-    expect(() => new HederaClientService({ networks: [] })).toThrowError('Networks should be defined.');
+    expect(() => new HederaClientService({ networks: [] })).toThrowError('Networks must not be empty');
   });
 
   test('should throw an error if network names are not unique', () => {
@@ -32,7 +32,7 @@ describe('HederaClientService', () => {
       operatorId,
       operatorKey,
     });
-    expect(() => new HederaClientService(config)).toThrowError('Network names must be unique.');
+    expect(() => new HederaClientService(config)).toThrowError('Network names must be unique');
   });
 
   test('should get client for a single network configuration', () => {
