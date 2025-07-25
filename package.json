@@ -4,8 +4,8 @@
   "scripts": {
     "docs:build": "antora antora-playbook.yml",
     "docs:serve": "npx http-server ./build/site",
-    "clean": "pnpm -r run clean",
-    "build": "pnpm -r run build",
+    "clean": "pnpm -r clean",
+    "build": "pnpm -r build",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",

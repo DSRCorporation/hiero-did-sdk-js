@@ -1,6 +1,6 @@
 # @hiero-did-sdk/zstd
 
-This package provides Zstandard (Zstd) compression utilities for the Hashgraph DID SDK. It offers a cross-platform implementation of Zstd compression and decompression, ensuring compatibility across different JavaScript environments including Node.js and React Native.
+This package provides Zstandard (Zstd) compression utilities for the Hiero DID SDK JS. It offers a cross-platform implementation of Zstd compression and decompression, ensuring compatibility across different JavaScript environments including Node.js and React Native.
 
 ## Features
 

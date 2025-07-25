@@ -1,6 +1,6 @@
 # @hiero-did-sdk/cache
 
-This package provides caching utilities for the Hashgraph DID SDK.
+This package provides caching utilities for the Hiero DID SDK JS.
 It implements Least Recently Used (LRU) memory cache to improve performance by reducing redundant operations and network calls.
 
 ## Features

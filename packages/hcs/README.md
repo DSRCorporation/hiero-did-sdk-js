@@ -1,6 +1,7 @@
 # @hiero-did-sdk/hcs
 
-This package provides a comprehensive interface for interacting with Hedera Consensus Service (HCS) within the Hashgraph DID SDK. It offers a set of services for managing topics, submitting and retrieving messages, and handling files through HCS.
+This package provides a comprehensive interface for interacting with Hedera Consensus Service (HCS) within the Hiero DID SDK JS.
+It offers a set of services for managing topics, submitting and retrieving messages, and handling files through HCS.
 
 ## Features
 

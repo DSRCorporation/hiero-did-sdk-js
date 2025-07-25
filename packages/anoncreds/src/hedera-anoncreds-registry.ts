@@ -390,8 +390,8 @@ export class HederaAnoncredsRegistry {
       toDate: new Date(timestamp),
     });
 
-    // This means that requested timestamp is before the actual registration of rev list
-    // In such case, we want to return initial state for the list (by adding first message to entries)
+    // This means that requested timestamp is before the first submitted entry (actual registration of rev list)
+    // In such case, we want to return initial state for the list (by adding first entry only)
     if (messages.length === 0) {
       messages = await this.hcsService.getTopicMessages({
         networkName,

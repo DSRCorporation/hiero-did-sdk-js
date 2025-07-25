@@ -1,6 +1,7 @@
 # @hiero-did-sdk/crypto
 
-This package provides cryptographic utilities for the Hashgraph DID SDK. It offers a cross-platform implementation of cryptographic functions, ensuring compatibility across different JavaScript environments including Node.js and React Native.
+This package provides cryptographic utilities for the Hiero DID SDK JS.
+It offers a cross-platform implementation of cryptographic functions, ensuring compatibility across different JavaScript environments including Node.js and React Native.
 
 ## Features
 
