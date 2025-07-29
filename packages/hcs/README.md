@@ -6,9 +6,9 @@ It offers a set of services for managing topics, submitting and retrieving messa
 ## Features
 
 - **HCS Topics Management:** Provides capabilities for creating, updating and deleing HCS Topics.
-- **HCS Messages Management:** Submit and retrieve HCS messages
+- **HCS Messages Management:** Submit and retrieve HCS messages.
 - **HCS-1 standard support:** Submit and retrieve files using HCS as a storage layer according to HCS-1 Standard.
-- **Caching Support:** Improve performance with optional caching of HCS messages and Topic info.
+- **Caching Support:** Improve performance with optional caching of HCS messages and Topics info.
 - **TypeScript Support:** Built with TypeScript to enhance developer experience and code maintainability.
 
 ## Installation
@@ -96,6 +96,6 @@ This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE
 
 ## References
 
-- [Hashgraph DID SDK](https://github.com/DSRCorporation/hiero-did-sdk-js) - The official repository for the Hashgraph DID SDK, containing the complete source code and documentation.
+- [Hiero DID SDK](https://github.com/DSRCorporation/hiero-did-sdk-js) - The official repository for the Hashgraph DID SDK, containing the complete source code and documentation.
 - [Hedera JavaScript SDK](https://github.com/hashgraph/hedera-sdk-js) - The official Hedera JavaScript SDK, used for interacting with the Hedera network.
 - [Hedera Consensus Service](https://docs.hedera.com/hedera/sdks-and-apis/sdks/consensus-service) - Documentation for the Hedera Consensus Service used by this package.

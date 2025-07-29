@@ -12,7 +12,7 @@
     "import": "./dist/index.esm.js",
     "default": "./dist/index.esm.js"
   },
-  "description": "This package forms the foundation of the Hashgraph DID SDK. It provides essential interfaces, utilities, and validation tools for working with Decentralized Identifiers (DIDs) on the Hedera network.",
+  "description": "This package forms the foundation of the Hiero DID SDK. It provides essential interfaces, utilities, and validation tools for working with Decentralized Identifiers (DIDs) on the Hedera network.",
   "author": {
     "name": "The Hashgraph Association",
     "url": "https://www.hashgraph.swiss/"

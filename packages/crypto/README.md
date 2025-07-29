@@ -1,13 +1,11 @@
 # @hiero-did-sdk/crypto
 
 This package provides cryptographic utilities for the Hiero DID SDK JS.
-It offers a cross-platform implementation of cryptographic functions, ensuring compatibility across different JavaScript environments including Node.js and React Native.
 
 ## Features
 
-- **SHA-256 Hashing:** Provides a simple and consistent API for generating SHA-256 hashes.
+- **SHA-256 Hashing:** Provides a simple API for generating SHA-256 hashes.
 - **Cross-Platform Compatibility:** Automatically detects and uses the appropriate cryptographic implementation based on the runtime environment.
-- **Multiple Input Formats:** Supports various input formats including strings, Buffer, Uint8Array, and ArrayBuffer.
 - **TypeScript Support:** Built with TypeScript to enhance developer experience and code maintainability.
 
 ## Installation
@@ -56,5 +54,5 @@ This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE
 
 ## References
 
-- [Hashgraph DID SDK](https://github.com/DSRCorporation/hiero-did-sdk-js) - The official repository for the Hashgraph DID SDK, containing the complete source code and documentation.
+- [Hiero DID SDK](https://github.com/DSRCorporation/hiero-did-sdk-js) - The official repository for the Hashgraph DID SDK, containing the complete source code and documentation.
 - [Hedera JavaScript SDK](https://github.com/hashgraph/hedera-sdk-js) - The official Hedera JavaScript SDK, used for interacting with the Hedera network.

@@ -1,6 +1,7 @@
 # @hiero-did-sdk/registrar
 
-This package provides the core functions for registering and managing Decentralized Identifiers (DIDs) on the Hedera network within the [Hashgraph DID SDK](https://github.com/DSRCorporation/hiero-did-sdk-js). It offers a streamlined interface for creating, updating, and deactivating DIDs, ensuring secure and verifiable DID operations.
+This package provides the core functions for registering and managing Decentralized Identifiers (DIDs) on the Hedera network within the Hiero DID SDK.
+It offers a streamlined interface for creating, updating, and deactivating DIDs, ensuring secure and verifiable DID operations.
 
 Specifically, this package provides the `createDID`, `updateDID`, and `deactivateDID` functions. These functions allow you to:
 
@@ -61,5 +62,5 @@ This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE
 
 ## References
 
-- [Hashgraph DID SDK](https://github.com/DSRCorporation/hiero-did-sdk-js) - The official repository for the Hashgraph DID SDK, containing the complete source code and documentation.
+- [Hiero DID SDK](https://github.com/DSRCorporation/hiero-did-sdk-js) - The official repository for the Hiero DID SDK, containing the complete source code and documentation.
 - [Hedera JavaScript SDK](https://github.com/hashgraph/hedera-sdk-js) - The official Hedera JavaScript SDK, used for interacting with the Hedera network.

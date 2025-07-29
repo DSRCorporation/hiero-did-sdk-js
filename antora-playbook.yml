@@ -1,5 +1,5 @@
 site:
-  title: Hashgraph DID-SDK
+  title: Hiero DID-SDK JS
   url: https://github.com/DSRCorporation/hiero-did-sdk-js
   start_page: documentation::index.adoc
 content:

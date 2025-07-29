@@ -1,11 +1,10 @@
 # @hiero-did-sdk/zstd
 
-This package provides Zstandard (Zstd) compression utilities for the Hiero DID SDK JS. It offers a cross-platform implementation of Zstd compression and decompression, ensuring compatibility across different JavaScript environments including Node.js and React Native.
+This package provides Zstandard (Zstd) compression utilities for the Hiero DID SDK JS.
 
 ## Features
 
-- **Zstd Compression:** Provides a simple and consistent API for compressing data using the Zstandard algorithm.
-- **Zstd Decompression:** Enables efficient decompression of Zstd-compressed data.
+- **Zstd Compression and Decompression:** Provides a simple API for compressing and decompressing data using the Zstandard algorithm.
 - **Cross-Platform Compatibility:** Automatically detects and uses the appropriate Zstd implementation based on the runtime environment.
 - **TypeScript Support:** Built with TypeScript to enhance developer experience and code maintainability.
 
@@ -50,5 +49,5 @@ This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE
 
 ## References
 
-- [Hashgraph DID SDK](https://github.com/DSRCorporation/hiero-did-sdk-js) - The official repository for the Hashgraph DID SDK, containing the complete source code and documentation.
+- [Hiero DID SDK](https://github.com/DSRCorporation/hiero-did-sdk-js) - The official repository for the Hashgraph DID SDK, containing the complete source code and documentation.
 - [Zstandard](https://facebook.github.io/zstd/) - The official Zstandard website, providing information about the compression algorithm used in this package.

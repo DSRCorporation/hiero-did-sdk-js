@@ -1,6 +1,6 @@
 # @hiero-did-sdk/verifier-internal
 
-This package provides the `Verifier` class, a core component of the Hashgraph DID SDK. It enables digital signature verification for Decentralized Identifiers (DIDs) using the ED25519 algorithm. The `Verifier` class adheres to the `Verifier` interface, providing a standardized way to handle cryptographic operations within the Hedera DID ecosystem.
+This package provides the `Verifier` class, a core component of the Hiero DID SDK. It enables digital signature verification for Decentralized Identifiers (DIDs) using the ED25519 algorithm. The `Verifier` class adheres to the `Verifier` interface, providing a standardized way to handle cryptographic operations within the Hedera DID ecosystem.
 
 ## Features
 
@@ -38,5 +38,5 @@ This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE
 
 ## References
 
-- [Hashgraph DID SDK](https://github.com/DSRCorporation/hiero-did-sdk-js) - The official repository for the Hashgraph DID SDK, containing the complete source code and documentation.
+- [Hiero DID SDK](https://github.com/DSRCorporation/hiero-did-sdk-js) - The official repository for the Hiero DID SDK, containing the complete source code and documentation.
 - [Hedera JavaScript SDK](https://github.com/hashgraph/hedera-sdk-js) - The official Hedera JavaScript SDK, used for interacting with the Hedera network.
