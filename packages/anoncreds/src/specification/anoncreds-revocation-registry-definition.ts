@@ -14,3 +14,8 @@ export interface AnonCredsRevocationRegistryDefinition {
     tailsHash: string;
   };
 }
+
+export interface AnonCredsRevocationRegistryDefinitionWithMetadata {
+  revRegDef: AnonCredsRevocationRegistryDefinition;
+  hcsMetadata: { entriesTopicId: string };
+}

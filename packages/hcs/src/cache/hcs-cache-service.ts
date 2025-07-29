@@ -15,22 +15,21 @@ export class HcsCacheService {
     }
   }
 
-  public async getTopicInfo(client: Client, topicId: string): Promise<TopicInfo | null> {
-    return await this.getFromCache<TopicInfo>(this.buildCacheKey(client, 'info', topicId));
+  public getTopicInfo(client: Client, topicId: string): Promise<TopicInfo | null> {
+    return this.getFromCache<TopicInfo>(this.buildCacheKey(client, 'info', topicId));
   }
 
-  public async setTopicInfo(client: Client, topicId: string, topicInfo: TopicInfo): Promise<void> {
-    await this.putToCache(this.buildCacheKey(client, 'info', topicId), topicInfo);
+  public setTopicInfo(client: Client, topicId: string, topicInfo: TopicInfo): Promise<void> {
+    return this.putToCache(this.buildCacheKey(client, 'info', topicId), topicInfo);
   }
 
   public async removeTopicInfo(client: Client, topicId: string): Promise<void> {
     await this.removeFromCache(this.buildCacheKey(client, 'info', topicId));
     await this.removeTopicMessages(client, topicId);
-    await this.removeTopicFile(client, topicId);
   }
 
-  public async getTopicMessages(client: Client, topicId: string): Promise<TopicMessageData[] | null> {
-    return await this.getFromCache<TopicMessageData[]>(this.buildCacheKey(client, 'messages', topicId));
+  public getTopicMessages(client: Client, topicId: string): Promise<TopicMessageData[] | null> {
+    return this.getFromCache<TopicMessageData[]>(this.buildCacheKey(client, 'messages', topicId));
   }
 
   public async setTopicMessages(client: Client, topicId: string, messages: TopicMessageData[]): Promise<void> {
@@ -43,16 +42,16 @@ export class HcsCacheService {
     await this.removeTopicFile(client, topicId);
   }
 
-  public async getTopicFile(client: Client, topicId: string): Promise<Buffer | null> {
-    return await this.getFromCache<Buffer>(this.buildCacheKey(client, 'file', topicId));
+  public getTopicFile(client: Client, topicId: string): Promise<Buffer | null> {
+    return this.getFromCache<Buffer>(this.buildCacheKey(client, 'file', topicId));
   }
 
-  public async setTopicFile(client: Client, topicId: string, file: Buffer): Promise<void> {
-    await this.putToCache(this.buildCacheKey(client, 'file', topicId), file);
+  public setTopicFile(client: Client, topicId: string, file: Buffer): Promise<void> {
+    return this.putToCache(this.buildCacheKey(client, 'file', topicId), file);
   }
 
-  public async removeTopicFile(client: Client, topicId: string): Promise<void> {
-    await this.removeFromCache(this.buildCacheKey(client, 'file', topicId));
+  public removeTopicFile(client: Client, topicId: string): Promise<void> {
+    return this.removeFromCache(this.buildCacheKey(client, 'file', topicId));
   }
 
   /**
@@ -72,7 +71,7 @@ export class HcsCacheService {
    * @param topicId
    */
   private buildCacheKey(client: Client, target: 'info' | 'messages' | 'file', topicId: string): string {
-    const ledgerId = client.ledgerId?.toString() ?? '';
+    const ledgerId = client.ledgerId?.toString() ?? 'unknown';
     return `${ledgerId}-${target}-${topicId}`;
   }
 
@@ -81,8 +80,8 @@ export class HcsCacheService {
    * @param key - The cache key
    * @return The saved value
    */
-  private async getFromCache<T>(key: string): Promise<T | null> {
-    return await this.cache?.get<T>(key);
+  private getFromCache<T>(key: string): Promise<T | null> {
+    return this.cache.get<T>(key);
   }
 
   /**
@@ -91,15 +90,15 @@ export class HcsCacheService {
    * @param value - The value for save
    * @param expiresInSeconds - The cached value lifetime
    */
-  private async putToCache<T>(key: string, value: T, expiresInSeconds?: number): Promise<void> {
-    await this.cache?.set<T>(key, value, expiresInSeconds);
+  private putToCache<T>(key: string, value: T, expiresInSeconds?: number): Promise<void> {
+    return this.cache.set<T>(key, value, expiresInSeconds);
   }
 
   /**
    * Remove data from cache
    * @param key - The cache key
    */
-  private async removeFromCache(key: string): Promise<void> {
-    await this.cache?.remove(key);
+  private removeFromCache(key: string): Promise<void> {
+    return this.cache.remove(key);
   }
 }

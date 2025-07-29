@@ -62,7 +62,7 @@ describe('Hedera HCS networks configuration', () => {
       new HederaHcsService({
         networks: [],
       });
-    }).toThrow('Networks should be defined.');
+    }).toThrow('Networks must not be empty');
   });
 
   it('Init with duplicated network names', () => {
@@ -87,7 +87,7 @@ describe('Hedera HCS networks configuration', () => {
           },
         ],
       });
-    }).toThrow('Network names must be unique.');
+    }).toThrow('Network names must be unique');
   });
 
   it('Using one network without required network name', async () => {

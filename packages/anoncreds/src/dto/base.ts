@@ -21,7 +21,6 @@ export interface AnonCredsOperationStateFailed {
 }
 
 export interface AnonCredsResolutionMetadata extends Extensible {
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-  error?: 'invalid' | 'notFound' | 'unsupportedAnonCredsMethod' | string;
+  error?: string;
   message?: string;
 }

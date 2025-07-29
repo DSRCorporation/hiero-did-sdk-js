@@ -1,12 +1,12 @@
 import { Zstd } from '@hiero-did-sdk/zstd';
 
-describe('ZSTD', () => {
-  const testString = 'Test data for sha256 calculating';
+describe('Zstd', () => {
+  const testString = 'Test data for zstd compression/decompression';
 
   const data = new TextEncoder().encode(testString);
   const compressedData = [
-    40, 181, 47, 253, 32, 32, 1, 1, 0, 84, 101, 115, 116, 32, 100, 97, 116, 97, 32, 102, 111, 114, 32, 115, 104, 97, 50,
-    53, 54, 32, 99, 97, 108, 99, 117, 108, 97, 116, 105, 110, 103,
+    40, 181, 47, 253, 32, 44, 77, 1, 0, 20, 2, 84, 101, 115, 116, 32, 100, 97, 116, 97, 32, 102, 111, 114, 32, 122, 115,
+    116, 100, 32, 99, 111, 109, 112, 114, 101, 115, 115, 105, 111, 110, 47, 100, 101, 1, 0, 9, 99, 62, 1,
   ];
 
   it('should compress data correctly', () => {

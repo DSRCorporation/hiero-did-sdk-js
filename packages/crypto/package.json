@@ -1,5 +1,15 @@
 {
   "name": "@hiero-did-sdk/crypto",
+  "version": "0.0.4",
+  "description": "This package provides cryptographic utilities for the Hiero DID SDK JS.",
+  "author": {
+    "name": "DSR Corporation",
+    "url": "https://en.dsr-corporation.com/"
+  },
+  "bugs": {
+    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js/issues"
+  },
+  "license": "Apache-2.0",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.esm.js",
   "types": "./dist/index.d.ts",
@@ -11,43 +21,34 @@
     "import": "./dist/index.esm.js",
     "default": "./dist/index.esm.js"
   },
-  "version": "0.0.4",
-  "license": "Apache-2.0",
-  "homepage": "https://github.com/DSRCorporation/hiero-did-sdk-js.git",
-  "bugs": {
-    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js.git",
-    "directory": "packages/crypto"
-  },
   "files": [
     "dist",
     "package.json",
     "README.md",
     "LICENSE"
   ],
-  "publishConfig": {
-    "main": "dist/index",
-    "types": "dist/index",
-    "access": "restricted",
-    "registry": "https://npm.pkg.github.com",
-    "scope": "@hiero-did-sdk"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DSRCorporation/hiero-did-sdk-js.git",
+    "directory": "packages/crypto"
+  },
+  "engines": {
+    "node": ">=20"
   },
   "scripts": {
     "clean": "rimraf ./dist",
     "compile": "tsup",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "build": "pnpm run clean && pnpm run compile",
+    "build": "pnpm clean && pnpm compile",
     "format": "prettier --write \"src/**/*.ts\" \"tests/*.ts\"",
     "format-check": "prettier --check \"src/*.ts\" \"tests/*.ts\""
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "scope": "@hiero-did-sdk"
+  },
   "dependencies": {
-    "crypto": "^1.0.1",
-    "crypto-js": "^4.2.0",
-    "buffer": "^6.0.3",
-    "react-native-quick-crypto": "^0.7.14"
+    "buffer": "^6.0.3"
   }
 }

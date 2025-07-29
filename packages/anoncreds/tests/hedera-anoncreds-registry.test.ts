@@ -84,7 +84,7 @@ const revocationStatusListPayload: AnonCredsRevocationStatusListWithoutTimestamp
 };
 
 describe('Hedera AnonCreds Registry', () => {
-  jest.setTimeout(60000)
+  jest.setTimeout(60000);
 
   let anoncredsRegistry: HederaAnoncredsRegistry;
 
@@ -93,10 +93,8 @@ describe('Hedera AnonCreds Registry', () => {
   const logger = new ConsoleLogger(LOG_DEBUG_MASSAGES ? LogLevel.debug : LogLevel.off);
   const cache = TEST_WITH_CACHE ? new LRUMemoryCache() : new FakeCache();
 
-  beforeAll(async () => {});
-
   beforeEach(async () => {
-    await cache.cleanup();
+    await cache.clear();
     anoncredsRegistry = new HederaAnoncredsRegistry({
       networks: networkConfigs,
       cache,
@@ -450,7 +448,7 @@ describe('Hedera AnonCreds Registry', () => {
         return;
       }
 
-      await cache.cleanup();
+      await cache.clear();
 
       const resolveForTimestamp = async (
         timestamp: number

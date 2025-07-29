@@ -21,7 +21,7 @@ export class LRUMemoryCache implements Cache {
     this._cache = new Map();
   }
 
-  async get<CacheValue>(key: string): Promise<CacheValue | null> {
+  get<CacheValue>(key: string): Promise<CacheValue | null> {
     if (!this._cache.has(key)) {
       return null;
     }
@@ -33,14 +33,14 @@ export class LRUMemoryCache implements Cache {
       return null;
     }
 
+    // Refresh cache entry, so the key will be the last to clean up
     this._cache.delete(key);
-
     this._cache.set(key, entry);
 
-    return await Promise.resolve(entry.value as CacheValue);
+    return Promise.resolve(entry.value as CacheValue);
   }
 
-  async set<CacheValue>(key: string, value: CacheValue, expiresInSeconds?: number): Promise<void> {
+  set<CacheValue>(key: string, value: CacheValue, expiresInSeconds?: number): Promise<void> {
     if (this._cache.has(key)) {
       this._cache.delete(key);
     } else {
@@ -59,31 +59,31 @@ export class LRUMemoryCache implements Cache {
 
     this._cache.set(key, entry);
 
-    return await Promise.resolve();
+    return Promise.resolve();
   }
 
-  async remove(key: string): Promise<void> {
+  remove(key: string): Promise<void> {
     this._cache.delete(key);
-    return await Promise.resolve();
+    return Promise.resolve();
   }
 
-  async cleanup(): Promise<void> {
+  clear(): Promise<void> {
     this._cache.clear();
-    return await Promise.resolve();
+    return Promise.resolve();
   }
 
-  async cleanupExpired(): Promise<void> {
+  cleanupExpired(): Promise<void> {
     const now = Date.now();
     for (const [key, entry] of this._cache.entries()) {
       if (entry.expiresAt && entry.expiresAt < now) {
         this._cache.delete(key);
       }
     }
-    return await Promise.resolve();
+    return Promise.resolve();
   }
 
-  async getAll<CacheValue>(): Promise<KeyValue<CacheValue>[]> {
+  getAll<CacheValue>(): Promise<KeyValue<CacheValue>[]> {
     const entries = [...this._cache] as [string, CacheEntry<CacheValue>][];
-    return await Promise.resolve(entries.map(([key, entry]) => ({ key, value: entry.value }) as KeyValue<CacheValue>));
+    return Promise.resolve(entries.map(([key, entry]) => ({ key, value: entry.value }) as KeyValue<CacheValue>));
   }
 }

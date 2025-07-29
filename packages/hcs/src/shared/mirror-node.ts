@@ -24,8 +24,9 @@ export function normalizeMirrorUrl(url: string): string {
 }
 
 /**
- * Get mirror node URL or catch an error if it missed
- * @param client
+ * Get mirror node URL
+ * @param client - Hedera SDK Client to get mirror node URL for
+ * @returns normalized mirror node URL
  */
 export function getMirrorNetworkNodeUrl(client: Client): string {
   const mirrorNetwork = client.mirrorNetwork;

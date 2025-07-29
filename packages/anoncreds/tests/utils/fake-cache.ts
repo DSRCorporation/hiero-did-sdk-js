@@ -1,33 +1,23 @@
-interface ICache {
-  get<CacheValue>(key: string): Promise<CacheValue | null>
-  set<CacheValue>(key: string, value: CacheValue, expiresInSeconds?: number): Promise<void>
-  remove(key: string): Promise<void>
+import { Cache } from '@hiero-did-sdk/core';
 
-  cleanup(): Promise<void>
-  cleanupExpired(): Promise<void>
-}
-
-export class FakeCache implements ICache {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async get<CacheValue>(key: string): Promise<CacheValue | null> {
-    return new Promise(() => null)
+export class FakeCache implements Cache {
+  get<CacheValue>(_: string): Promise<CacheValue | null> {
+    return new Promise(() => null);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  set<CacheValue>(key: string, value: CacheValue, expiresInSeconds?: number): Promise<void> {
-    throw new Error('Method not implemented.')
+  set<CacheValue>(_key: string, _value: CacheValue, _expiresInSeconds?: number): Promise<void> {
+    throw new Error('Method not implemented.');
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  remove(key: string): Promise<void> {
-    throw new Error('Method not implemented.')
+  remove(_: string): Promise<void> {
+    throw new Error('Method not implemented.');
   }
 
-  cleanup(): Promise<void> {
-    throw new Error('Method not implemented.')
+  clear(): Promise<void> {
+    throw new Error('Method not implemented.');
   }
 
   cleanupExpired(): Promise<void> {
-    throw new Error('Method not implemented.')
+    throw new Error('Method not implemented.');
   }
 }

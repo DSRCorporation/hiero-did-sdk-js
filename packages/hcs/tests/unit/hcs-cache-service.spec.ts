@@ -20,7 +20,7 @@ describe('HcsCacheService', () => {
     get: jest.fn(() => Promise.resolve(undefined)),
     set: jest.fn(() => Promise.resolve(undefined)),
     remove: jest.fn(() => Promise.resolve(undefined)),
-    cleanup: jest.fn(() => Promise.resolve(undefined)),
+    clear: jest.fn(() => Promise.resolve(undefined)),
     cleanupExpired: jest.fn(() => Promise.resolve(undefined)),
   };
 
@@ -38,7 +38,6 @@ describe('HcsCacheService', () => {
 
       // Test the cache works correctly
       await service.getTopicInfo(mockClient, 'topic123');
-      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(mockCache.get).toHaveBeenCalled();
     });
 
@@ -57,8 +56,7 @@ describe('HcsCacheService', () => {
 
       const result = await service.getTopicInfo(mockClient, 'topic123');
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockCache.get).toHaveBeenCalledWith('-info-topic123');
+      expect(mockCache.get).toHaveBeenCalledWith('unknown-info-topic123');
       expect(result).toEqual(mockTopicInfo);
     });
   });
@@ -69,8 +67,7 @@ describe('HcsCacheService', () => {
 
       await service.setTopicInfo(mockClient, 'topic123', mockTopicInfo);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockCache.set).toHaveBeenCalledWith('-info-topic123', mockTopicInfo, undefined);
+      expect(mockCache.set).toHaveBeenCalledWith('unknown-info-topic123', mockTopicInfo, undefined);
     });
   });
 
@@ -78,12 +75,9 @@ describe('HcsCacheService', () => {
     it('should remove topic info, messages, and file from the cache', async () => {
       await service.removeTopicInfo(mockClient, 'topic123');
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockCache.remove).toHaveBeenCalledWith('-info-topic123');
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockCache.remove).toHaveBeenCalledWith('-messages-topic123');
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockCache.remove).toHaveBeenCalledWith('-file-topic123');
+      expect(mockCache.remove).toHaveBeenCalledWith('unknown-info-topic123');
+      expect(mockCache.remove).toHaveBeenCalledWith('unknown-messages-topic123');
+      expect(mockCache.remove).toHaveBeenCalledWith('unknown-file-topic123');
     });
   });
 
@@ -94,8 +88,7 @@ describe('HcsCacheService', () => {
 
       const result = await service.getTopicMessages(mockClient, 'topic123');
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockCache.get).toHaveBeenCalledWith('-messages-topic123');
+      expect(mockCache.get).toHaveBeenCalledWith('unknown-messages-topic123');
       expect(result).toEqual(mockMessages);
     });
   });
@@ -106,10 +99,8 @@ describe('HcsCacheService', () => {
 
       await service.setTopicMessages(mockClient, 'topic123', mockMessages);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockCache.set).toHaveBeenCalledWith('-messages-topic123', mockMessages, undefined);
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockCache.remove).toHaveBeenCalledWith('-file-topic123');
+      expect(mockCache.set).toHaveBeenCalledWith('unknown-messages-topic123', mockMessages, undefined);
+      expect(mockCache.remove).toHaveBeenCalledWith('unknown-file-topic123');
     });
   });
 
@@ -117,10 +108,8 @@ describe('HcsCacheService', () => {
     it('should remove topic messages and the topic file from the cache', async () => {
       await service.removeTopicMessages(mockClient, 'topic123');
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockCache.remove).toHaveBeenCalledWith('-messages-topic123');
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockCache.remove).toHaveBeenCalledWith('-file-topic123');
+      expect(mockCache.remove).toHaveBeenCalledWith('unknown-messages-topic123');
+      expect(mockCache.remove).toHaveBeenCalledWith('unknown-file-topic123');
     });
   });
 
@@ -131,8 +120,7 @@ describe('HcsCacheService', () => {
 
       const result = await service.getTopicFile(mockClient, 'topic123');
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockCache.get).toHaveBeenCalledWith('-file-topic123');
+      expect(mockCache.get).toHaveBeenCalledWith('unknown-file-topic123');
       expect(result).toEqual(mockFile);
     });
   });
@@ -143,8 +131,7 @@ describe('HcsCacheService', () => {
 
       await service.setTopicFile(mockClient, 'topic123', mockFile);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockCache.set).toHaveBeenCalledWith('-file-topic123', mockFile, undefined);
+      expect(mockCache.set).toHaveBeenCalledWith('unknown-file-topic123', mockFile, undefined);
     });
   });
 
@@ -152,8 +139,7 @@ describe('HcsCacheService', () => {
     it('should remove topic file from the cache using a constructed key', async () => {
       await service.removeTopicFile(mockClient, 'topic123');
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(mockCache.remove).toHaveBeenCalledWith('-file-topic123');
+      expect(mockCache.remove).toHaveBeenCalledWith('unknown-file-topic123');
     });
   });
 });

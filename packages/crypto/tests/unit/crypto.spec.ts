@@ -4,9 +4,9 @@ import { Buffer } from 'buffer';
 const data = 'Test data for sha256 calculating';
 const digest = '952a959a1ac6cd9ce1d80fcd1dfd570401c0d40ab36ea9a7a2e22295fd630d3b';
 
-const engines = [{ name: 'react-native-quick-crypto' }, { name: 'crypto' }, { name: 'crypto-js' }];
+const engines = [{ name: 'crypto' }, { name: 'react-native-quick-crypto' }];
 
-describe('Crypto.sha256', () => {
+describe('Crypto', () => {
   const mockCreateHash = jest.fn().mockReturnThis();
   const mockUpdate = jest.fn().mockReturnThis();
   const mockDigest = jest.fn().mockReturnValue(digest);
@@ -16,29 +16,24 @@ describe('Crypto.sha256', () => {
     digest: mockDigest,
   };
 
-  const mockSHA256 = jest.fn().mockReturnValue({ toString: () => digest });
-  const cryptoJsMock = {
-    SHA256: mockSHA256,
-  };
-
   beforeEach(() => {
-    jest.mock('react-native-quick-crypto', () => undefined);
     jest.mock('crypto', () => undefined);
-    jest.mock('crypto-js', () => undefined);
+    jest.mock('react-native-quick-crypto', () => undefined, { virtual: true });
     jest.resetModules();
   });
 
   it('should throw an error if no compatible crypto module is found', () => {
     // Mock failure for all crypto modules
-    jest.doMock('react-native-quick-crypto', () => {
+    jest.mock('crypto', () => {
       throw new Error();
     });
-    jest.doMock('crypto', () => {
-      throw new Error();
-    });
-    jest.doMock('crypto-js', () => {
-      throw new Error();
-    });
+    jest.mock(
+      'react-native-quick-crypto',
+      () => {
+        throw new Error();
+      },
+      { virtual: true }
+    );
 
     expect(() => Crypto.sha256(data)).toThrow('No compatible crypto module found');
   });
@@ -57,11 +52,11 @@ describe('Crypto.sha256', () => {
     expect(Crypto.sha256(uint8ArrayInput)).toBe(digest);
     expect(Crypto.sha256(bufferInput)).toBe(digest);
 
-    expect(mockUpdate).toHaveBeenCalledWith(expect.any(Buffer));
+    expect(mockUpdate).toHaveBeenCalledWith(bufferInput);
   });
 
   it.each(engines)('should hash a string input correctly using $name', ({ name }) => {
-    jest.mock(name, () => (name === 'crypto-js' ? cryptoJsMock : cryptoMock));
+    jest.mock(name, () => cryptoMock);
     jest.resetModules();
 
     let result = Crypto.sha256(data);

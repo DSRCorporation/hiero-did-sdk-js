@@ -50,8 +50,14 @@ export class HcsFileService {
   }
 
   /**
-   * Submit and store file in HCS-1 file
-   * @param props
+   * Submit HCS-1 file to HCS
+   * @param props - The properties for submitting a file
+   * @param props.payload - The file content as a Buffer
+   * @param props.submitKey - Optional private key used to sign the transaction
+   * @param props.waitForChangesVisibility - Optional flag to wait until the file is visible in the network
+   * @param props.waitForChangesVisibilityTimeoutMs - Optional timeout in milliseconds for waiting
+   * @returns The topic ID where the file was submitted
+   * @throws Error if there's an issue with file submission
    */
   public async submitFile(props: SubmitFileProps): Promise<string> {
     const hcsMessagesService = new HcsMessageService(this.client, this.cacheService);
@@ -85,8 +91,11 @@ export class HcsFileService {
   }
 
   /**
-   * Resolve file from HCS-1 format
-   * @param props
+   * Resolve HCS-1 file from a topic ID
+   * @param props - The properties for resolving a file
+   * @param props.topicId - The topic ID where the file was submitted
+   * @returns A Buffer containing the resolved file content
+   * @throws Error if the file cannot be resolved
    */
   public async resolveFile(props: ResolveFileProps): Promise<Buffer> {
     const cachedFile = await this.cacheService?.getTopicFile(this.client, props.topicId);
@@ -100,8 +109,12 @@ export class HcsFileService {
   }
 
   /**
-   * Resolve file from HCS-1 format without cahce using
-   * @param props
+   * Resolve HCS-1 file without using cache
+   * @param props - The properties for resolving a file
+   * @param props.topicId - The topic ID where the file was submitted
+   * @returns A Buffer containing the resolved file content
+   * @throws Error if the topic memo is invalid, if the topic contains an admin key, or if the file checksum is invalid
+   * @private
    */
   private async resolveFileWithoutCache(props: ResolveFileProps): Promise<Buffer> {
     const hcsTopicService = new HcsTopicService(this.client, this.cacheService);
@@ -130,17 +143,21 @@ export class HcsFileService {
   }
 
   /**
-   * Build file from HCS-1 chunks
-   * @param chunkMessages
+   * Build HCS-1 file from chunk messages
+   * @param chunkMessages - Array of chunk messages to be combined and decompressed
+   * @returns A Buffer containing the reconstructed file content
+   * @throws Error if there's an issue building the file from chunks
    * @private
    */
   private buildFileFromChunkMessages(chunkMessages: ChunkMessage[]): Buffer {
     let messageContent = '';
+
     try {
       for (const chunkMessage of chunkMessages.sort((a, b) => a.o - b.o)) {
         messageContent += chunkMessage.c;
       }
       const compressedPayload = Buffer.from(messageContent.replace(BASE64_JSON_CONTENT_PREFIX, ''), 'base64');
+
       return Buffer.from(Zstd.decompress(compressedPayload));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -149,17 +166,22 @@ export class HcsFileService {
   }
 
   /**
-   * Create file HCS-1 chunks
-   * @param payload
+   * Build chunk messages from HCS-1 file payload
+   * @param payload - The file content as a Buffer to be chunked
+   * @returns Array of chunk messages with order index and content
+   * @throws Error if there's an issue creating chunk messages
    * @private
    */
   private buildChunkMessagesFromFile(payload: Buffer): HcsFileChunkMessage[] {
     try {
       const compressedPayload = Zstd.compress(payload);
       const compressedPayloadBase64 = Buffer.from(compressedPayload).toString('base64');
+
       const messageContent = `${BASE64_JSON_CONTENT_PREFIX}${compressedPayloadBase64}`;
       const encoded = new TextEncoder().encode(messageContent);
+
       const chunks: HcsFileChunkMessage[] = [];
+
       let orderIndex = 0;
       for (let i = 0; i < encoded.length; i += MAX_CHUNK_CONTENT_SIZE_IN_BYTES) {
         const chunk = encoded.slice(i, i + MAX_CHUNK_CONTENT_SIZE_IN_BYTES);
@@ -168,6 +190,7 @@ export class HcsFileService {
           content: new TextDecoder().decode(chunk),
         });
       }
+
       return chunks;
     } catch (error) {
       throw new Error(`Error on getting chunk messages for HCS-1 file: ${error}`);
@@ -175,17 +198,19 @@ export class HcsFileService {
   }
 
   /**
-   * Create HCS-1 memo by required format
+   * Create Topic memo in HCS-1 format
+   * @param hash - The SHA-256 hash of the file payload
+   * @returns A string in the format "{hash}:zstd:base64"
    * @private
-   * @param hash
    */
   private createHCS1Memo(hash: string): string {
     return `${hash}:zstd:base64`;
   }
 
   /**
-   * Check HCS-1 memo format
-   * @param memo
+   * Check if the memo follows the HCS-1 format
+   * @param memo - The memo string to validate
+   * @returns True if the memo matches the HCS-1 format pattern, false otherwise
    * @private
    */
   private isValidHCS1Memo(memo: string): boolean {
@@ -193,9 +218,11 @@ export class HcsFileService {
   }
 
   /**
-   * Check HCS-1 checksum
-   * @param memo
-   * @param checksum
+   * Validate that the file checksum matches the expected hash in the memo
+   * @param memo - The HCS-1 memo string containing the expected hash
+   * @param checksum - The calculated SHA-256 hash of the file payload
+   * @returns True if the checksum matches the hash in the memo, false otherwise
+   * @throws Error if the memo is empty or null
    * @private
    */
   private isValidHCS1Checksum(memo: string, checksum: string): boolean {

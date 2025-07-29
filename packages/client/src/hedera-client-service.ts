@@ -13,11 +13,11 @@ export class HederaClientService {
 
   constructor(config: HederaClientConfiguration) {
     if (!config.networks.length) {
-      throw new Error('Networks should be defined.');
+      throw new Error('Networks must not be empty');
     }
     const networkNames = config.networks.map((n) => (typeof n.network === 'string' ? n.network : n.network.name));
     if (new Set(networkNames).size !== networkNames.length) {
-      throw new Error('Network names must be unique.');
+      throw new Error('Network names must be unique');
     }
     this.configuration = config;
   }

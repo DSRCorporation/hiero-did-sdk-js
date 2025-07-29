@@ -23,7 +23,7 @@ describe('HederaClientService', () => {
   });
 
   test('should throw an error if no networks are defined', () => {
-    expect(() => new HederaClientService({ networks: [] })).toThrowError('Networks should be defined.');
+    expect(() => new HederaClientService({ networks: [] })).toThrow('Networks must not be empty');
   });
 
   test('should throw an error if network names are not unique', () => {
@@ -32,7 +32,7 @@ describe('HederaClientService', () => {
       operatorId,
       operatorKey,
     });
-    expect(() => new HederaClientService(config)).toThrowError('Network names must be unique.');
+    expect(() => new HederaClientService(config)).toThrow('Network names must be unique');
   });
 
   test('should get client for a single network configuration', () => {
@@ -41,7 +41,7 @@ describe('HederaClientService', () => {
     expect(client.operatorAccountId.toString()).toBe(operatorId);
   });
 
-  test('should get client for multiply networks configuration by name', () => {
+  test('should get client for multiple networks configuration by name', () => {
     const configWithMultipleNetworks: HederaClientConfiguration = {
       networks: [
         {
@@ -58,7 +58,7 @@ describe('HederaClientService', () => {
           network: {
             name: 'custom-network',
             nodes: {
-              "https://testnet-node00-00-grpc.hedera.com:443": new AccountId(3)
+              'https://testnet-node00-00-grpc.hedera.com:443': new AccountId(3),
             },
           },
           operatorId,
@@ -77,7 +77,7 @@ describe('HederaClientService', () => {
   });
 
   test('should throw an error if unknown network is requested', () => {
-    expect(() => service.getClient('unknownNetwork')).toThrowError('Unknown Hedera network');
+    expect(() => service.getClient('unknownNetwork')).toThrow('Unknown Hedera network');
   });
 
   test('should execute operation with client and close the client afterwards', async () => {
